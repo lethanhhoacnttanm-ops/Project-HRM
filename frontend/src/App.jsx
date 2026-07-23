@@ -8,6 +8,10 @@ import RegisterPage from './pages/auth/RegisterPage.jsx';
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx';
 
+import DashboardPage from './pages/admin/DashboardPage.jsx';
+import EmployeeListPage from './pages/admin/Employee/EmployeeListPage.jsx';
+import ContractListPage from './pages/admin/Contract/ContractListPage.jsx';
+
 function App() {
   return (
     <Routes>
@@ -19,19 +23,23 @@ function App() {
         <Route path="/resetpassword" element={<ResetPasswordPage />} />
       </Route>
 
-      <Route path="/admin-page"  element={<AdminLayout />}>
-        {/* <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/employees" element={<EmployeesPage />} />
-        <Route path="/attendance" element={<AttendancePage />} />
-        <Route path="/payroll" element={<PayrollPage />} />
-        <Route path="/development" element={<DevelopmentPage />} />
-        <Route path="/support" element={<SupportPage />} />
-        <Route path="/reports" element={<ReportsPage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="/settings" element={<SettingsPage />} /> */}
-      </Route>
+      <Route path="/admin-page" element={<AdminLayout />}>
+        <Route index element={<Navigate to="dashboard" replace />} />
 
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="employees" element={<EmployeeListPage />} />
+        <Route path="contracts" element={<ContractListPage />} />
+        {/* <Route path="employees/:id" element={<EmployeeDetailsPage />} />
+        <Route path="attendance" element={<div>Chấm công</div>} />
+        <Route path="payroll" element={<div>Lương thưởng</div>} />
+        <Route path="development" element={<div>Phát triển</div>} />
+        <Route path="support" element={<div>Hỗ trợ</div>} />
+        <Route path="reports" element={<div>Báo cáo</div>} />
+        <Route path="notifications" element={<div>Thông báo</div>} />
+        <Route path="settings" element={<div>Cài đặt</div>} /> */}
+      </Route>
     </Routes>
+
   );
 }
 

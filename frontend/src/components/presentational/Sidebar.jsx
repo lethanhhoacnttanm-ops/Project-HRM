@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   DashboardOutlined,
   UsergroupAddOutlined,
@@ -10,12 +10,23 @@ import {
   BarChartOutlined,
   BellOutlined,
   SettingOutlined,
-  UserOutlined
+  UserOutlined,
+  AppstoreOutlined,
+  DownOutlined,
+  RightOutlined
 } from '@ant-design/icons';
 
 const mainNav = [
-  { path: '/dashboard', label: 'Tổng quan', icon: <DashboardOutlined /> },
-  { path: '/employees', label: 'Nhân sự', icon: <UsergroupAddOutlined /> },
+  { path: 'dashboard', label: 'Tổng quan', icon: <DashboardOutlined /> },
+  {
+    label: 'Nhân sự',
+    icon: <UsergroupAddOutlined />,
+    children: [
+      { path: 'employees', label: 'Hồ sơ nhân viên', icon: <UsergroupAddOutlined /> },
+      { path: 'contracts', label: 'Hợp đồng lao động', icon: <UsergroupAddOutlined /> },
+      { path: 'recruitment', label: 'Tuyển dụng nội bộ', icon: <UsergroupAddOutlined /> },
+    ]
+  },
   { path: '/attendance', label: 'Chấm công', icon: <CalendarOutlined /> },
   { path: '/payroll', label: 'Lương thưởng', icon: <DollarOutlined /> },
   { path: '/development', label: 'Phát triển', icon: <RiseOutlined /> },
@@ -28,23 +39,78 @@ const systemNav = [
   { path: '/settings', label: 'Cài đặt', icon: <SettingOutlined /> },
 ];
 
-const Sidebar = () => {
-  const renderNavItem = (item) => (
-    <NavLink
-      key={item.path}
-      to={item.path}
-      className={({ isActive }) =>
-        `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-semibold border-r-4 ${
-          isActive
-            ? 'bg-indigo-50! text-blue-600! border-blue-600! shadow-xs'
-            : 'bg-white-50! text-black-600 hover:bg-indigo-100/80 border-transparent hover:text-blue-600 hover:border-r-blue-600'
-        }`
-      }
-    >
-      <span className="text-lg flex items-center">{item.icon}</span>
-      <span>{item.label}</span>
-    </NavLink>
+const SubmenuItem = ({ item }) => {
+  const location = useLocation();
+  
+  const isChildActive = item.children.some(child => location.pathname === child.path);
+  const [isOpen, setIsOpen] = useState(isChildActive);
+
+  return (
+    <div className="space-y-1">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-sm font-semibold border-r-4 text-black hover:text-blue-600 ${
+          isOpen || isChildActive
+            ? 'bg-indigo-50 border-blue-600 shadow-xs text-blue-600'
+            : 'bg-white hover:bg-indigo-100/80 border-transparent'
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-lg flex items-center">{item.icon}</span>
+          <span>{item.label}</span>
+        </div>
+        <span className="text-xs">
+          {isOpen ? <DownOutlined className="text-blue-600" /> : <RightOutlined className="text-gray-400" />}
+        </span>
+      </button>
+
+      {isOpen && (
+        <div className="bg-indigo-50/40 p-2 rounded-2xl border border-indigo-100/80 space-y-1.5 ml-1">
+          {item.children.map((sub) => (
+            <NavLink
+              key={sub.path}
+              to={sub.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 text-xs font-semibold ${
+                  isActive
+                    ? 'bg-indigo-50 text-blue-600 border-r-4 border-blue-600 shadow-2xs font-bold'
+                    : 'text-black hover:text-blue-600 hover:bg-indigo-100/50'
+                }`
+              }
+            >
+              <span className="text-sm flex items-center">{sub.icon}</span>
+              <span>{sub.label}</span>
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
   );
+};
+
+const Sidebar = () => {
+  const renderNavItem = (item, idx) => {
+    if (item.children) {
+      return <SubmenuItem key={idx} item={item} />;
+    }
+
+    return (
+      <NavLink
+        key={item.path}
+        to={item.path}
+        className={({ isActive }) =>
+          `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-sm font-semibold border-r-4 ${
+            isActive
+              ? 'bg-indigo-50 text-blue-600 border-blue-600 shadow-xs'
+              : 'bg-white text-black hover:bg-indigo-100/80 border-transparent'
+          }`
+        }
+      >
+        <span className="text-lg flex items-center">{item.icon}</span>
+        <span>{item.label}</span>
+      </NavLink>
+    );
+  };
 
   return (
     <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 shrink-0">
