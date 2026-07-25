@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+.ant-menu-light .ant-menu-item-selected {
+  border-right: 4px solid #2563eb !important; 
+  border-radius: 12px !important;   
+  background-color: #eff6ff !important; 
+  font-weight: 700 !important;
+}
+
+.ant-menu-light .ant-menu-item:hover {
+  border-radius: 12px !important;
+}

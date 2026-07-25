@@ -11,6 +11,8 @@ import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx';
 import DashboardPage from './pages/admin/DashboardPage.jsx';
 import EmployeeListPage from './pages/admin/Employee/EmployeeListPage.jsx';
 import ContractListPage from './pages/admin/Contract/ContractListPage.jsx';
+import JobPostingPage from './pages/admin/Recruitment/JobPostingPage.jsx';
+import CandidateApprovalPage from './pages/admin/Recruitment/CandidateApprovalPage.jsx';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="employees" element={<EmployeeListPage />} />
         <Route path="contracts" element={<ContractListPage />} />
+        <Route path="recruitment" element={<JobPostingPage />} />
+        <Route path="approval" element={<CandidateApprovalPage />} />
         {/* <Route path="employees/:id" element={<EmployeeDetailsPage />} />
         <Route path="attendance" element={<div>Chấm công</div>} />
         <Route path="payroll" element={<div>Lương thưởng</div>} />
