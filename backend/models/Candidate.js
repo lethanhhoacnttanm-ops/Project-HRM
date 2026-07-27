@@ -15,7 +15,7 @@ const CandidateSchema = new mongoose.Schema(
         required: true 
     },
     
-    job: { 
+    job: {   
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'jobs', 
         required: true 

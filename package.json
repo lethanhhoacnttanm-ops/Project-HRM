@@ -7,6 +7,13 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "backend": "npm run dev --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
+    "doctor": "npx react-doctor@latest"
+  },
+  "dependencies": {
+    "concurrently": "^10.0.4"
   }
 }
