@@ -1,41 +1,45 @@
 import { useState } from 'react';
-import { Form, Input, Button, Segmented, DatePicker, notification } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { UserOutlined, LockOutlined, IdcardOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Segmented, DatePicker, notification, Select } from 'antd';
+import { useNavigate, Link } from 'react-router-dom';
+import { UserOutlined, LockOutlined, IdcardOutlined, MailOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useAuth } from '../../hooks/useAuth.js';
 
 export default function RegisterPage() {
-  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const { handleRegister, loading } = useAuth();
   const navigate = useNavigate();
 
-  const openNotification = (type, message, description) => {
-    notification[type]({
-      message,
-      description,
-      placement: 'topRight',
-      duration: 3,
-    });
-  };
+  const [api, contextHolder] = notification.useNotification();
 
-  const handleRegister = async (values) => {
-    setLoading(true);
-    try {
-      await new Promise((r) => setTimeout(r, 1100));
+  const onFinish = async (values) => {
+     try {
+      const formattedData = {
+        ...values,
+        dateOfBirth: values.dateOfBirth.format('YYYY-MM-DD'),
+      };
 
-      openNotification(
-        'success',
-        'Đăng ký thành công',
-        `Tài khoản ${values.username} đã được tạo thành công! Vui lòng đăng nhập.`
-      );
+      const res = await handleRegister(formattedData);
 
-      form.resetFields();
-      navigate('/login');
+      api.success({
+        message: 'Đăng ký thành công!',
+        description: res.message || `Tài khoản nhân viên ${res.data?.fullName} đã được khởi tạo.`,
+        placement: 'topRight',
+        duration: 3,
+      });
+
+      setTimeout(() => {
+        navigate('/admin-page/dashboard');
+      }, 1500);
+
     } catch (error) {
-      openNotification('error', 'Đăng ký thất bại', 'Có lỗi xảy ra trong quá trình tạo tài khoản.');
-    } finally {
-      setLoading(false);
-    }
+      api.error({
+        message: 'Đăng ký thất bại!',
+        description: error.message || 'Có lỗi xảy ra trong quá trình đăng ký, vui lòng thử lại.',
+        placement: 'topRight',
+        duration: 4,
+      });
+    } 
   };
 
   return (
@@ -43,9 +47,8 @@ export default function RegisterPage() {
       <Form
         form={form}
         layout="vertical"
-        onFinish={handleRegister}
+        onFinish={onFinish}
         requiredMark={false}
-        initialValues={{ gender: 'male' }}
         className="[&_.ant-form-item]:mb-3.5"
       >
         <Form.Item
@@ -54,7 +57,7 @@ export default function RegisterPage() {
           rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
         >
           <Input 
-            prefix={<IdcardOutlined />} 
+            prefix={<UserOutlined />} 
             placeholder="Nguyễn Văn A" 
             size="large" 
             className="rounded-xl!" 
@@ -62,13 +65,29 @@ export default function RegisterPage() {
         </Form.Item>
 
         <Form.Item
-          name="username"
-          label="Tên đăng nhập"
-          rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
+          name="identityCard"
+          label="Số CCCD / CMND"
+          rules={[{ required: true, message: 'Vui lòng nhập CCCD!' }]}
         >
           <Input 
-            prefix={<UserOutlined />} 
-            placeholder="username" 
+            prefix={<IdcardOutlined />} 
+            placeholder="Nhập số CCCD" 
+            size="large" 
+            className="rounded-xl!" 
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="email"
+          label="Email"
+          rules={[
+            { required: true, message: 'Vui lòng nhập email của bạn!' },
+            { type: 'email', message: 'Email không đúng định dạng!' }
+          ]}
+        >
+          <Input 
+            prefix={<MailOutlined />} 
+            placeholder="an.nguyen@company.com" 
             size="large" 
             className="rounded-xl!" 
           />
@@ -78,7 +97,7 @@ export default function RegisterPage() {
           <Form.Item
             name="gender"
             label="Giới tính"
-            rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
+            initialValue="Nam"
           >
             <Segmented
               block
@@ -86,7 +105,7 @@ export default function RegisterPage() {
               className="rounded-xl! p-1 bg-slate-100"
               options={[
                 { label: 'Nam', value: 'male' },
-                { label: 'Nữ', value: 'female' },
+                { label: 'Nữ', value: 'female' }
               ]}
             />
           </Form.Item>
@@ -97,10 +116,10 @@ export default function RegisterPage() {
             rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}
           >
             <DatePicker
-              format="DD/MM/YYYY"
+              format="YYYY-MM-DD"
               size="large"
               className="w-full rounded-xl!"
-              placeholder="Chọn ngày sinh"
+              placeholder="YYYY-MM-DD"
               disabledDate={(d) => d && d.isAfter(dayjs())}
             />
           </Form.Item>
@@ -124,7 +143,7 @@ export default function RegisterPage() {
         </Form.Item>
 
         <Form.Item
-          name="confirmpassword"
+          name="confirmPassword"
           label="Xác nhận mật khẩu"
           dependencies={['password']}
           rules={[
@@ -156,7 +175,7 @@ export default function RegisterPage() {
           loading={loading}
           className="rounded-xl! font-semibold! h-11! bg-linear-to-r! from-[#2563eb]! to-[#0ea5e9]! border-none! shadow-[0_6px_16px_-6px_rgba(37,99,235,0.6)]! hover:brightness-108 transition-all mt-2"
         >
-          Đăng ký
+          Đăng ký tài khoản
         </Button>
       </Form>
 

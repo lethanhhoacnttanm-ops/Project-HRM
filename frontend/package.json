@@ -13,6 +13,7 @@
     "@ant-design/icons": "^6.3.2",
     "@tailwindcss/vite": "^4.3.3",
     "antd": "^6.5.1",
+    "axios": "^1.18.1",
     "dayjs": "^1.11.21",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
