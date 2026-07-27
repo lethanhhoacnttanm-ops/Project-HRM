@@ -11,7 +11,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const message = error.response?.data?.message || error.response?.data?.errors?.[0] || 'Có lỗi xảy ra!';
+    const message = error.response?.data?.message || 'Có lỗi xảy ra!';
     return Promise.reject(new Error(message));
   }
 );

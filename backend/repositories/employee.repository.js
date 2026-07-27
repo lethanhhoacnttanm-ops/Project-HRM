@@ -13,6 +13,14 @@ class EmployeeRepository {
     const employee = new EmployeeModel(employeeData);
     return await employee.save();
   }
+
+  async findByEmailWithPassword(email) {
+    return await EmployeeModel.findOne({ email }).select('+password');
+  }
+
+  async findById(id) {
+    return await EmployeeModel.findById(id);
+  }
 }
 
 export default new EmployeeRepository();

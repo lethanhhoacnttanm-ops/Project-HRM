@@ -9,7 +9,7 @@ export const validateRegisterRules = [
   body('confirmPassword').notEmpty().withMessage('Vui lòng xác nhận mật khẩu!'),
 ];
 
-export const handleValidation = (req, res, next) => {
+export const handleValidationRegister = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({
