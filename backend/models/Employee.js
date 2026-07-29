@@ -29,8 +29,7 @@ const EmployeeSchema = new mongoose.Schema(
       default: 'Nam' 
     },
     dateOfBirth: { 
-      type: Date, 
-      required: true 
+      type: Date,
     },
     identityCard: { 
       type: String,
@@ -39,7 +38,8 @@ const EmployeeSchema = new mongoose.Schema(
     },
     department: { 
       type: mongoose.Schema.Types.ObjectId, 
-      ref: 'departments' 
+      ref: 'departments', 
+      required: false
     },
     status: { 
       type: String, 

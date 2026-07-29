@@ -13,6 +13,8 @@ const LoginPage = () => {
     try {
       const res = await handleLogin(values);
 
+      const userRole = res?.data?.role;
+
       notification.success({
         message: 'Đăng nhập thành công!',
         description: `Chào mừng ${res.data?.fullName || 'bạn'} quay trở lại hệ thống.`,
@@ -20,7 +22,13 @@ const LoginPage = () => {
         duration: 2,
       });
 
-      navigate('/admin-page/dashboard', { replace: true });
+      setTimeout(() => {
+      if (userRole === 'ADMIN') {
+        navigate('/admin-page/dashboard', { replace: true });
+      } else {
+        navigate('/employee/dashboard', { replace: true });
+      }
+    }, 800);
 
     } catch (error) {
       notification.error({

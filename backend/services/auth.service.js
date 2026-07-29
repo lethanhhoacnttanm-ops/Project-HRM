@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import employeeRepository from '../repositories/employee.repository.js';
-import { generateEmployeeCode } from '../utils/generateEmployeeCode.js';
+import { generateEmployeeCode } from '../utils/generateEmployeeCode.js'; 
+import { generateAdminCode } from '../utils/generateAdminCode.js'
 import { generateToken } from '../utils/jwt.js';
 
 class AuthService {
@@ -70,6 +71,26 @@ class AuthService {
     const token = generateToken({ id: newEmployee._id, role: newEmployee.role });
 
     return { employee: newEmployee, token };
+  }
+
+  async createAdminAccount(adminData) {
+    const { fullName, email, password } = adminData;
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const employeeCode = generateAdminCode();
+
+    const newAdminPayload = {
+      fullName: fullName || 'Super Admin',
+      email,
+      employeeCode,
+      password: hashedPassword,
+      identityCard: process.env.ADMIN_IDENTITY,
+      role: 'ADMIN',
+    };
+
+    return await employeeRepository.create(newAdminPayload);
   }
 }
 

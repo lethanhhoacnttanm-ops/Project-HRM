@@ -39,7 +39,7 @@ const EmployeeTable = ({ employees, onOpenModal }) => {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {employees.map((emp) => (
-              <tr key={emp.id} className="hover:bg-slate-50/40 transition-colors">
+              <tr key={emp._id || emp.id} className="hover:bg-slate-50/40 transition-colors">
                 <td className="py-3.5 px-6">
                   <div
                     onClick={() => navigate(`/admin-page/employees/${emp.id}`)}
@@ -57,11 +57,11 @@ const EmployeeTable = ({ employees, onOpenModal }) => {
                   </div>
                 </td>
 
-                <td className="py-3.5 px-6 font-medium text-gray-600">{emp.position}</td>
+                <td className="py-3.5 px-6 font-medium text-gray-600">{emp.position || 'Cộng tác'}</td>
 
                 <td className="py-3.5 px-6">
                   <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-semibold px-3 py-1 rounded-xl border border-indigo-100">
-                    {emp.department}
+                    {emp.department || 'Fullstack Developer'}
                   </span>
                 </td>
 
