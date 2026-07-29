@@ -11,8 +11,13 @@ const axiosClient = axios.create({
 axiosClient.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    const message = error.response?.data?.message || 'Có lỗi xảy ra!';
-    return Promise.reject(new Error(message));
+    const data = error.response?.data;
+    const msg = 
+      data?.message || 
+      (Array.isArray(data?.errors) ? data.errors[0] : null) || 
+      'Email hoặc mật khẩu không chính xác!';
+
+    return Promise.reject(new Error(msg));
   }
 );
 

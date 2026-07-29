@@ -5,39 +5,31 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
     const checkAuthStatus = async () => {
       try {
         const response = await authService.getMe();
-        if (isMounted && response?.success) {
+        if (response?.success) {
           setUser(response.data);
         }
       } catch (error) {
-        if (isMounted) {
-          setUser(null);
-        }
+        setUser(null);
       } finally {
-        if (isMounted) {
-          setLoading(false); 
-        }
+        setIsInitializing(false); 
       }
     };
 
     checkAuthStatus();
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
   const handleLogin = async (credentials) => {
     setLoading(true);
     try {
       const response = await authService.login(credentials);
-      if (response.success) {
+      if (response?.success) {
         setUser(response.data);
       }
       return response;
@@ -74,7 +66,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, loading, handleRegister, handleLogin, handleLogout }}>
-      {loading ? (
+      {isInitializing ? (
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           <div className="text-xs font-bold text-gray-400 animate-pulse">Đang tải dữ liệu...</div>
         </div>

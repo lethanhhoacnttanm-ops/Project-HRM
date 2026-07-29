@@ -1,4 +1,5 @@
 node_modules/
+sequenceDiagram.mmd
 .kombai/
 **/client/.env
 **/server/.env
