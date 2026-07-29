@@ -1,40 +1,40 @@
 import { useState } from 'react';
-import { Form, Input, Button, Segmented, DatePicker, notification, Select } from 'antd';
+import { Form, Input, Button, Segmented, DatePicker, notification, Select, Spin } from 'antd';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserOutlined, LockOutlined, IdcardOutlined, MailOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useAuth } from '../../hooks/useAuth.js';
 
-export default function RegisterPage() {
+const RegisterPage = () => {
   const [form] = Form.useForm();
   const { handleRegister, loading } = useAuth();
   const navigate = useNavigate();
 
-  const [api, contextHolder] = notification.useNotification();
 
   const onFinish = async (values) => {
      try {
       const formattedData = {
         ...values,
-        dateOfBirth: values.dateOfBirth.format('YYYY-MM-DD'),
+        dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
       };
 
       const res = await handleRegister(formattedData);
 
-      api.success({
-        message: 'Đăng ký thành công!',
+      notification.success({
+        title: 'Đăng ký thành công!',
         description: res.message || `Tài khoản nhân viên ${res.data?.fullName} đã được khởi tạo.`,
         placement: 'topRight',
         duration: 3,
       });
 
-      setTimeout(() => {
-        navigate('/admin-page/dashboard');
-      }, 1500);
+      
+      navigate('/login', { replace: true });
+     
 
     } catch (error) {
-      api.error({
-        message: 'Đăng ký thất bại!',
+      console.log("Lỗi ở đây ", error)
+      notification.error({
+        title: 'Đăng ký thất bại!',
         description: error.message || 'Có lỗi xảy ra trong quá trình đăng ký, vui lòng thử lại.',
         placement: 'topRight',
         duration: 4,
@@ -52,7 +52,7 @@ export default function RegisterPage() {
         className="[&_.ant-form-item]:mb-3.5"
       >
         <Form.Item
-          name="fullname"
+          name="fullName"
           label="Họ và tên"
           rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
         >
@@ -199,3 +199,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+export default RegisterPage

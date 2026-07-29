@@ -1,24 +1,45 @@
 import { Typography } from 'antd';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth.js';
 
 const { Title, Text } = Typography;
 
-export default function AuthLayout() {
+const AUTH_HEADER_CONFIG = {
+  register: {
+    title: 'HRM System',
+    subTitle: 'Tạo tài khoản mới',
+  },
+  forgotpassword: {
+    title: 'Quên mật khẩu',
+    subTitle: 'Nhập email của bạn để nhận hướng dẫn khôi phục',
+  },
+  resetpassword: {
+    title: 'Đặt lại mật khẩu',
+    subTitle: 'Tạo mật khẩu mới cho tài khoản của bạn',
+  },
+  default: {
+    title: 'HRM System',
+    subTitle: 'Đăng nhập để quản lý nhân sự',
+  },
+};
+
+const AuthLayout = () => {
   const location = useLocation();
 
-  const getSubTitle = () => {
-    if (location.pathname.includes('register')) return 'Tạo tài khoản mới';
-    if (location.pathname.includes('forgotpassword')) return 'Nhập email của bạn để nhận hướng dẫn khôi phục';
-    if (location.pathname.includes('resetpassword')) return 'Tạo mật khẩu mới cho tài khoản của bạn';
-    return 'Đăng nhập để quản lý nhân sự';
-  };
+  const { user, isInitializing } = useAuth();
 
-  const getTitle = () => {
-    if (location.pathname.includes('register')) return 'HRM System';
-    if (location.pathname.includes('forgotpassword')) return 'Quên mật khẩu';
-    if (location.pathname.includes('resetpassword')) return 'Đặt lại mật khẩu';
-    return 'HRM System';
+  if (!isInitializing && user) {
+    if (user.role === 'ADMIN') {
+      return <Navigate to="/admin-page/dashboard" replace />;
+    }
+    return <Navigate to="/employee/dashboard" replace />;
   }
+
+  const currentKey = Object.keys(AUTH_HEADER_CONFIG).find((key) =>
+    location.pathname.includes(key)
+  ) || 'default';
+
+  const { title, subTitle } = AUTH_HEADER_CONFIG[currentKey];
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-linear-to-br from-[#1e3a8a] via-[#2563eb] to-[#0ea5e9] bg-size-[200%_200%] animate-[gradientShift_18s_ease_infinite]">
@@ -58,10 +79,10 @@ export default function AuthLayout() {
               />
             </div>
             <Title level={3} className="m-0! font-bold! text-[#0f172a]! sm:text-[20px]! tracking-tight">
-              {getTitle()}
+              {title}
             </Title>
             <Text type="secondary" className="block mt-1 text-[13px]">
-              {getSubTitle()}
+              {subTitle}
             </Text>
           </div>
 
@@ -72,3 +93,5 @@ export default function AuthLayout() {
     </div>
   );
 }
+
+export default AuthLayout;

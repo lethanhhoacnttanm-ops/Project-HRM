@@ -1,6 +1,10 @@
 import EmployeeModel from "../models/Employee.js";
 
 class EmployeeRepository {
+  async findAllEmpoyees() {
+    return await EmployeeModel.find();
+  }
+
   async findByEmail(email) {
     return await EmployeeModel.findOne({ email });
   }
@@ -20,6 +24,10 @@ class EmployeeRepository {
 
   async findById(id) {
     return await EmployeeModel.findById(id);
+  }
+
+  async findByRole(role) {
+    return await EmployeeModel.findOne({ role })
   }
 }
 
