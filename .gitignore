@@ -1,6 +1,13 @@
 node_modules/
 sequenceDiagram.mmd
 .kombai/
-**/backend/.env
-**/backend/env.js
+
+backend/.env
+backend/.env.*
+backend/env.js
+
+.env
+*.env
+env.js
+
 *.agents*
