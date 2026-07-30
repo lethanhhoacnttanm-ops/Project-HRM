@@ -4,6 +4,7 @@ import { Menu } from 'antd';
 import {
   DashboardOutlined,
   UsergroupAddOutlined,
+  UserAddOutlined,
   CalendarOutlined,
   DollarOutlined,
   RiseOutlined,
@@ -14,7 +15,16 @@ import {
   UserOutlined,
   AppstoreOutlined,
   DownOutlined,
-  RightOutlined
+  RightOutlined,
+  SolutionOutlined,
+  FileTextOutlined,
+  ApartmentOutlined,
+  ScheduleOutlined,
+  TrophyOutlined,
+  HeartOutlined,
+  MessageOutlined,
+  ToolOutlined,
+  SafetyCertificateOutlined
 } from '@ant-design/icons';
 
 const items = [
@@ -24,52 +34,104 @@ const items = [
     label: 'Tổng quan',
   },
   {
-    key: 'sub-employees',
+    key: 'sub-personnel',
     icon: <UsergroupAddOutlined />,
     label: 'Nhân sự',
     children: [
-      { key: '/admin-page/employees', label: 'Hồ sơ nhân viên' },
-      { key: '/admin-page/contracts', label: 'Hợp đồng lao động' },
-      { key: '/admin-page/recruitment', label: 'Tuyển dụng nội bộ' },
-      { key: '/admin-page/approval', label: 'Thúc đẩy nhân sự' },
+      { key: '/admin-page/employees', icon: <SolutionOutlined />, label: 'Hồ sơ nhân viên' },
+      { key: '/admin-page/contracts', icon: <FileTextOutlined />, label: 'Hợp đồng lao động' },
+      { key: '/admin-page/promotion', icon: <RiseOutlined />, label: 'Thăng tiến' },
+      { key: '/admin-page/department', icon: <ApartmentOutlined />, label: 'Phòng ban' }
     ],
   },
   {
-    key: '/admin-page/attendance',
-    icon: <CalendarOutlined />,
-    label: 'Chấm công',
+    key: 'sub-talent',
+    icon: <UserAddOutlined />,
+    label: 'Tuyển dụng & Đào tạo',
+    children: [
+      { key: '/admin-page/recruitment', icon: <UserAddOutlined />, label: 'Tuyển dụng nội bộ' },
+      { key: '/admin-page/training', icon: <ScheduleOutlined />, label: 'Khóa học & Đào tạo' },
+    ],
   },
   {
-    key: '/admin-page/payroll',
+    key: 'sub-operations',
+    icon: <CalendarOutlined />,
+    label: 'Vận hành & Chấm công',
+    children: [
+      { key: '/admin-page/attendance', icon: <CalendarOutlined />, label: 'Chấm công' },
+      { key: '/admin-page/leave-requests', icon: <ScheduleOutlined />, label: 'Quản lý nghỉ phép' },
+      { key: '/admin-page/performance', icon: <TrophyOutlined />, label: 'Đánh giá hiệu suất' },
+      { key: '/admin-page/benefits', icon: <HeartOutlined />, label: 'Chính sách phúc lợi' },
+    ],
+  },
+  {
+    key: 'sub-finance',
     icon: <DollarOutlined />,
-    label: 'Lương thưởng',
+    label: 'Lương & Báo cáo',
+    children: [
+      { key: '/admin-page/payroll', icon: <DollarOutlined />, label: 'Lương & Thưởng' },
+      { key: '/admin-page/reports', icon: <BarChartOutlined />, label: 'Báo cáo & Thống kê' },
+    ],
+  },
+  {
+    key: 'sub-communication',
+    icon: <MessageOutlined />,
+    label: 'Truyền thông & Hỗ trợ',
+    children: [
+      { key: '/admin-page/notifications', icon: <BellOutlined />, label: 'Quản lý thông báo' },
+      { key: '/admin-page/support-tickets', icon: <CustomerServiceOutlined />, label: 'Yêu cầu hỗ trợ' },
+    ],
   },
   {
     type: 'divider',
   },
   {
-    key: '/admin-page/reports',
-    icon: <BarChartOutlined />,
-    label: 'Báo cáo',
-  },
-  {
-    key: '/admin-page/settings',
+    key: 'sub-system',
     icon: <SettingOutlined />,
-    label: 'Cài đặt',
+    label: 'Hệ thống & Cấu hình',
+    children: [
+      { key: '/admin-page/system-config', icon: <ToolOutlined />, label: 'Cấu hình chung' },
+      { key: '/admin-page/security-settings', icon: <SafetyCertificateOutlined />, label: 'Quản lý bảo mật' },
+    ],
   },
 ];
 
+const getActiveKeys = (items, pathname) => {
+  let selectedKey = pathname;
+  let openKey = '';
+
+  items.forEach((item) => {
+    if (item.children) {
+      const childMatch = item.children.find((child) =>
+        pathname.startsWith(child.key)
+      );
+      if (childMatch) {
+        selectedKey = childMatch.key; 
+        openKey = item.key;          
+      }
+    } else if (item.key && pathname.startsWith(item.key) && item.key !== '/') {
+      selectedKey = item.key;
+    }
+  });
+
+  return { selectedKey, openKey };
+};
 
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { selectedKey, openKey } = useMemo(
+    () => getActiveKeys(items, location.pathname),
+    [location.pathname]
+  );
+
   return (
     <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 shrink-0">
       <div className="h-16 px-6 flex items-center gap-2.5 border-b border-gray-50">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
-          <AppstoreOutlined className="text-xl" />
+        <div className="w-18 h-8 rounded-lg flex items-center justify-center text-white font-bold">
+          <img src='/hrm_system_logo.png' />
         </div>
         <span className="text-xl font-extrabold text-blue-600 tracking-tight">HRM System</span>
       </div>
@@ -77,8 +139,8 @@ const Sidebar = () => {
       <div className="flex-1 overflow-y-auto py-2">
         <Menu
           mode="inline"
-          selectedKeys={[location.pathname]}
-          defaultOpenKeys={['sub-employees']}
+          selectedKeys={[selectedKey]}
+          defaultOpenKeys={[openKey]}
           onClick={({ key }) => {
             if (!key.startsWith('sub-')) {
               navigate(key);

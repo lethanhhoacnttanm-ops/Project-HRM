@@ -16,6 +16,7 @@ import ContractListPage from './pages/admin/Contract/ContractListPage.jsx';
 import JobPostingPage from './pages/admin/Recruitment/JobPostingPage.jsx';
 import CandidateApprovalPage from './pages/admin/Recruitment/CandidateApprovalPage.jsx';
 
+
 function App() {
   return (
     <Routes>

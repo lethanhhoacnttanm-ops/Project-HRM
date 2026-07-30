@@ -47,14 +47,6 @@ const CandidateApprovalPage = () => {
             Quản lý tiến độ tuyển dụng, đánh giá năng lực và phê duyệt các ứng viên tiềm năng.
           </p>
         </div>
-
-        <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate('/admin-page/recruitment')}
-              className="rounded-xl border-gray-200 text-gray-600 font-bold cursor-pointer"
-            >
-              Quay lại tin tuyển dụng
-        </Button>
       </div>
 
       <CandidateStats />

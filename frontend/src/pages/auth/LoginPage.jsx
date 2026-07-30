@@ -32,7 +32,7 @@ const LoginPage = () => {
 
     } catch (error) {
       notification.error({
-        message: 'Đăng nhập thất bại!',
+        title: 'Đăng nhập thất bại!',
         description: error.message,
         placement: 'topRight',
         duration: 3,
