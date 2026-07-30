@@ -18,7 +18,7 @@ app.use(morgan('dev'));
 
 const allowedOrigins = [
   'http://localhost:5173',
-  env.CLIENT_URL,
+  ENV.CLIENT_URL,
 ].filter(Boolean).map(url => url.replace(/\/$/, ''));
 
 app.use(
