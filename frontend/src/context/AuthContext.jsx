@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         setUser(null);
       } finally {
-        setIsInitializing(false); 
+        setIsInitializing(false);
       }
     };
 
@@ -43,9 +43,10 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = async () => {
     try {
       await authService.logout();
-      setUser(null);
     } catch (error) {
-      console.error(error);
+      console.error('Lỗi API logout:', error);
+    } finally {
+      setUser(null);
     }
   };
 
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authService.register(formData);
       if (response.success) {
-        setUser(response.data); 
+        setUser(response.data);
       }
       return response;
     } catch (error) {
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, handleRegister, handleLogin, handleLogout }}>
+    <AuthContext.Provider value={{ user, loading, handleRegister, handleLogin, handleLogout, setUser }}>
       {isInitializing ? (
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           <div className="text-xs font-bold text-gray-400 animate-pulse">Đang tải dữ liệu...</div>
