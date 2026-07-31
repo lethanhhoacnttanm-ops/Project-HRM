@@ -16,7 +16,7 @@ const LoginPage = () => {
       const userRole = res?.data?.role;
 
       notification.success({
-        message: 'Đăng nhập thành công!',
+        title: 'Đăng nhập thành công!',
         description: `Chào mừng ${res.data?.fullName || 'bạn'} quay trở lại hệ thống.`,
         placement: 'topRight',
         duration: 2,

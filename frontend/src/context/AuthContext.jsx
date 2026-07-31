@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         setUser(null);
       } finally {
-        setIsInitializing(false); 
+        setIsInitializing(false);
       }
     };
 
@@ -43,9 +43,10 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = async () => {
     try {
       await authService.logout();
-      setUser(null);
     } catch (error) {
-      console.error(error);
+      console.error('Lỗi API logout:', error);
+    } finally {
+      setUser(null);
     }
   };
 
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authService.register(formData);
       if (response.success) {
-        setUser(response.data); 
+        setUser(response.data);
       }
       return response;
     } catch (error) {
