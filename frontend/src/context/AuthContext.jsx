@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, handleRegister, handleLogin, handleLogout, setUser }}>
+    <AuthContext.Provider value={{ user, loading, isInitializing, handleRegister, handleLogin, handleLogout }}>
       {isInitializing ? (
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           <div className="text-xs font-bold text-gray-400 animate-pulse">Đang tải dữ liệu...</div>
