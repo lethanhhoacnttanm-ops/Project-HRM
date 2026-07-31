@@ -1,15 +1,18 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.js';
-import { Spin } from 'antd';
+import { Loader2 } from 'lucide-react';
 
 const ProtectedRoute = ({ allowedRoles = ['ADMIN'] }) => {
   const { user, isInitializing } = useAuth();
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Spin size="large" tip="Đang xác thực quyền truy cập..." />
+      <div className="flex min-h-screen w-full items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Đang xác thực...</p>
+        </div>
       </div>
     );
   }

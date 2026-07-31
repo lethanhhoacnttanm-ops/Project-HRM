@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppstoreOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const EmployeeCard = ({ employees = [] }) => {
   const navigate = useNavigate();
@@ -47,7 +47,7 @@ const EmployeeCard = ({ employees = [] }) => {
             : 'hover:bg-indigo-600 hover:text-white hover:scale-105'
         }`}
       >
-        <LeftOutlined className="text-base font-bold" />
+        <ChevronLeft className="text-base font-bold" />
       </button>
 
       <button
@@ -59,7 +59,7 @@ const EmployeeCard = ({ employees = [] }) => {
             : 'hover:bg-indigo-600 hover:text-white hover:scale-105'
         }`}
       >
-        <RightOutlined className="text-base font-bold" />
+        <ChevronRight className="text-base font-bold" />
       </button>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-500 ease-in-out">

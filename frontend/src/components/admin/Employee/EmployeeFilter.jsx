@@ -1,6 +1,14 @@
 import React from 'react';
-import { Input, Select, Button } from 'antd';
-import { SearchOutlined, PlusOutlined, TableOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { Search, Table, LayoutGrid } from "lucide-react";
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const EmployeeFilter = ({
   searchTerm,
@@ -41,77 +49,102 @@ const EmployeeFilter = ({
       <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
           <div className="md:col-span-6">
-            <Input
-              placeholder="Tìm kiếm theo tên, email, phòng ban..."
-              prefix={<SearchOutlined className="text-gray-400 mr-1" />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="rounded-xl py-2 bg-gray-50/50 border-gray-200"
-            />
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                type="search"
+                placeholder="Tìm kiếm theo tên, email, phòng ban..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 rounded-xl py-2 bg-gray-50/50 border-gray-200"
+              />
+            </div>
           </div>
 
           <div className="md:col-span-3">
-            <Select
-              className="w-full h-10"
-              value={selectedDepartment}
-              onChange={setSelectedDepartment}
-              options={[
-                { value: 'all', label: 'Tất cả phòng ban' },
-                { value: 'SmartTeach', label: 'SmartTeach' },
-                { value: 'CI/CD', label: 'CI/CD' },
-                { value: 'Frontend', label: 'Frontend' },
-              ]}
-            />
+            <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+              <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/50 border-gray-200">
+                <SelectValue placeholder="Chọn phòng ban" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tất cả phòng ban</SelectItem>
+                <SelectItem value="SmartTeach">SmartTeach</SelectItem>
+                <SelectItem value="CI/CD">CI/CD</SelectItem>
+                <SelectItem value="Frontend">Frontend</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="md:col-span-3 flex items-center bg-gray-100 p-1 rounded-xl">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedStatus('all')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                selectedStatus === 'all' ? 'bg-white text-gray-800 shadow-2xs' : 'text-gray-500'
-              }`}
+              className={`flex-1 h-auto py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${selectedStatus === 'all'
+                ? 'bg-white text-gray-800 shadow-xs hover:bg-white'
+                : 'text-gray-500 hover:bg-transparent hover:text-gray-700'
+                }`}
             >
               Tất cả
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedStatus('active')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                selectedStatus === 'active' ? 'bg-emerald-500 text-white shadow-2xs' : 'text-gray-500'
-              }`}
+              className={`flex-1 h-auto py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${selectedStatus === 'active'
+                ? 'bg-emerald-500 text-white shadow-xs hover:bg-emerald-600'
+                : 'text-gray-500 hover:bg-transparent hover:text-gray-700'
+                }`}
             >
               Hoạt động
-            </button>
-            <button
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setSelectedStatus('leave')}
-              className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                selectedStatus === 'leave' ? 'bg-gray-400 text-white shadow-2xs' : 'text-gray-500'
-              }`}
+              className={`flex-1 h-auto py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${selectedStatus === 'leave'
+                ? 'bg-gray-400 text-white shadow-xs hover:bg-gray-500'
+                : 'text-gray-500 hover:bg-transparent hover:text-gray-700'
+                }`}
             >
               Đang nghỉ
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       <div className="flex justify-end gap-3 pt-2 border-t border-gray-50 text-xs font-semibold">
-          <button
-            onClick={() => setViewMode('table')}
-            className={`flex items-center gap-1.5 cursor-pointer ${
-              viewMode === 'table' ? 'text-blue-600 font-bold underline underline-offset-4' : 'text-gray-400'
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          onClick={() => setViewMode('table')}
+          className={`h-auto p-0 flex items-center gap-1.5 text-xs cursor-pointer hover:no-underline ${viewMode === 'table'
+              ? 'text-blue-600 font-bold underline underline-offset-4'
+              : 'text-gray-400 hover:text-gray-600'
             }`}
-          >
-            <TableOutlined /> Xem dạng bảng
-          </button>
-          <span className="text-gray-200">|</span>
-          <button
-            onClick={() => setViewMode('card')}
-            className={`flex items-center gap-1.5 cursor-pointer ${
-              viewMode === 'card' ? 'text-blue-600 font-bold underline underline-offset-4' : 'text-gray-400'
+        >
+          <Table className="h-4 w-4" /> Xem dạng bảng
+        </Button>
+
+        <span className="text-gray-200">|</span>
+
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          onClick={() => setViewMode('card')}
+          className={`h-auto p-0 flex items-center gap-1.5 text-xs cursor-pointer hover:no-underline ${viewMode === 'card'
+              ? 'text-blue-600 font-bold underline underline-offset-4'
+              : 'text-gray-400 hover:text-gray-600'
             }`}
-          >
-            <AppstoreOutlined /> Xem dạng thẻ
-          </button>
-        </div>
+        >
+          <LayoutGrid className="h-4 w-4" /> Xem dạng thẻ
+        </Button>
+      </div>
     </div>
   );
 };

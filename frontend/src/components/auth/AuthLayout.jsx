@@ -1,8 +1,5 @@
-import { Typography } from 'antd';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth.js';
-
-const { Title, Text } = Typography;
 
 const AUTH_HEADER_CONFIG = {
   register: {
@@ -78,12 +75,12 @@ const AuthLayout = () => {
                 className="w-full h-full object-contain scale-[1.5]"
               />
             </div>
-            <Title level={3} className="m-0! font-bold! text-[#0f172a]! sm:text-[20px]! tracking-tight">
+            <h3 className="m-0 text-slate-900 font-bold text-base sm:text-[20px] tracking-tight">
               {title}
-            </Title>
-            <Text type="secondary" className="block mt-1 text-[13px]">
+            </h3>
+            <p className="block mt-1 text-[13px] text-muted-foreground">
               {subTitle}
-            </Text>
+            </p>
           </div>
 
           <Outlet />

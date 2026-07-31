@@ -1,28 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dropdown } from 'antd';
-import { MoreOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from '@/components/ui/button';
+import { MoreVertical, User, Edit, ExternalLink } from "lucide-react";
 
 const EmployeeTable = ({ employees, onOpenModal }) => {
-  const navigate = useNavigate();
 
-  const getDropdownItems = (record) => [
-    {
-      key: 'view_modal',
-      label: 'Xem chi tiết nhanh (Modal)',
-      onClick: () => onOpenModal('view', record),
-    },
-    {
-      key: 'view_page',
-      label: 'Đến trang hồ sơ đầy đủ',
-      onClick: () => navigate(`/admin-page/employees/${record.id}`),
-    },
-    {
-      key: 'edit',
-      label: 'Chỉnh sửa thông tin',
-      onClick: () => onOpenModal('edit', record),
-    },
-  ];
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white rounded-2xl border border-gray-300 shadow-xs overflow-hidden">
@@ -46,7 +36,7 @@ const EmployeeTable = ({ employees, onOpenModal }) => {
                     className="flex items-center gap-3 cursor-pointer group"
                   >
                     <div className="w-9 h-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 group-hover:border-blue-500 transition-colors">
-                      <UserOutlined />
+                      <User />
                     </div>
                     <div>
                       <div className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
@@ -80,11 +70,39 @@ const EmployeeTable = ({ employees, onOpenModal }) => {
                 </td>
 
                 <td className="py-3.5 px-6 text-center">
-                  <Dropdown menu={{ items: getDropdownItems(emp) }} trigger={['click']} placement="bottomRight">
-                    <button className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer">
-                      <MoreOutlined className="text-lg" />
-                    </button>
-                  </Dropdown>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer outline-none">
+                      <MoreVertical className="h-5 w-5" />
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end" className="w-52 rounded-xl">
+                      <DropdownMenuItem
+                        onClick={() => onOpenModal('view', emp)}
+                        className="cursor-pointer gap-2"
+                      >
+                        <User className="h-4 w-4 text-gray-500" />
+                        Xem chi tiết
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        onClick={() => navigate(`/admin-page/employees/${emp.id}`)}
+                        className="cursor-pointer gap-2 text-slate-700 focus:text-slate-900"
+                      >
+                        <ExternalLink className="h-4 w-4 text-slate-500" />
+                        Đến trang hồ sơ đầy đủ
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
+                        onClick={() => onOpenModal('edit', emp)}
+                        className="cursor-pointer gap-2"
+                      >
+                        <Edit className="h-4 w-4 text-blue-500" />
+                        Chỉnh sửa thông tin
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             ))}
@@ -95,15 +113,15 @@ const EmployeeTable = ({ employees, onOpenModal }) => {
       <div className="p-4 border-t border-gray-100 bg-slate-50/30 flex items-center justify-between text-xs text-gray-500">
         <span>1 - {employees.length} trên 300 nhân sự</span>
         <div className="flex items-center gap-1">
-          <button className="px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
+          <Button className="px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
             &lt;
-          </button>
-          <button className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold cursor-pointer">1</button>
-          <button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">2</button>
-          <button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">3</button>
-          <button className="px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
+          </Button>
+          <Button className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold cursor-pointer">1</Button>
+          <Button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">2</Button>
+          <Button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">3</Button>
+          <Button className="px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
             &gt;
-          </button>
+          </Button>
         </div>
       </div>
     </div>
