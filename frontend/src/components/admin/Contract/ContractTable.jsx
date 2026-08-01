@@ -1,10 +1,24 @@
 import React from 'react';
-import { Dropdown } from 'antd';
-import { MoreOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import {
+  User,
+  MoreVertical,
+  Eye,
+  XCircle,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 const ContractTable = ({ contracts, onOpenModal }) => {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-2xs overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs font-semibold">
           <thead>
@@ -26,7 +40,7 @@ const ContractTable = ({ contracts, onOpenModal }) => {
                 <td className="py-3.5 px-5">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 shrink-0">
-                      <UserOutlined />
+                      <User className="h-4 w-4" />
                     </div>
                     <div>
                       <div className="font-bold text-gray-800">{item.name}</div>
@@ -36,15 +50,16 @@ const ContractTable = ({ contracts, onOpenModal }) => {
                 </td>
 
                 <td className="py-3.5 px-5">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-xl text-[11px] font-bold ${
+                  <Badge
+                    variant="outline"
+                    className={`border-0 px-3 py-1 rounded-xl text-[11px] font-bold ${
                       item.type === 'Fulltime'
-                        ? 'bg-green-200 text-green-800'
-                        : 'bg-purple-200 text-purple-800'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-purple-100 text-purple-800'
                     }`}
                   >
                     {item.type}
-                  </span>
+                  </Badge>
                 </td>
 
                 <td className="py-3.5 px-5 text-gray-600">{item.startDate}</td>
@@ -65,20 +80,31 @@ const ContractTable = ({ contracts, onOpenModal }) => {
                 </td>
 
                 <td className="py-3.5 px-5 text-center">
-                  <Dropdown
-                    menu={{
-                      items: [
-                        { key: 'view', label: 'Xem chi tiết hợp đồng', onClick: () => onOpenModal('view', item) },
-                        { key: 'cancel', label: 'Hủy hợp đồng', danger: true, onClick: () => onOpenModal('cancel', item) },
-                      ],
-                    }}
-                    trigger={['click']}
-                    placement="bottomRight"
-                  >
-                    <button className="p-1 rounded-lg text-gray-400 hover:text-gray-600 cursor-pointer">
-                      <MoreOutlined className="text-base" />
-                    </button>
-                  </Dropdown>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer outline-none">
+                      <MoreVertical className="h-4 w-4" />
+                    </DropdownMenuTrigger>
+                    
+                    <DropdownMenuContent align="end" className="w-48 rounded-xl">
+                      <DropdownMenuItem
+                        onClick={() => onOpenModal('view', item)}
+                        className="cursor-pointer gap-2 text-xs font-semibold"
+                      >
+                        <Eye className="h-4 w-4 text-gray-500" />
+                        Xem chi tiết hợp đồng
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSeparator />
+
+                      <DropdownMenuItem
+                        onClick={() => onOpenModal('cancel', item)}
+                        className="cursor-pointer gap-2 text-xs font-semibold text-red-600 focus:text-red-600 focus:bg-red-50"
+                      >
+                        <XCircle className="h-4 w-4" />
+                        Hủy hợp đồng
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </td>
               </tr>
             ))}
@@ -89,11 +115,15 @@ const ContractTable = ({ contracts, onOpenModal }) => {
       <div className="p-3.5 border-t border-gray-100 bg-slate-50/40 flex items-center justify-between text-xs text-gray-500 font-medium">
         <span>1 - {contracts.length} trên 20 Hợp đồng</span>
         <div className="flex items-center gap-1">
-          <button className="px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">&lt;</button>
+          <button className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer text-gray-600">
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
           <button className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold cursor-pointer">1</button>
           <button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">2</button>
           <button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">3</button>
-          <button className="px-2.5 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">&gt;</button>
+          <button className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer text-gray-600">
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
     </div>

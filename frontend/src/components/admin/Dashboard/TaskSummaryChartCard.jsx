@@ -1,12 +1,12 @@
 import React from 'react';
-import { MoreOutlined } from '@ant-design/icons';
+import { MoreHorizontalIcon } from 'lucide-react';
 
 const TaskSummaryChartCard = () => {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-xs">
       <div className="flex items-center justify-between  bg-violet-50! p-3 pr-5 pl-5 rounded-t-2xl">
         <h2 className="text-xl font-bold text-gray-800">Tóm tắt công việc</h2>
-        <MoreOutlined className="text-gray-400 text-lg cursor-pointer" />
+        <MoreHorizontalIcon className="text-gray-400 text-lg cursor-pointer" />
       </div>
 
       <div className=" p-5 flex justify-center items-center py-6">

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -35,9 +35,9 @@ const ContractExport = ({ contracts = [] }) => {
 
   return (
     <Button
-      icon={<DownloadOutlined />}
+      icon={<Download />}
       onClick={handleExportPDF}
-      className="rounded-xl border-gray-300 text-gray-700 font-semibold h-10 px-4 cursor-pointer hover:bg-gray-50"
+      className="rounded-xl border-gray-300 text-gray-700 font-semibold h-10 px-4 cursor-pointer bg-white hover:bg-gray-50"
     >
       Export
     </Button>

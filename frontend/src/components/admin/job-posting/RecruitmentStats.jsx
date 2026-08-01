@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'antd';
+import { Button } from '@/components/ui/button';
 
 const RecruitmentStats = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const RecruitmentStats = () => {
           <h3 className="text-base font-extrabold text-gray-800">Quy trình ứng dụng</h3>
           <Button
             onClick={() => navigate('/admin-page/approval')}
-            className="rounded-xl bg-none! border-none! text-blue-600! font-bold cursor-pointer"
+            className="rounded-xl bg-white hover:bg-blue-600 hover:text-white border-none! text-blue-600 font-bold cursor-pointer"
           >
             Duyệt danh sách nhân sự
           </Button>

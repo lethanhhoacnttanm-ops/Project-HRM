@@ -1,45 +1,62 @@
 import React from 'react';
-import { Input, Select } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Search } from "lucide-react";
 
-const ContractFilter = ({ searchTerm, setSearchTerm, contractType, setContractType, status, setStatus }) => {
+const ContractFilter = ({
+  searchTerm,
+  setSearchTerm,
+  contractType,
+  setContractType,
+  status,
+  setStatus,
+}) => {
   return (
-    <div className="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-2xs">
+    <div className="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-xs">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         <div className="md:col-span-6">
-          <Input
-            placeholder="Tìm kiếm theo tên, email, phòng ban,..."
-            prefix={<SearchOutlined className="text-gray-400 mr-1" />}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="rounded-xl py-2 bg-gray-50/40 border-gray-200"
-          />
+          <div className="relative w-full">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              type="search"
+              placeholder="Tìm kiếm theo tên, email, phòng ban,..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 rounded-xl py-2 bg-gray-50/40 border-gray-200"
+            />
+          </div>
         </div>
 
         <div className="md:col-span-3">
-          <Select
-            className="w-full h-10"
-            value={contractType}
-            onChange={setContractType}
-            options={[
-              { value: 'all', label: 'Loại hợp đồng' },
-              { value: 'Fulltime', label: 'Fulltime' },
-              { value: 'Parttime', label: 'Parttime' },
-            ]}
-          />
+          <Select value={contractType} onValueChange={setContractType}>
+            <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/40 border-gray-200">
+              <SelectValue placeholder="Loại hợp đồng" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all">Loại hợp đồng</SelectItem>
+              <SelectItem value="Fulltime">Fulltime</SelectItem>
+              <SelectItem value="Parttime">Parttime</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="md:col-span-3">
-          <Select
-            className="w-full h-10"
-            value={status}
-            onChange={setStatus}
-            options={[
-              { value: 'all', label: 'Trạng thái' },
-              { value: 'active', label: 'Hoạt động' },
-              { value: 'leave', label: 'Đang nghỉ' },
-            ]}
-          />
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/40 border-gray-200">
+              <SelectValue placeholder="Trạng thái" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="all">Trạng thái</SelectItem>
+              <SelectItem value="active">Hoạt động</SelectItem>
+              <SelectItem value="leave">Đang nghỉ</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
