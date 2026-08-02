@@ -18,6 +18,11 @@ import EmployeeListPage from './pages/admin/Employee/EmployeeListPage.jsx';
 import ContractListPage from './pages/admin/Contract/ContractListPage.jsx';
 import JobPostingPage from './pages/admin/Recruitment/JobPostingPage.jsx';
 import CandidateApprovalPage from './pages/admin/Recruitment/CandidateApprovalPage.jsx';
+import PromotionPage from './pages/admin/Promotion/PromotionPage.jsx';
+import DepartmentPage from './pages/admin/Department/DepartmentPage.jsx';
+import TrainingPage from './pages/admin/Training/TrainingPage.jsx';
+import AttendancePageAd from './pages/admin/Attendance/AttendancePage.jsx';
+import LeavePage from './pages/admin/Leave/LeavePage.jsx';
 
 // ========== Employee pages ==========
 import EmployeeDashboard from './pages/employee/DashboardPage.jsx';
@@ -34,6 +39,7 @@ import CareerPathPage from './pages/employee/CareerPathPage.jsx';
 import PersonalReportPage from './pages/employee/PersonalReportPage.jsx';
 import NotificationListPage from './pages/employee/NotificationListPage.jsx';
 import SupportRequestPage from './pages/employee/SupportRequestPage.jsx';
+
 
 function App() {
   return (
@@ -56,7 +62,12 @@ function App() {
             <Route path="employees" element={<EmployeeListPage />} />
             <Route path="contracts" element={<ContractListPage />} />
             <Route path="recruitment" element={<JobPostingPage />} />
-            <Route path="approval" element={<CandidateApprovalPage />} />
+            <Route path="candidate-approval" element={<CandidateApprovalPage />} />
+            <Route path="promotion" element={<PromotionPage />} />
+            <Route path="departments" element={<DepartmentPage />} />
+            <Route path="training" element={<TrainingPage />} />
+            <Route path="attendance" element={<AttendancePageAd />} />
+            <Route path="leave" element={<LeavePage />} />
           </Route>
         </Route>
 
