@@ -23,6 +23,8 @@ import DepartmentPage from './pages/admin/Department/DepartmentPage.jsx';
 import TrainingPage from './pages/admin/Training/TrainingPage.jsx';
 import AttendancePageAd from './pages/admin/Attendance/AttendancePage.jsx';
 import LeavePage from './pages/admin/Leave/LeavePage.jsx';
+import PerformancePage from './pages/admin/Performance/PerformancePage.jsx';
+import BenefitsPage from './pages/admin/Benefits/BenefitsPage.jsx'; 
 
 // ========== Employee pages ==========
 import EmployeeDashboard from './pages/employee/DashboardPage.jsx';
@@ -68,6 +70,8 @@ function App() {
             <Route path="training" element={<TrainingPage />} />
             <Route path="attendance" element={<AttendancePageAd />} />
             <Route path="leave" element={<LeavePage />} />
+            <Route path="performance" element={<PerformancePage />} />
+            <Route path="benefits" element={<BenefitsPage />} />
           </Route>
         </Route>
 
