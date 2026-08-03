@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Form, Input, Button, Segmented, DatePicker, notification, Select, Spin } from 'antd';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserOutlined, LockOutlined, IdcardOutlined, MailOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, IdcardOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useAuth } from '../../hooks/useAuth.js';
 
@@ -12,7 +12,7 @@ const RegisterPage = () => {
 
 
   const onFinish = async (values) => {
-     try {
+    try {
       const formattedData = {
         ...values,
         dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
@@ -27,9 +27,9 @@ const RegisterPage = () => {
         duration: 3,
       });
 
-      
+
       navigate('/login', { replace: true });
-     
+
 
     } catch (error) {
       console.log("Lỗi ở đây ", error)
@@ -39,7 +39,7 @@ const RegisterPage = () => {
         placement: 'topRight',
         duration: 4,
       });
-    } 
+    }
   };
 
   return (
@@ -56,11 +56,11 @@ const RegisterPage = () => {
           label="Họ và tên"
           rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
         >
-          <Input 
-            prefix={<UserOutlined />} 
-            placeholder="Nguyễn Văn A" 
-            size="large" 
-            className="rounded-xl!" 
+          <Input
+            prefix={<UserOutlined />}
+            placeholder="Nguyễn Văn A"
+            size="large"
+            className="rounded-xl!"
           />
         </Form.Item>
 
@@ -69,11 +69,24 @@ const RegisterPage = () => {
           label="Số CCCD / CMND"
           rules={[{ required: true, message: 'Vui lòng nhập CCCD!' }]}
         >
-          <Input 
-            prefix={<IdcardOutlined />} 
-            placeholder="Nhập số CCCD" 
-            size="large" 
-            className="rounded-xl!" 
+          <Input
+            prefix={<IdcardOutlined />}
+            placeholder="Nhập số CCCD"
+            size="large"
+            className="rounded-xl!"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="phone"
+          label="Số điện thoại"
+          rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+        >
+          <Input
+            prefix={<PhoneOutlined />}
+            placeholder="Nhập số điện thoại"
+            size="large"
+            className="rounded-xl!"
           />
         </Form.Item>
 
@@ -85,45 +98,45 @@ const RegisterPage = () => {
             { type: 'email', message: 'Email không đúng định dạng!' }
           ]}
         >
-          <Input 
-            prefix={<MailOutlined />} 
-            placeholder="an.nguyen@company.com" 
-            size="large" 
-            className="rounded-xl!" 
+          <Input
+            prefix={<MailOutlined />}
+            placeholder="an.nguyen@company.com"
+            size="large"
+            className="rounded-xl!"
           />
         </Form.Item>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Form.Item
-            name="gender"
-            label="Giới tính"
-            initialValue="Nam"
-          >
-            <Segmented
-              block
-              size="large"
-              className="rounded-xl! p-1 bg-slate-100"
-              options={[
-                { label: 'Nam', value: 'male' },
-                { label: 'Nữ', value: 'female' }
-              ]}
-            />
-          </Form.Item>
+        <Form.Item
+          name="gender"
+          label="Giới tính"
+          initialValue="Nam"
+        >
+          <Segmented
+            block
+            size="large"
+            className="rounded-xl! p-1 bg-slate-100"
+            options={[
+              { label: 'Nam', value: 'Nam' },
+              { label: 'Nữ', value: 'Nữ' },
+              { label: 'Khác', value: 'Khác' },
+            ]}
+          />
+        </Form.Item>
 
-          <Form.Item
-            name="birthday"
-            label="Ngày sinh"
-            rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}
-          >
-            <DatePicker
-              format="YYYY-MM-DD"
-              size="large"
-              className="w-full rounded-xl!"
-              placeholder="YYYY-MM-DD"
-              disabledDate={(d) => d && d.isAfter(dayjs())}
-            />
-          </Form.Item>
-        </div>
+        <Form.Item
+          name="dateOfBirth"
+          label="Ngày sinh"
+          rules={[{ required: true, message: 'Vui lòng chọn ngày sinh!' }]}
+        >
+          <DatePicker
+            format="YYYY-MM-DD"
+            size="large"
+            className="w-full rounded-xl!"
+            placeholder="YYYY-MM-DD"
+            disabledDate={(d) => d && d.isAfter(dayjs())}
+          />
+        </Form.Item>
+
 
         <Form.Item
           name="password"
@@ -133,12 +146,12 @@ const RegisterPage = () => {
             { min: 6, message: 'Mật khẩu tối thiểu 6 ký tự!' },
           ]}
         >
-          <Input.Password 
-            prefix={<LockOutlined />} 
-            placeholder="••••••" 
-            size="large" 
-            autoComplete="new-password" 
-            className="rounded-xl!" 
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="••••••"
+            size="large"
+            autoComplete="new-password"
+            className="rounded-xl!"
           />
         </Form.Item>
 
@@ -158,12 +171,12 @@ const RegisterPage = () => {
             }),
           ]}
         >
-          <Input.Password 
-            prefix={<LockOutlined />} 
-            placeholder="••••••" 
-            size="large" 
-            autoComplete="new-password" 
-            className="rounded-xl!" 
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="••••••"
+            size="large"
+            autoComplete="new-password"
+            className="rounded-xl!"
           />
         </Form.Item>
 

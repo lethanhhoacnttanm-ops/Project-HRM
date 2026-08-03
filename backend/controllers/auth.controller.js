@@ -67,7 +67,7 @@ class AuthController {
         message: 'Đăng ký tài khoản nhân viên thành công!',
         data: {
           id: employee._id,
-          employeeCode: employee.employeeCode,
+          employeeCode: employee.code,
           fullName: employee.fullName,
           email: employee.email,
           role: employee.role,

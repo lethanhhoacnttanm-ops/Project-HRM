@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import employeeRepository from '../repositories/employee.repository.js';
-import { generateEmployeeCode } from '../utils/generateEmployeeCode.js'; 
+import { generateEmployeeCode } from '../utils/generateEmployeeCode.js';
 import { generateAdminCode } from '../utils/generateAdminCode.js'
 import { generateToken } from '../utils/jwt.js';
 
@@ -38,7 +38,7 @@ class AuthService {
   }
 
   async registerEmployee(registerData) {
-    const { fullName, email, dateOfBirth, identityCard, password, confirmPassword } = registerData;
+    const { fullName, email, dateOfBirth, identityCard, password, confirmPassword, phone, gender } = registerData;
 
     if (password !== confirmPassword) {
       throw new Error('Mật khẩu xác nhận không trùng khớp!');
@@ -57,20 +57,27 @@ class AuthService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const employeeCode = generateEmployeeCode();
+    const code = generateEmployeeCode();
 
     const newEmployee = await employeeRepository.create({
-      employeeCode,
+      code,
       fullName,
       email,
       dateOfBirth,
       identityCard,
+      phone,
+      gender,
       password: hashedPassword,
+      role: 'EMPLOYEE',
+      status: 'active',
     });
 
     const token = generateToken({ id: newEmployee._id, role: newEmployee.role });
 
-    return { employee: newEmployee, token };
+    const employeeResponse = newEmployee.toObject ? newEmployee.toObject() : { ...newEmployee };
+    delete employeeResponse.password;
+
+    return { employee: employeeResponse, token };
   }
 
   async createAdminAccount(adminData) {

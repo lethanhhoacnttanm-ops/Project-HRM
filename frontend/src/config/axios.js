@@ -17,7 +17,8 @@ axiosClient.interceptors.response.use(
       (Array.isArray(data?.errors) ? data.errors[0] : null) || 
       'Email hoặc mật khẩu không chính xác!';
 
-    return Promise.reject(new Error(msg));
+    error.customMessage = msg;
+    return Promise.reject(error);
   }
 );
 
