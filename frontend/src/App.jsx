@@ -24,7 +24,13 @@ import TrainingPage from './pages/admin/Training/TrainingPage.jsx';
 import AttendancePageAd from './pages/admin/Attendance/AttendancePage.jsx';
 import LeavePage from './pages/admin/Leave/LeavePage.jsx';
 import PerformancePage from './pages/admin/Performance/PerformancePage.jsx';
-import BenefitsPage from './pages/admin/Benefits/BenefitsPage.jsx'; 
+import BenefitsPage from './pages/admin/Benefits/BenefitsPage.jsx';
+import PayrollPage from './pages/admin/Payroll/PayrollPage.jsx'; 
+import AnalyticsPage from './pages/admin/Analytics/AnalyticsPage.jsx';
+import NotificationPage from './pages/admin/Notifications/NotificationPage.jsx';
+import SupportTicketPage from './pages/admin/Support/SupportTicketPage.jsx';
+import SystemConfigPage from './pages/admin/System/SystemConfigPage.jsx';
+import SecurityPage from './pages/admin/Security/SecurityPage.jsx'; 
 
 // ========== Employee pages ==========
 import EmployeeDashboard from './pages/employee/DashboardPage.jsx';
@@ -72,6 +78,12 @@ function App() {
             <Route path="leave" element={<LeavePage />} />
             <Route path="performance" element={<PerformancePage />} />
             <Route path="benefits" element={<BenefitsPage />} />
+            <Route path="payroll" element={<PayrollPage />} />
+            <Route path="reports" element={<AnalyticsPage />} />
+            <Route path="notifications" element={<NotificationPage />} />
+            <Route path="support-tickets" element={<SupportTicketPage />} />
+            <Route path="system-config" element={<SystemConfigPage />} />
+            <Route path="security-settings" element={<SecurityPage />} />
           </Route>
         </Route>
 

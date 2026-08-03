@@ -10,7 +10,7 @@ const EmployeeDetailsPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-2">
       <Button
         variant="outline"
         onClick={() => navigate('/admin-page/employees')}
