@@ -1,6 +1,17 @@
 import EmployeeModel from "../models/Employee.js";
 
 class EmployeeRepository {
+
+  async FindWithPagination({ skip, limit, filter = {}}) {
+
+    const [totalEmp, dataEmp] = await Promise.all([
+      EmployeeModel.countDocuments(filter),
+      EmployeeModel.find(filter).skip(skip).limit(limit).lean()
+    ])
+
+    return {totalEmp, dataEmp}
+  }
+
   async findAllEmpoyees() {
     return await EmployeeModel.find();
   }

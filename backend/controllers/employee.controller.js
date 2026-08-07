@@ -4,11 +4,12 @@ class EmployeesController {
 
   async getAllEmployees(req, res) {
     try {
-      const employees = await employeeService.getAllEmployee();
+      const { page, limit, role } = req.query;
+      const result = await employeeService.getAllEmployee({ page, limit, role });
       return res.status(200).json({
         success: true,
         message: 'Lấy danh sách nhân viên thành công!',
-        data: employees,
+        ...result,
       });
     } catch (error) {
       return res.status(500).json({
@@ -18,6 +19,7 @@ class EmployeesController {
       });
     }
   };
+
 }
 
 export default new EmployeesController();

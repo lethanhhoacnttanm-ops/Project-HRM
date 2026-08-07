@@ -22,7 +22,8 @@ const ProtectedRoute = ({ allowedRoles = ['ADMIN'] }) => {
   }
 
   if (!allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />; 
+    
+    return user.role === "NONE" ? <Navigate to="/pending-approval" replace /> : <Navigate to="/unauthorized" replace />; 
   }
 
   return <Outlet />;

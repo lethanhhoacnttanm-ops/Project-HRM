@@ -18,7 +18,11 @@ const RegisterPage = () => {
         dateOfBirth: dayjs(values.dateOfBirth).format('YYYY-MM-DD'),
       };
 
+
       const res = await handleRegister(formattedData);
+
+      console.log("Rs", res)
+
 
       notification.success({
         title: 'Đăng ký thành công!',
@@ -32,12 +36,22 @@ const RegisterPage = () => {
 
 
     } catch (error) {
-      console.log("Lỗi ở đây ", error)
+      const responseData = error.response?.data;
+
+      if (responseData?.errors && Array.isArray(responseData.errors)) {
+        responseData.errors.forEach(err => {
+          notification.error({
+            message: 'Dữ liệu không hợp lệ',
+            description: err
+          });
+        });
+        return;
+      }
+
+      const errorMsg = responseData?.message || "Có lỗi xảy ra, vui lòng thử lại!";
       notification.error({
-        title: 'Đăng ký thất bại!',
-        description: error.message || 'Có lỗi xảy ra trong quá trình đăng ký, vui lòng thử lại.',
-        placement: 'topRight',
-        duration: 4,
+        message: 'Đăng ký thất bại!',
+        description: errorMsg,
       });
     }
   };

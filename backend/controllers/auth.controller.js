@@ -52,19 +52,11 @@ class AuthController {
 
   async register(req, res) {
     try {
-      const { employee, token } = await authService.registerEmployee(req.body);
-
-      res.cookie('token', token, {
-        httpOnly: true, 
-        secure: ENV.NODE_ENV === 'production', 
-        sameSite: 'strict',
-        maxAge: 24 * 60 * 60 * 1000, 
-      });
-
+      const { employee } = await authService.registerEmployee(req.body);
      
       return res.status(201).json({
         success: true,
-        message: 'Đăng ký tài khoản nhân viên thành công!',
+        message: 'Đăng ký tài khoản nhân viên thành công! Chờ quản trị viên duyệt',
         data: {
           id: employee._id,
           employeeCode: employee.code,

@@ -25,6 +25,31 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
+  const loadUser = async () => {
+    const token = localStorage.getItem('token'); 
+
+    if (!token) {
+      
+      setUser(null);
+      setIsInitializing(false);
+      return;
+    }
+
+    try {
+      const res = await api.get('/me');
+      setUser(res.data.user);
+    } catch (error) {
+      setUser(null);
+      localStorage.removeItem('token');
+    } finally {
+      setIsInitializing(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
   const handleLogin = async (credentials) => {
     setLoading(true);
     try {
@@ -66,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isInitializing, handleRegister, handleLogin, handleLogout }}>
+    <AuthContext.Provider value={{ setUser ,user, loading, isInitializing, handleRegister, handleLogin, handleLogout }}>
       {isInitializing ? (
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           <div className="text-xs font-bold text-gray-400 animate-pulse">Đang tải dữ liệu...</div>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
-import { Plus } from "lucide-react";
+import { BellCheck } from "lucide-react";
+import dayjs from 'dayjs';
 
 import EmployeeFilter from '../../../components/admin/Employee/EmployeeFilter.jsx';
 import EmployeeTable from '../../../components/admin/Employee/EmployeeTable.jsx';
@@ -12,11 +13,24 @@ import { useAuth } from '../../../hooks/useAuth.js';
 import { employeeService } from '../../../services/employee.service.js';
 
 const EmployeeListPage = () => {
+
   const [employees, setEmployees] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const [pageSize] = useState(5);
+
+  const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1});
+
+  const [beginEmployees, setBeginEmployees] = useState([]);
+  const [beginPageNumber, setBeginPageNumber] = useState(1);
+  const [beginPaginationInfo, setbeginPaginationInfo] = useState({ totalEmp: 0, totalPages: 1 });
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [viewMode, setViewMode] = useState('table');
+
+
 
   const { loading } = useAuth();
 
@@ -25,9 +39,10 @@ const EmployeeListPage = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await employeeService.getAllEmployees();
+        const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE'); 
         if (res?.success) {
-          setEmployees(res.data);
+          setEmployees(res.dataEmp);
+          setPaginationInfo(res.pagination);
         }
       } catch (error) {
         toast.error('Thất bại', {
@@ -37,7 +52,24 @@ const EmployeeListPage = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [pageNumber, pageSize]);
+
+  useEffect(() => {
+    const fetchPendingEmployees = async () => {
+      if (modalState.isOpen && modalState.mode === 'processRegistry') {
+        try {
+          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE');
+          if (res?.success) {
+            setBeginEmployees(res.dataEmp);
+            setbeginPaginationInfo(res.pagination);
+          }
+        } catch (error) {
+          toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
+        }
+      }
+    };
+    fetchPendingEmployees();
+  }, [modalState.isOpen, modalState.mode, beginPageNumber, pageSize]);
 
   const handleOpenModal = (mode, data = null) => {
     setModalState({ isOpen: true, mode, data });
@@ -48,14 +80,32 @@ const EmployeeListPage = () => {
   };
 
   const filteredEmployees = employees.filter((emp) => {
-    const isEmployeeOnly = emp.role !== 'ADMIN';
-    const matchSearch =
-      emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emp.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchSearch = emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || emp.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchDept = selectedDepartment === 'all' || emp.department === selectedDepartment;
     const matchStatus = selectedStatus === 'all' || emp.status === selectedStatus;
-    return isEmployeeOnly && matchSearch && matchDept && matchStatus;
+    return matchSearch && matchDept && matchStatus;
   });
+
+
+  const now = dayjs();
+
+  const CountNewEmployee = employees.filter(emp => emp.role === "EMPLOYEE").reduce((count, emp) => {
+
+    const diffInDays = now.diff(dayjs(emp.startDate), "day");
+
+    if (diffInDays >= 0 && diffInDays <= 30) {
+      return count + 1;
+    }
+
+    return count;
+  }, 0)
+
+  const totalEmployee = employees.filter(item => item.role === "EMPLOYEE").length
+
+  const isActiveEmployee = employees.filter(item => item.status === "active" && item.role === "EMPLOYEE").length
+
+  const employeeOnsite = (isActiveEmployee * 100) / totalEmployee
+
 
   return (
     <div className="space-y-6 p-2">
@@ -70,15 +120,19 @@ const EmployeeListPage = () => {
         </div>
 
         <Button
-          onClick={() => handleOpenModal('add')}
+          onClick={() => handleOpenModal('processRegistry')}
           className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-5 rounded-xl font-semibold border-none shadow-xs cursor-pointer gap-1.5"
         >
-          <Plus className="h-4 w-4" />
-          Thêm nhân viên
+          <BellCheck  />
+          Thông báo đăng ký 
         </Button>
       </div>
 
       <EmployeeFilter
+        newEmployee={CountNewEmployee}
+        Employee={totalEmployee}
+        activeEmployee={isActiveEmployee}
+        onsite={employeeOnsite}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         selectedDepartment={selectedDepartment}
@@ -91,7 +145,7 @@ const EmployeeListPage = () => {
       />
 
       {viewMode === 'table' ? (
-        <EmployeeTable employees={filteredEmployees} onOpenModal={handleOpenModal} />
+        <EmployeeTable pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} employees={filteredEmployees} onOpenModal={handleOpenModal} />
       ) : (
         <EmployeeCard employees={filteredEmployees} onOpenModal={handleOpenModal} />
       )}
@@ -100,7 +154,11 @@ const EmployeeListPage = () => {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         mode={modalState.mode}
-        data={modalState.data}
+        data={beginEmployees}
+
+        pendingPagination={beginPaginationInfo}
+        setPendingPageNumber={setBeginPageNumber}
+        pendingPageNumber={beginPageNumber}
       />
     </div>
   );
