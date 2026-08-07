@@ -19,7 +19,7 @@ class EmployeesController {
     }
   };
 
-  }
+  
 
   // ===== EMP-Profile =====
   async getMyProfile(req, res) {
