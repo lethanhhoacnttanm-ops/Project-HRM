@@ -30,7 +30,7 @@ class EmployeeRepository {
   }
 
   async findByEmailWithPassword(email) {
-    return await EmployeeModel.findOne({ email }).select('+password');
+    return await EmployeeModel.findOne({ email }).select("+password");
   }
 
   async findById(id) {
@@ -38,7 +38,23 @@ class EmployeeRepository {
   }
 
   async findByRole(role) {
-    return await EmployeeModel.findOne({ role })
+    return await EmployeeModel.findOne({ role });
+  }
+
+  async findById(id) {
+    return await EmployeeModel.findById(id);
+  }
+
+  async findByIdWithPassword(id) {
+    return await EmployeeModel.findById(id).select("+password");
+  }
+
+  async updateById(id, data) {
+    return await EmployeeModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true, runValidators: true },
+    ).select("-password");
   }
 }
 
