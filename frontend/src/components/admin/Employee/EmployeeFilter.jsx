@@ -11,6 +11,11 @@ import {
 } from '@/components/ui/select'
 
 const EmployeeFilter = ({
+  newEmployee,
+  Employee,
+  activeEmployee,
+  onsite,
+  onleave,
   searchTerm,
   setSearchTerm,
   selectedDepartment,
@@ -23,26 +28,21 @@ const EmployeeFilter = ({
 }) => {
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
           <p className="text-xs text-gray-500 font-semibold">Tổng số nhân sự</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">300</h3>
-          <p className="text-[11px] text-emerald-600 font-medium mt-2">~12% Nhân sự mới</p>
+          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">{Employee}</h3>
+          <p className="text-[11px] text-emerald-600 font-medium mt-2"> {newEmployee} Nhân sự mới trong tháng qua</p>
         </div>
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
           <p className="text-xs text-gray-500 font-semibold">Đang hoạt động</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">150</h3>
-          <p className="text-[11px] text-gray-400 font-medium mt-2">50% trên công ty</p>
+          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">{activeEmployee}</h3>
+          <p className="text-[11px] text-gray-400 font-medium mt-2">{onsite}% trên công ty</p>
         </div>
         <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
           <p className="text-xs text-gray-500 font-semibold">Đang nghỉ phép</p>
           <h3 className="text-2xl font-extrabold text-gray-900 mt-1">50</h3>
           <p className="text-[11px] text-red-500 font-medium mt-2">Tuần nghỉ cao điểm</p>
-        </div>
-        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
-          <p className="text-xs text-gray-500 font-semibold">Vị trí tuyển dụng</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">5</h3>
-          <p className="text-[11px] text-blue-600 font-medium mt-2">Đang phỏng vấn 2</p>
         </div>
       </div>
 

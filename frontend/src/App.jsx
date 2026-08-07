@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 
 import AuthLayout from './components/auth/AuthLayout.jsx';
 import AdminLayout from './components/layouts/AdminLayout.jsx';
-import EmployeeLayout from './components/layouts/EmployeeLayout.jsx'; // thêm
+import EmployeeLayout from './components/layouts/EmployeeLayout.jsx'; 
 
 import LoginPage from './pages/auth/LoginPage.jsx';
 import RegisterPage from './pages/auth/RegisterPage.jsx';
@@ -12,6 +12,7 @@ import ForgotPasswordPage from './pages/auth/ForgotPasswordPage.jsx';
 import ResetPasswordPage from './pages/auth/ResetPasswordPage.jsx';
 
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import PendingApprovalPage from './components/auth/PendingApprovalPage.jsx';
 
 import DashboardPage from './pages/admin/DashboardPage.jsx';
 import EmployeeListPage from './pages/admin/Employee/EmployeeListPage.jsx';
@@ -61,6 +62,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
           <Route path="/resetpassword" element={<ResetPasswordPage />} />
+          <Route path="/pending-approval" element={<PendingApprovalPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>

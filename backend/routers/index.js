@@ -5,6 +5,6 @@ import employeeRouter from './employee.route.js'
 const mainRouter = express.Router();
 
 mainRouter.use('/auth', authRouter);
-mainRouter.use('/allemployees', employeeRouter)
+mainRouter.use('/employees', employeeRouter)
 
 export default mainRouter;

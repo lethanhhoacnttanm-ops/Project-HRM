@@ -3,6 +3,7 @@ import employeeRepository from '../repositories/employee.repository.js';
 import { generateEmployeeCode } from '../utils/generateEmployeeCode.js';
 import { generateAdminCode } from '../utils/generateAdminCode.js'
 import { generateToken } from '../utils/jwt.js';
+import { body } from 'express-validator';
 
 class AuthService {
 
@@ -40,6 +41,10 @@ class AuthService {
   async registerEmployee(registerData) {
     const { fullName, email, dateOfBirth, identityCard, password, confirmPassword, phone, gender } = registerData;
 
+    if(!fullName || !email || !dateOfBirth || !identityCard || !password || !confirmPassword || !phone || !gender){
+      throw new Error('một trường đang bị thiếu hoặc sai!');
+    }
+
     if (password !== confirmPassword) {
       throw new Error('Mật khẩu xác nhận không trùng khớp!');
     }
@@ -60,24 +65,20 @@ class AuthService {
     const code = generateEmployeeCode();
 
     const newEmployee = await employeeRepository.create({
-      code,
+      code: role === "NONE" ? `PENDING_${Date.now()}` : code,
       fullName,
       email,
       dateOfBirth,
       identityCard,
       phone,
       gender,
-      password: hashedPassword,
-      role: 'EMPLOYEE',
-      status: 'active',
+      password: hashedPassword
     });
-
-    const token = generateToken({ id: newEmployee._id, role: newEmployee.role });
 
     const employeeResponse = newEmployee.toObject ? newEmployee.toObject() : { ...newEmployee };
     delete employeeResponse.password;
 
-    return { employee: employeeResponse, token };
+    return { employee: employeeResponse };
   }
 
   async createAdminAccount(adminData) {

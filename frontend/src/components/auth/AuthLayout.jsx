@@ -26,6 +26,9 @@ const AuthLayout = () => {
   const { user, isInitializing } = useAuth();
 
   if (!isInitializing && user) {
+    if (user.role === 'NONE') {
+      return <Navigate to="/pending-approval" replace />;
+    }
     if (user.role === 'ADMIN') {
       return <Navigate to="/admin-page/dashboard" replace />;
     }
