@@ -14,10 +14,9 @@ const ContractSchema = new mongoose.Schema(
     },
     type: { 
       type: String, 
-      enum: ['Fulltime', 'Parttime', 'Probation', 'Internship'], 
+      enum: ['Fulltime', 'Parttime', 'Probation'], 
       required: true 
     }, 
-    
     startDate: { 
         type: Date, 
         required: true 
@@ -33,14 +32,7 @@ const ContractSchema = new mongoose.Schema(
       type: String, 
       enum: ['active', 'pending', 'expired', 'cancelled'], 
       default: 'active' 
-    }, 
-    
-    fileUrl: { 
-        type: String 
-    }, 
-    note: { 
-        type: String 
-    },
+    }
   },
   { timestamps: true }
 );

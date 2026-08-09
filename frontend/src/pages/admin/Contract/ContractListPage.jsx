@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { toast } from "sonner";
 
 import { ContractTopCards, ContractBottomCards } from '../../../components/admin/Contract/ContractTabs.jsx';
 import ContractFilter from '../../../components/admin/Contract/ContractFilter.jsx';
 import ContractTable from '../../../components/admin/Contract/ContractTable.jsx';
 import ContractExport from '../../../components/admin/Contract/ContractExport.jsx';
 import ContractModal from '../../../components/admin/Contract/ContractModal.jsx';
+import { contractService } from '../../../services/contract.service.js';
+import { employeeService } from '../../../services/employee.service.js';
 
 const initialContracts = [
   { id: 1, code: 'HĐ-1222', name: 'Lương Diệu Kiệt', email: 'dieukietbigtech@gmail.com', type: 'Fulltime', startDate: '23-07-2026', endDate: '11-08-2026', status: 'active' },
@@ -22,9 +25,32 @@ const ContractListPage = () => {
   const [contractType, setContractType] = useState('all');
   const [status, setStatus] = useState('all');
 
+  const [pageSize] = useState(5);
+
+  const [beginEmployees, setBeginEmployees] = useState([]);
+  const [beginPageNumber, setBeginPageNumber] = useState(1);
+  const [beginPaginationInfo, setbeginPaginationInfo] = useState({ totalEmp: 0, totalPages: 1 });
+
   const [modalState, setModalState] = useState({ isOpen: false, mode: 'view', data: null });
 
-  const handleOpenModal = (mode, data = null) => {
+  useEffect(() => {
+    const fetchPendingEmployees = async () => {
+      if (modalState.isOpen && modalState.mode === 'create') {
+        try {
+          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE', 'pending');
+          if (res?.success) {
+            setBeginEmployees(res.dataEmp || []);
+            setbeginPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
+          }
+        } catch (error) {
+          toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
+        }
+      }
+    };
+    fetchPendingEmployees();
+  }, [modalState.isOpen, modalState.mode, beginPageNumber, pageSize]);
+
+  const handleOpenModal = (mode, data) => {
     setModalState({ isOpen: true, mode, data });
   };
 
@@ -38,6 +64,21 @@ const ContractListPage = () => {
     const matchStatus = status === 'all' || item.status === status;
     return matchSearch && matchType && matchStatus;
   });
+
+
+  const handleCreateContract = async (selectedValue, payload) => {
+    try {
+      const res = await contractService.createNewContract(selectedValue, payload);
+      
+      if (res?.success) {
+        toast.success(res.message);
+      }
+
+      handleCloseModal();
+    } catch (error) {
+      toast.error('Lỗi', { description: 'Không thể cập nhật thông tin!' });
+    }
+  };
 
   return (
     <div className="space-y-6 p-2">
@@ -82,7 +123,14 @@ const ContractListPage = () => {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         mode={modalState.mode}
-        data={modalState.data}
+        data={beginEmployees}
+
+        pendingPagination={beginPaginationInfo}
+        setPendingPageNumber={setBeginPageNumber}
+        pendingPageNumber={beginPageNumber}
+
+        onSubmit={handleCreateContract}
+
       />
     </div>
   );
