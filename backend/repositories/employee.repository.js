@@ -3,7 +3,6 @@ import EmployeeModel from "../models/Employee.js";
 class EmployeeRepository {
 
   async FindWithPagination({ skip, limit, filter = {}}) {
-
     const [totalEmp, dataEmp] = await Promise.all([
       EmployeeModel.countDocuments(filter),
       EmployeeModel.find(filter).skip(skip).limit(limit).lean()
@@ -34,7 +33,7 @@ class EmployeeRepository {
   }
 
   async findById(id) {
-    return await EmployeeModel.findById(id);
+    return await EmployeeModel.findById(id).lean();
   }
 
   async findByRole(role) {
@@ -47,6 +46,16 @@ class EmployeeRepository {
 
   async findByIdWithPassword(id) {
     return await EmployeeModel.findById(id).select("+password");
+  }
+
+  async updateEditFileById(id, payload) {
+      const result = await EmployeeModel.findByIdAndUpdate(
+      id, 
+      payload, 
+      { new: true, runValidators: true } 
+    ).lean();
+    
+    return result;
   }
 
   async updateById(id, data) {

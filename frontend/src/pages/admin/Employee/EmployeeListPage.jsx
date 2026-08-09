@@ -41,10 +41,13 @@ const EmployeeListPage = () => {
       try {
         const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE'); 
         if (res?.success) {
-          setEmployees(res.dataEmp);
-          setPaginationInfo(res.pagination);
+          setEmployees(res.dataEmp); 
+          setPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
+        }else {
+          setEmployees([]);
         }
       } catch (error) {
+        setEmployees([]);
         toast.error('Thất bại', {
           description: error.message || 'Không thể lấy danh sách nhân viên!',
         });
@@ -58,10 +61,10 @@ const EmployeeListPage = () => {
     const fetchPendingEmployees = async () => {
       if (modalState.isOpen && modalState.mode === 'processRegistry') {
         try {
-          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE');
+          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE', 'begin');
           if (res?.success) {
-            setBeginEmployees(res.dataEmp);
-            setbeginPaginationInfo(res.pagination);
+            setBeginEmployees(res.dataEmp || []);
+            setbeginPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
           }
         } catch (error) {
           toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
@@ -71,7 +74,7 @@ const EmployeeListPage = () => {
     fetchPendingEmployees();
   }, [modalState.isOpen, modalState.mode, beginPageNumber, pageSize]);
 
-  const handleOpenModal = (mode, data = null) => {
+  const handleOpenModal = (mode, data) => {
     setModalState({ isOpen: true, mode, data });
   };
 
@@ -79,11 +82,14 @@ const EmployeeListPage = () => {
     setModalState({ isOpen: false, mode: 'view', data: null });
   };
 
-  const filteredEmployees = employees.filter((emp) => {
-    const matchSearch = emp.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || emp.email.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredEmployees = (employees || []).filter((emp) => {
+    const isEmployeeOnly = emp.role !== 'ADMIN' &&  emp.role !== 'NONE' ;
+    const matchSearch =
+      emp.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      emp.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchDept = selectedDepartment === 'all' || emp.department === selectedDepartment;
     const matchStatus = selectedStatus === 'all' || emp.status === selectedStatus;
-    return matchSearch && matchDept && matchStatus;
+    return isEmployeeOnly && matchSearch && matchDept && matchStatus;
   });
 
 
@@ -105,6 +111,44 @@ const EmployeeListPage = () => {
   const isActiveEmployee = employees.filter(item => item.status === "active" && item.role === "EMPLOYEE").length
 
   const employeeOnsite = (isActiveEmployee * 100) / totalEmployee
+
+  const handleUpdateEmployee = async (employeeId, payload) => {
+    try {
+      const res = await employeeService.updateEmployee(employeeId, payload);
+      
+      if (res.success) {
+        toast.success("Cập nhật thông tin thành công!");
+        
+        setModalState({ isOpen: false, mode: 'edit', data: null });
+
+        fetchPendingEmployees();
+      }
+    } catch (error) {
+      toast.error('Lỗi', { description: 'Không thể cập nhật thông tin!' });
+    }
+  };
+
+  const handleApproveEmployee = async (employeeId) => {
+    try {
+      const payload = { 
+        status: 'pending',
+      };
+
+      const res = await employeeService.updateEmployee(employeeId, payload);
+
+      if (res?.success) {
+        toast.success('Duyệt đăng ký thành công!');
+
+        setBeginEmployees((prevList) => prevList.filter(emp => emp._id !== employeeId));
+        
+        setbeginPaginationInfo(prev => ({ ...prev, totalEmp: prev.totalEmp - 1 }));
+      }
+    } catch (error) {
+      toast.error('Lỗi', {
+        description: error.message || 'Không thể duyệt nhân viên này!'
+      });
+    }
+  };
 
 
   return (
@@ -154,11 +198,15 @@ const EmployeeListPage = () => {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         mode={modalState.mode}
-        data={beginEmployees}
+        data={modalState?.mode === 'view' ? modalState?.data : modalState?.mode === 'edit' ? modalState?.data : beginEmployees}
 
         pendingPagination={beginPaginationInfo}
         setPendingPageNumber={setBeginPageNumber}
         pendingPageNumber={beginPageNumber}
+
+        onSubmit={handleUpdateEmployee}
+
+        onApprove={handleApproveEmployee}
       />
     </div>
   );

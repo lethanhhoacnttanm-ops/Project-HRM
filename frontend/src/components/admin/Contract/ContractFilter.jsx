@@ -39,7 +39,7 @@ const ContractFilter = ({
               <SelectValue placeholder="Loại hợp đồng" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="all">Loại hợp đồng</SelectItem>
+              <SelectItem value="Tất cả">Loại hợp đồng</SelectItem>
               <SelectItem value="Fulltime">Fulltime</SelectItem>
               <SelectItem value="Parttime">Parttime</SelectItem>
             </SelectContent>

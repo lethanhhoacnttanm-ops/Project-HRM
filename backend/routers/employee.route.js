@@ -4,8 +4,9 @@ import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// Admin
 router.get('/', verifyToken, checkRole('ADMIN'), employeesController.getAllEmployees);
+
+router.put('/:id', verifyToken, checkRole('ADMIN'), employeesController.updateEmployee);
 
 // ===== Employee self-service =====
 router.get(
