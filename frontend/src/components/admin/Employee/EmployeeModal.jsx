@@ -6,37 +6,76 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Field, FieldGroup } from '@/components/ui/field';
+import { Label } from '@/components/ui/label';
 import { Button } from "@/components/ui/button";
+import { Input } from '@/components/ui/input';
+import { DatePicker, Segmented } from 'antd';
+import dayjs from 'dayjs';
 import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@/components/ui/table';
 import { User, Check, X, Mail, Phone, ShieldAlert, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPendingPageNumber, pendingPageNumber }) => {
+const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPendingPageNumber, pendingPageNumber, onSubmit, onApprove }) => {
   const isView = mode === 'view';
   const isProcess = mode === 'processRegistry';
+  const isEdit = mode === "edit"
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    position: '',
-    department: '',
+    fullName: data?.fullName || '',
+    email: data?.email || '',
+    phone: data?.phone || '',
+    identityCard: data?.identityCard || '',
+    dateOfBirth: data?.dateOfBirth || null,
+    gender: data?.gender || 'Nam',
   });
 
   useEffect(() => {
     if (data && !isProcess) {
       setFormData({
-        name: data.name || '',
+        fullName: data.fullName || data.fullname || '', 
         email: data.email || '',
-        position: data.position || '',
-        department: data.department || '',
+        phone: data.phone || '',
+        identityCard: data.identityCard || '',
+        dateOfBirth: data.dateOfBirth || null,
+        gender: data.gender || 'Nam',
       });
     } else {
-      setFormData({ name: '', email: '', position: '', department: '' });
+      setFormData({ fullName: '', email: '', phone: '', identityCard: '', dateOfBirth: null, gender: 'Nam' });
     }
   }, [data, mode, isOpen]);
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDateChange = (date, dateString) => {
+    setFormData((prev) => ({
+      ...prev,
+      dateOfBirth: date ? date.toISOString() : null,
+    }));
+  };
+
+  const handleGenderChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      gender: value,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onClose();
+
+    if (!data || !data._id) {
+      return; 
+    }
+    
+    const payload = { ...formData };
+    
+    onSubmit(data._id, payload); 
   };
 
   const totalPages = pendingPagination?.totalPage || pendingPagination?.totalPages || 1;
@@ -46,10 +85,10 @@ const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPend
       <DialogContent className="sm:max-w-4xl rounded-2xl p-6">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-gray-800">
-            {isView ? 'Hồ sơ tóm tắt' : isProcess ? 'Các lượt đăng ký gần đây' : 'Lượt đăng ký gần đây'}
+            {isView ? 'Hồ sơ tóm tắt' : isProcess ? 'Các lượt đăng ký gần đây' : isEdit ? 'Sửa thông tin' : 'Nội dung bị lỗi'}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            {isView ? 'Xem chi tiết thông tin nhân viên' : 'Xét duyệt thông tin nhân viên'}
+            {isView ? 'Xem chi tiết thông tin nhân viên' : isProcess ? 'Xét duyệt thông tin nhân viên' : isEdit ? 'Sửa thông tin nhân viên' : "Nội dung bị lỗi"}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,7 +125,7 @@ const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPend
               </div>
             </div>
           </div>
-        ) : (
+        ) : isProcess ? (
           <div className="space-y-4">
             <Table>
               <TableHeader>
@@ -156,6 +195,7 @@ const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPend
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Button
+                              onClick={() => onApprove(emp._id)}
                               size="sm"
                               className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm rounded-lg"
                             >
@@ -163,6 +203,7 @@ const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPend
                               Duyệt
                             </Button>
                             <Button
+                              onClick={() => onReject(emp._id)}
                               size="sm"
                               variant="destructive"
                               className="shadow-sm rounded-lg"
@@ -211,6 +252,58 @@ const EmployeeModal = ({ isOpen, onClose, mode, data, pendingPagination, setPend
               </div>
             )}
           </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <FieldGroup>
+              <Field>
+                <Label htmlFor="full-name-1">Tên</Label>
+                <Input id="full-name-1" name="fullname" value={formData.fullName} onChange={handleInputChange} />
+              </Field>
+              <Field>
+                <Label htmlFor="email-1">Email</Label>
+                <Input id="email-1" name="email" value={formData.email} onChange={handleInputChange} />
+              </Field>
+              <Field>
+                <Label htmlFor="phone-1">Số điện thoại</Label>
+                <Input id="phone-1" name="phone" value={formData.phone} onChange={handleInputChange} />
+              </Field>
+              <Field>
+                <Label htmlFor="dob-1">Ngày sinh</Label>
+                <DatePicker
+                  format="DD-MM-YYYY"
+                  size="large"
+                  className="w-full rounded-xl!"
+                  value={formData.dateOfBirth ? dayjs(formData.dateOfBirth) : null}
+                  onChange={handleDateChange}
+                  disabledDate={(d) => d && d.isAfter(dayjs())}
+                />
+              </Field>
+              <Field>
+                <Label htmlFor="gender-1">Giới tính</Label>
+                <Segmented
+                  block
+                  size="large"
+                  className="rounded-xl! p-1 bg-slate-100"
+                  value={formData.gender}
+                  onChange={handleGenderChange}
+                  options={[
+                    { label: 'Nam', value: 'Nam' },
+                    { label: 'Nữ', value: 'Nữ' },
+                    { label: 'Khác', value: 'Khác' },
+                  ]}
+                />
+              </Field>
+              <Field>
+                <Label htmlFor="identity-1">CCCD/ CMND</Label>
+                <Input id="identity-1" name="identityCard" value={formData.identityCard} onChange={handleInputChange} />
+              </Field>
+            </FieldGroup>
+            <div className="flex justify-end pt-4">
+              <Button type="submit" className="bg-blue-600 text-white">
+                Lưu thay đổi
+              </Button>
+            </div>
+          </form>
         )}
       </DialogContent>
     </Dialog>

@@ -3,12 +3,13 @@ import employeeService from '../services/employee.service.js';
 class EmployeesController {
   async getAllEmployees(req, res) {
     try {
-      const { page, limit, role } = req.query;
-      const result = await employeeService.getAllEmployee({ page, limit, role });
+      const { page, limit, role, status } = req.query;
+      const result = await employeeService.getAllEmployee({ page, limit, role, status });
       return res.status(200).json({
         success: true,
         message: 'Lấy danh sách nhân viên thành công!',
-        ...result,
+        dataEmp: result.dataEmp || result, 
+        pagination: result.pagination || {}
       });
     } catch (error) {
       return res.status(500).json({
@@ -18,6 +19,27 @@ class EmployeesController {
       });
     }
   };
+
+  async updateEmployee(req, res) {
+    try {
+      const { id } = req.params; 
+      const payload = req.body;  
+
+      const updatedEmployee = await employeeService.updateEmployeeInfo(id, payload);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Cập nhật thông tin nhân viên thành công!',
+        data: updatedEmployee
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi khi cập nhật nhân viên!',
+        error: error.message
+      });
+    }
+  }
 
   
 

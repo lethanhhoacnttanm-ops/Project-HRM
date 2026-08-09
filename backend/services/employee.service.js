@@ -1,8 +1,9 @@
 import employeeRepository from '../repositories/employee.repository.js';
 import bcrypt from 'bcryptjs';
+import { dateUtils } from '../utils/date.js';
 
 class EmployeeService {
-    async getAllEmployee({ page, limit, role }) {
+    async getAllEmployee({ page, limit, role, status }) {
         const pageNumber = Math.max(1, parseInt(page, 10));
         const pageSize = Math.max(1, parseInt(limit, 10));
         const skip = (pageNumber - 1) * pageSize;
@@ -12,11 +13,16 @@ class EmployeeService {
             queryFilter.role = role;
         }
 
+        if (status) {
+            queryFilter.status = status;
+        }
+
         const { totalEmp, dataEmp } = await employeeRepository.FindWithPagination({
             skip,
             limit: pageSize,
             filter: queryFilter
         });
+
 
         if (totalEmp === undefined || dataEmp === undefined) {
             throw new Error("Error valid field in pagination");
@@ -32,12 +38,20 @@ class EmployeeService {
             }
         };
     }
-    async getAllEmployee() {
-        const employee = await employeeRepository.findAllEmpoyees();
-        if (!employee) {
-            throw new Error('Danh sách rỗng hoàn toàn !!');
+
+    async updateEmployeeInfo(id, payload) {
+        const existingEmp = await employeeRepository.findById(id);
+        if (!existingEmp) {
+            throw new Error("Không tìm thấy nhân viên này!");
         }
-        return employee;
+
+        if (payload.dateOfBirth) {
+            payload.dateOfBirth = dateUtils.formatDateOfBirth(payload.dateOfBirth);
+        }
+
+        const updatedData = await employeeRepository.updateEditFileById(id, payload);
+
+        return updatedData;
     }
 
     // ===== EMP-Profile =====
