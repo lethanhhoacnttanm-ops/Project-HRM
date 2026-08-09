@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { DatePicker } from 'antd';
+import { DropdownMenuItem, DropdownMenuTrigger, DropdownMenu, DropdownMenuGroup, DropdownMenuContent, DropdownMenuLabel, } from '@/components/ui/dropdown-menu';
 import {
   Select,
   SelectContent,
@@ -16,55 +18,76 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import dayjs from 'dayjs';
 
-const ContractModal = ({ isOpen, onClose, mode, data, onSubmit }) => {
+const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPagination, setPendingPageNumbe, pendingPageNumbe }) => {
   const isView = mode === 'view';
   const isCreate = mode === 'create';
   const isCancel = mode === 'cancel';
 
+  const [selectedValue, setSelectedValue] = useState("Danh sách");
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const [formData, setFormData] = useState({
-    name: '',
-    code: '',
+    employee: selectedValue,
     type: '',
     startDate: '',
     endDate: '',
+    salary: ''
   });
 
-  useEffect(() => {
-    if (!isOpen) {
-      setFormData({
-        name: '',
-        code: '',
-        type: '',
-        startDate: '',
-        endDate: '',
-      });
-    }
-  }, [isOpen]);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDateChange = (field, date) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: date ? date.toISOString() : null,
+    }));
+  };
+
+  const handleTypeContractChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      type: value,
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit(formData);
-    onClose();
+
+    if (!selectedValue) {
+      toast.error("Vui lòng chọn người ký hợp đồng!");
+      return;
+    }
+
+    if (!formData.startDate) {
+      toast.error("Vui lòng chọn ngày bắt đầu!");
+      return;
+    }
+
+    const payload = { ...formData };
+
+    onSubmit(selectedValue, payload);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-120 rounded-2xl p-6">
+        {console.log(selectedValue)}
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-gray-800">
-            {isCreate
-              ? 'Tạo hợp đồng mới'
-              : isView
-              ? 'Chi tiết hợp đồng'
-              : 'Xác nhận hủy hợp đồng'}
+            {isCreate ? 'Tạo hợp đồng mới' : isView ? 'Chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            {isCreate
-              ? 'Tạo hợp đồng mới cho nhân viên'
-              : isView
-              ? 'Xem chi tiết hợp đồng'
-              : 'Xác nhận hủy hợp đồng'}
+            {isCreate ? 'Tạo hợp đồng mới cho nhân viên' : isView ? 'Xem chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
           </DialogDescription>
         </DialogHeader>
 
@@ -129,48 +152,85 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit }) => {
           <form onSubmit={handleSubmit} className="pt-3 space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="name" className="text-xs font-semibold text-gray-700">
-                Nhân viên <span className="text-red-500">*</span>
+                Người ký hợp đồng <span className="text-red-500">*</span>
               </Label>
-              <Input
-                id="name"
-                required
-                placeholder="Nguyễn Văn A"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="rounded-xl py-2 text-xs"
-              />
+              <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+                <DropdownMenuTrigger
+                  className="w-full"
+                  render={
+                    <Button className="w-full justify-between font-normal text-slate-700" variant="outline">
+                      <span>{data.filter(item => item._id === selectedValue).map(emp => { return emp.fullName })}</span>
+                      {isDropdownOpen ? (
+                        <ChevronUp className="w-4 h-4 ml-2 opacity-50 shrink-0" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 ml-2 opacity-50 shrink-0" />
+                      )}
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent align='start'>
+                  <DropdownMenuGroup className="w-full" >
+                    <DropdownMenuLabel>Chờ ký</DropdownMenuLabel>
+                    {Array.isArray(data) && data.length > 0 ? (
+                      data.map((emp) => (
+                        <DropdownMenuItem
+                          key={emp._id}
+                          onClick={() => {
+                            setSelectedValue(emp._id);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium text-slate-800">
+                              {emp.fullName || emp.fullname}
+                            </span>
+                            {emp.email && (
+                              <span className="text-xs text-slate-500">{emp.email}</span>
+                            )}
+                          </div>
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <div className="p-3 text-sm text-center text-slate-500 italic">
+                        Không có dữ liệu chờ ký
+                      </div>
+                    )}
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="code" className="text-xs font-semibold text-gray-700">
-                  Mã HĐ <span className="text-red-500">*</span>
+              <div
+                className="space-y-1.5"
+              >
+                <Label htmlFor="endDate" className="text-xs font-semibold text-gray-700">
+                  Mức lương cơ bản <span className="text-red-500">*</span>
                 </Label>
                 <Input
-                  id="code"
-                  required
-                  placeholder="HĐ-1223"
-                  value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                  className="rounded-xl py-2 text-xs"
+                  name="salary"
+                  type="text"
+                  onChange={handleInputChange}
+                  placeholder="Nhập số tiền..."
+                  className="text-left font-medium text-emerald-600"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="type" className="text-xs font-semibold text-gray-700">
-                  Loại HĐ <span className="text-red-500">*</span>
+                <Label htmlFor="type" className="text-xs font-semibold text-gray-700 w-full">
+                  Loại Hợp Đồng<span className="text-red-500">*</span>
                 </Label>
                 <Select
-                  value={formData.type}
-                  onValueChange={(val) => setFormData({ ...formData, type: val })}
+                  onValueChange={handleTypeContractChange}
                   required
                 >
-                  <SelectTrigger id="type" className="h-10 text-xs rounded-xl">
+                  <SelectTrigger id="type-1" className="h-10 text-xs rounded-xl w-full">
                     <SelectValue placeholder="Chọn loại HĐ" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value="Fulltime" className="text-xs">Fulltime</SelectItem>
-                    <SelectItem value="Parttime" className="text-xs">Parttime</SelectItem>
+                    <SelectItem value="Fulltime" className="text-xs">Toàn thời gian</SelectItem>
+                    <SelectItem value="Parttime" className="text-xs">Bán thời gian</SelectItem>
+                    <SelectItem value="Probation" className="text-xs">Thử việc</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -178,28 +238,40 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit }) => {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="startDate" className="text-xs font-semibold text-gray-700">
-                  Ngày bắt đầu
+                <Label htmlFor="startDate-1" className="text-xs font-semibold text-gray-700">
+                  Ngày bắt đầu <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                <DatePicker
+                  format="DD-MM-YYYY"
+                  id="startDate-1"
+                  name="startDate"
+                  size="large"
                   className="w-full h-10 rounded-xl text-xs block cursor-pointer"
+                  value={formData.startDate ? dayjs(formData.startDate) : null}
+                  onChange={(date) => handleDateChange('startDate', date)}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="endDate" className="text-xs font-semibold text-gray-700">
+                <Label htmlFor="endDate-1" className="text-xs font-semibold text-gray-700">
                   Ngày kết thúc
+                  {formData.contractType !== 'Fulltime-Indefinite' && <span className="text-red-500"> *</span>}
                 </Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full h-10 rounded-xl text-xs block cursor-pointer"
+                <DatePicker
+                  format="DD-MM-YYYY"
+                  id="endDate-1"
+                  name="endDate"
+                  size="large"
+                  className="w-full h-10 rounded-xl text-xs block cursor-pointer disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  value={formData.endDate ? dayjs(formData.endDate) : null}
+                  onChange={(date) => handleDateChange('endDate', date)}
+                  disabledDate={(currentDate) => {
+                    if (formData.startDate) {
+                      return currentDate && currentDate.isBefore(dayjs(formData.startDate), 'day');
+                    }
+                    return false;
+                  }}
+                  disabled={formData.contractType === 'Fulltime-Indefinite'}
                 />
               </div>
             </div>
