@@ -23,6 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import ThemeToggle from '../ThemeToggle.jsx';
 
 import { Search, Bell, User, LogOut, AlertTriangle } from "lucide-react";
 
@@ -49,7 +50,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="h-16 bg-white border-b border-gray-100 px-6 flex items-center justify-between sticky top-0 z-10">
+      <header className="h-16 bg-white border-b dark:bg-gray-900 border-gray-100  dark:border-gray-800 px-6 flex items-center justify-between sticky top-0 z-10 transition-colors duration-300">
         <div className="w-80">
           <div className="relative w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -62,12 +63,13 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon"
             className="text-gray-500 hover:text-blue-600 rounded-full h-9 w-9"
           >
-            <Bell className="h-5 w-5" />
+            <Bell className="h-5 w-5 dark:text-white" />
           </Button>
 
           <div className="h-6 w-px bg-gray-200" />
@@ -78,7 +80,7 @@ const Header = () => {
                 <div className="text-sm font-bold text-blue-600 leading-tight">
                   {user?.name || 'Quản trị viên'}
                 </div>
-                <div className="text-[11px] text-gray-400">
+                <div className="text-[11px] text-gray-400 ">
                   {user?.role === 'ADMIN' ? 'Trưởng bộ quản trị hệ thống' : 'Nhân sự'}
                 </div>
               </div>
