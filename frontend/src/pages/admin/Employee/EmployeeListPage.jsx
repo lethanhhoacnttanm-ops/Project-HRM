@@ -155,10 +155,10 @@ const EmployeeListPage = () => {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight dark:text-white">
             Quản lý hồ sơ nhân viên
           </h1>
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-amber-50/50">
             Quản lý nhân lực, theo dõi hiệu suất và giám sát các nhiệm vụ của từng bộ phận.
           </p>
         </div>

@@ -22,27 +22,27 @@ const hrDepartments = [
 const DepartmentHRCard = () => {
   return (
     <TooltipProvider>
-      <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Nhân sự</h2>
+      <div className="bg-white dark:bg-black rounded-2xl border border-gray-100 dark:border-gray-900 shadow-xs">
+        <div className="flex items-center justify-between p-3 px-5 rounded-t-2xl border-b border-gray-100 dark:bg-gray-900 ">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">Nhân sự</h2>
           <Button
             size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 rounded-lg gap-1"
+            className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 dark:hover:text-white dark:text-black dark:bg-white text-white text-xs font-semibold px-4 rounded-lg gap-1"
           >
             Xem tất cả
             <ChevronRight className="h-3.5 w-3.5" />
           </Button>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-3 p-5 rounded-b-2xl dark:bg-blue-950">
           {hrDepartments.map((dept, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between p-3 border border-gray-100 rounded-xl"
+              className="flex items-center justify-between p-3 border border-gray-100 rounded-xl dark:bg-gray-900 "
             >
               <div>
-                <h3 className="text-sm font-bold text-gray-800">{dept.title}</h3>
-                <p className="text-[11px] text-gray-400 font-medium">{dept.subtitle}</p>
+                <h3 className="text-sm font-bold text-gray-800 dark:text-white">{dept.title}</h3>
+                <p className="text-[11px] text-gray-400 font-medium dark:text-amber-50/50">{dept.subtitle}</p>
               </div>
 
               <div className="flex items-center -space-x-2 overflow-hidden py-1 pl-1">
