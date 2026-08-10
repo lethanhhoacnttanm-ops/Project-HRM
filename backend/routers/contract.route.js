@@ -7,5 +7,6 @@ import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 router.post('/', verifyToken, checkRole('ADMIN'), validateCreateContract, checkValidationResult, contractsController.postNewContract);
+router.get('/allContract', verifyToken, checkRole('ADMIN'), contractsController.getAllContractForTable)
 
 export default router;

@@ -6,9 +6,15 @@ export const contractService = {
       ...payload,
       employee: employeeId 
     };
-
-    console.log("🚀 Dữ liệu CHUẨN BỊ BAY LÊN SERVER:", dataToSend);
-
     return await axiosClient.post('/contracts', dataToSend);
   },
+
+  getallContractEmployee: async (page, limit) => {
+     return await axiosClient.get('/contracts/allContract', {
+       params: {
+        page: page,
+        limit: limit
+      },
+     })
+  }
 };

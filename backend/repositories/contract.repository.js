@@ -12,5 +12,15 @@ export const contractRepository = {
       { status: status, role: role }, 
       { new: true }
     );
+  },
+
+  getAllContract: async ({skip, limit}) => {
+
+    const [totalContract, dataContract] = await Promise.all([
+          ContractModel.countDocuments(),
+          ContractModel.find().populate("employee").skip(skip).limit(limit).lean()
+        ])
+    
+    return {totalContract, dataContract}
   }
 };

@@ -25,7 +25,7 @@ class EmployeeService {
 
 
         if (totalEmp === undefined || dataEmp === undefined) {
-            throw new Error("Error valid field in pagination");
+            throw new Error("Lỗi trường hợp lệ trong phân trang");
         }
 
         return {

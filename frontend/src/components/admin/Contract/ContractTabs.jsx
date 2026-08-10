@@ -1,36 +1,31 @@
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
 
-export const ContractTopCards = () => {
+export const ContractTopCards = ({ mode, totalContract, isActiveContract, isExpired, waitingForRegis, isProbation }) => {
+  const isWaiting = mode === 'create'
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs">
+      <div className="bg-white p-4 rounded-2xl border border-emerald-400 shadow-xs">
         <p className="text-xs font-bold text-gray-500">Tổng số hợp đồng</p>
-        <h3 className="text-2xl font-black text-gray-900 mt-1">187</h3>
-        <p className="text-[11px] text-emerald-600 font-bold mt-2">180 Vẫn duy trì hoạt động</p>
+        <h3 className="text-2xl font-black text-gray-900 mt-1">{totalContract}</h3>
+        <p className="text-[11px] text-emerald-600 font-bold mt-2">Đang duy trì hoạt động: {isActiveContract}</p>
       </div>
 
       <div className="bg-white p-4 rounded-2xl border-2 border-red-400 shadow-xs">
         <p className="text-xs font-bold text-gray-500">Sắp hết hạn</p>
-        <h3 className="text-2xl font-black text-gray-900 mt-1">42</h3>
-        <p className="text-[11px] text-red-500 font-bold mt-2">Khẩn cấp tái ký &gt; 5</p>
+        <h3 className="text-2xl font-black text-gray-900 mt-1">{isExpired}</h3>
+        <p className="text-[11px] text-red-500 font-bold mt-2">Khẩn cấp tái ký: {isExpired}</p>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-center space-y-1">
-        <div className="flex items-center justify-between text-xs font-bold">
-          <span className="text-gray-500">Chờ ký :</span>
-          <span className="text-emerald-600 text-base font-black">3</span>
-        </div>
-        <div className="border-t border-gray-100 my-1"></div>
-        <div className="flex items-center justify-between text-xs font-bold">
-          <span className="text-gray-500">Chưa ký :</span>
-          <span className="text-red-500 text-base font-black">10</span>
-        </div>
+      <div className="bg-white p-4 rounded-2xl border border-orange-400 shadow-xs">
+        <p className="text-gray-500 font-bold text-xs">Chờ ký :</p>
+        <h3 className="text-gray-900 text-2xl font-black mt-1">{waitingForRegis}</h3>
+        <p className="text-[11px] text-orange-500 font-bold mt-2">Cần chuẩn bị kỹ thông tin</p>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl border-2 border-indigo-200 shadow-xs">
+      <div className="bg-white p-4 rounded-2xl border-2 border-blue-400 shadow-xs">
         <p className="text-xs font-bold text-gray-500">Hợp đồng thử việc</p>
-        <h3 className="text-2xl font-black text-gray-900 mt-1">5</h3>
+        <h3 className="text-2xl font-black text-gray-900 mt-1">{isProbation}</h3>
         <p className="text-[11px] text-blue-600 font-bold mt-2">Đang gần hạn đánh giá</p>
       </div>
     </div>
@@ -71,9 +66,9 @@ export const ContractBottomCards = () => {
               <span className="text-gray-700">Luật lao động địa phương</span>
               <span className="text-indigo-600">98% Yêu cầu</span>
             </div>
-            <Progress 
-              value={98} 
-              className="h-2.5 bg-purple-200 [&>div]:bg-purple-600" 
+            <Progress
+              value={98}
+              className="h-2.5 bg-purple-200 [&>div]:bg-purple-600"
             />
           </div>
 
@@ -82,9 +77,9 @@ export const ContractBottomCards = () => {
               <span className="text-gray-700">Luật lao động địa phương</span>
               <span className="text-emerald-600">80% Yêu cầu</span>
             </div>
-            <Progress 
-              value={80} 
-              className="h-2.5 bg-slate-200 [&>div]:bg-emerald-500" 
+            <Progress
+              value={80}
+              className="h-2.5 bg-slate-200 [&>div]:bg-emerald-500"
             />
           </div>
         </div>

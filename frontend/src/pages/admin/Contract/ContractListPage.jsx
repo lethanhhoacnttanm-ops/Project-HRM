@@ -10,20 +10,13 @@ import ContractExport from '../../../components/admin/Contract/ContractExport.js
 import ContractModal from '../../../components/admin/Contract/ContractModal.jsx';
 import { contractService } from '../../../services/contract.service.js';
 import { employeeService } from '../../../services/employee.service.js';
-
-const initialContracts = [
-  { id: 1, code: 'HĐ-1222', name: 'Lương Diệu Kiệt', email: 'dieukietbigtech@gmail.com', type: 'Fulltime', startDate: '23-07-2026', endDate: '11-08-2026', status: 'active' },
-  { id: 2, code: 'HĐ-1222', name: 'Lê Thanh Hòa', email: 'hoalebigtech@gmail.com', type: 'Parttime', startDate: '23-07-2026', endDate: '11-08-2026', status: 'leave' },
-  { id: 3, code: 'HĐ-1222', name: 'Lương Diệu Kiệt', email: 'dieukietbigtech@gmail.com', type: 'Parttime', startDate: '23-07-2026', endDate: '11-08-2026', status: 'active' },
-  { id: 4, code: 'HĐ-1222', name: 'Lê Thanh Hòa', email: 'hoalebigtech@gmail.com', type: 'Fulltime', startDate: '23-07-2026', endDate: '11-08-2026', status: 'leave' },
-  { id: 5, code: 'HĐ-1222', name: 'Lương Diệu Kiệt', email: 'dieukietbigtech@gmail.com', type: 'Fulltime', startDate: '23-07-2026', endDate: '11-08-2026', status: 'active' },
-];
+import dayjs from 'dayjs';
 
 const ContractListPage = () => {
-  const [contracts] = useState(initialContracts);
+  const [contracts, setContract] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [contractType, setContractType] = useState('all');
-  const [status, setStatus] = useState('all');
+  const [contractType, setContractType] = useState('Tất cả');
+  const [status, setStatus] = useState('Tất cả');
 
   const [pageSize] = useState(5);
 
@@ -32,6 +25,7 @@ const ContractListPage = () => {
   const [beginPaginationInfo, setbeginPaginationInfo] = useState({ totalEmp: 0, totalPages: 1 });
 
   const [modalState, setModalState] = useState({ isOpen: false, mode: 'view', data: null });
+
 
   useEffect(() => {
     const fetchPendingEmployees = async () => {
@@ -50,6 +44,42 @@ const ContractListPage = () => {
     fetchPendingEmployees();
   }, [modalState.isOpen, modalState.mode, beginPageNumber, pageSize]);
 
+  useEffect(() => {
+    const fetchAllContract = async () => {
+      try {
+        const res = await contractService.getallContractEmployee(beginPageNumber, pageSize);
+        if (res?.success) {
+          setContract(res?.dataContract)
+          setbeginPaginationInfo(res?.pagination || { totalContract: 0, totalPage: 1 });
+        }
+
+      } catch (error) {
+        setContract([])
+        toast.error('Thất bại', { description: 'Không thể lấy danh sách các hợp đồng!' });
+
+      }
+
+    }
+
+    fetchAllContract()
+  }, [beginPageNumber, pageSize])
+
+  useEffect(() => {
+    const fetchPendingEmployees = async () => {
+        try {
+          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE', 'pending');
+          if (res?.success) {
+            setBeginEmployees(res.dataEmp || []);
+            setbeginPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
+          }
+        } catch (error) {
+          toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
+        }
+      }
+
+    fetchPendingEmployees();
+  }, [beginPageNumber, pageSize]);
+
   const handleOpenModal = (mode, data) => {
     setModalState({ isOpen: true, mode, data });
   };
@@ -59,9 +89,9 @@ const ContractListPage = () => {
   };
 
   const filteredContracts = contracts.filter((item) => {
-    const matchSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchType = contractType === 'all' || item.type === contractType;
-    const matchStatus = status === 'all' || item.status === status;
+    const matchSearch = item?.employee?.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || item?.contractCode.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchType = contractType === 'Tất cả' || item?.type === contractType;
+    const matchStatus = status === 'Tất cả' || item?.status === status;
     return matchSearch && matchType && matchStatus;
   });
 
@@ -69,7 +99,7 @@ const ContractListPage = () => {
   const handleCreateContract = async (selectedValue, payload) => {
     try {
       const res = await contractService.createNewContract(selectedValue, payload);
-      
+
       if (res?.success) {
         toast.success(res.message);
       }
@@ -79,6 +109,26 @@ const ContractListPage = () => {
       toast.error('Lỗi', { description: 'Không thể cập nhật thông tin!' });
     }
   };
+
+  const totalContract = contracts.length
+
+  const isActiveContract = contracts.filter(item => item.status === "active").length
+
+  const now = dayjs()
+  const isExpried = contracts.filter((item) => {
+    if (!item?.endDate) return false;
+
+    const endDate = dayjs(item.endDate);
+
+    const daysLeft = endDate.diff(now, "day");
+
+    return daysLeft >= 0 && daysLeft <= 30;
+
+  }).length;
+
+  const waitingForRegis = beginEmployees.length
+
+  const isProbation = contracts.filter(item => item.type === 'Probation').length
 
   return (
     <div className="space-y-6 p-2">
@@ -91,7 +141,7 @@ const ContractListPage = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <ContractExport contracts={filteredContracts} />
+          <ContractExport contracts={contracts} />
 
           <Button
             type="primary"
@@ -104,7 +154,7 @@ const ContractListPage = () => {
         </div>
       </div>
 
-      <ContractTopCards />
+      <ContractTopCards isProbation={isProbation} waitingForRegis={waitingForRegis} totalContract={totalContract} isActiveContract={isActiveContract} isExpired={isExpried} />
 
       <ContractFilter
         searchTerm={searchTerm}
@@ -115,7 +165,7 @@ const ContractListPage = () => {
         setStatus={setStatus}
       />
 
-      <ContractTable contracts={filteredContracts} onOpenModal={handleOpenModal} />
+      <ContractTable pagination={beginPaginationInfo} pageSize={pageSize} pageNumber={beginPageNumber} setPageNumber={setBeginPageNumber} contracts={filteredContracts} onOpenModal={handleOpenModal} />
 
       <ContractBottomCards />
 
@@ -123,7 +173,8 @@ const ContractListPage = () => {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         mode={modalState.mode}
-        data={beginEmployees}
+        dataPending={beginEmployees}
+        dataContract={contracts}
 
         pendingPagination={beginPaginationInfo}
         setPendingPageNumber={setBeginPageNumber}
