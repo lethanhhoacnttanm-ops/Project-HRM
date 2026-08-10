@@ -40,8 +40,9 @@ const ContractFilter = ({
             </SelectTrigger>
             <SelectContent className="rounded-xl">
               <SelectItem value="Tất cả">Loại hợp đồng</SelectItem>
-              <SelectItem value="Fulltime">Fulltime</SelectItem>
-              <SelectItem value="Parttime">Parttime</SelectItem>
+              <SelectItem value="Fulltime">Toàn thời gian</SelectItem>
+              <SelectItem value="Parttime">Bán thời gian</SelectItem>
+              <SelectItem value="Probation">Thử việc</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -52,9 +53,10 @@ const ContractFilter = ({
               <SelectValue placeholder="Trạng thái" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="all">Trạng thái</SelectItem>
+              <SelectItem value="Tất cả">Trạng thái</SelectItem>
               <SelectItem value="active">Hoạt động</SelectItem>
-              <SelectItem value="leave">Đang nghỉ</SelectItem>
+              <SelectItem value="expired">Hết hạn</SelectItem>
+              <SelectItem value="cancelled">Đã hủy</SelectItem>
             </SelectContent>
           </Select>
         </div>

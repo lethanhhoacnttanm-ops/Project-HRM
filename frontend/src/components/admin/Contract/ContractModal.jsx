@@ -21,7 +21,7 @@ import {
 import { ChevronDown, ChevronUp } from "lucide-react";
 import dayjs from 'dayjs';
 
-const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPagination, setPendingPageNumbe, pendingPageNumbe }) => {
+const ContractModal = ({ isOpen, onClose, mode, dataPending, dataContract, onSubmit, pendingPagination, setPendingPageNumbe, pendingPageNumbe }) => {
   const isView = mode === 'view';
   const isCreate = mode === 'create';
   const isCancel = mode === 'cancel';
@@ -81,7 +81,6 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPaginatio
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-120 rounded-2xl p-6">
-        {console.log(selectedValue)}
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-gray-800">
             {isCreate ? 'Tạo hợp đồng mới' : isView ? 'Chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
@@ -93,30 +92,32 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPaginatio
 
         {isView && (
           <div className="space-y-4 py-3 text-xs">
-            <div className="p-3 bg-slate-50 rounded-xl space-y-2">
+            {dataContract.map(emp => (
+            <div key={emp._id} className="p-3 bg-slate-50 rounded-xl space-y-2">
               <p>
                 <span className="text-gray-400 w-28 inline-block">Mã HĐ:</span>{' '}
-                <strong className="text-gray-800">{data?.code}</strong>
+                <strong className="text-gray-800">{emp?.contractCode}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Nhân viên:</span>{' '}
-                <strong className="text-gray-800">{data?.name}</strong>
+                <strong className="text-gray-800">{emp?.employee?.fullName}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Email:</span>{' '}
-                <strong className="text-gray-800">{data?.email}</strong>
+                <strong className="text-gray-800">{emp?.employee?.email}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Loại HĐ:</span>{' '}
-                <strong className="text-indigo-600">{data?.type}</strong>
+                <strong className="text-indigo-600">{emp?.type}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Thời hạn:</span>{' '}
                 <strong className="text-gray-800">
-                  {data?.startDate} - {data?.endDate}
+                  {dayjs(emp?.startDate).format('DD/MM/YYYY')} - {dayjs(emp?.endDate).format('DD/MM/YYYY')}
                 </strong>
               </p>
             </div>
+            ))}
             <div className="flex justify-end pt-2">
               <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
                 Đóng
@@ -129,8 +130,8 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPaginatio
           <div className="space-y-4 py-3 text-sm">
             <p className="text-gray-600">
               Bạn có chắc chắn muốn hủy hợp đồng{' '}
-              <strong className="text-red-600">{data?.code}</strong> của nhân viên{' '}
-              <strong>{data?.name}</strong> không?
+              <strong className="text-white">{dataContract?.contractCode}</strong> của nhân viên{' '}
+              <strong>{dataContract?.employee?.fullName}</strong> không?
             </p>
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
@@ -140,7 +141,7 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPaginatio
                 type="button"
                 variant="destructive"
                 onClick={onClose}
-                className="rounded-xl bg-red-600 hover:bg-red-700"
+                className="rounded-xl text-white bg-red-600 hover:bg-red-700"
               >
                 Xác nhận hủy
               </Button>
@@ -159,7 +160,7 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPaginatio
                   className="w-full"
                   render={
                     <Button className="w-full justify-between font-normal text-slate-700" variant="outline">
-                      <span>{data.filter(item => item._id === selectedValue).map(emp => { return emp.fullName })}</span>
+                      <span>{dataPending.filter(item => item._id === selectedValue).map(emp => { return emp.fullName })}</span>
                       {isDropdownOpen ? (
                         <ChevronUp className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                       ) : (
@@ -171,8 +172,8 @@ const ContractModal = ({ isOpen, onClose, mode, data, onSubmit, pendingPaginatio
                 <DropdownMenuContent align='start'>
                   <DropdownMenuGroup className="w-full" >
                     <DropdownMenuLabel>Chờ ký</DropdownMenuLabel>
-                    {Array.isArray(data) && data.length > 0 ? (
-                      data.map((emp) => (
+                    {Array.isArray(dataPending) && dataPending.length > 0 ? (
+                      dataPending.map((emp) => (
                         <DropdownMenuItem
                           key={emp._id}
                           onClick={() => {

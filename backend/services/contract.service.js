@@ -27,6 +27,31 @@ class ContractsService {
             data: newContract
         };
     }
+
+    async getAllContractByID({page, limit}) {
+
+        const pageNumber = Math.max(1, parseInt(page, 10));
+        const pageSize = Math.max(1, parseInt(limit, 10));
+        const skip = (pageNumber - 1) * pageSize;
+
+        const { totalContract, dataContract } = await contractRepository.getAllContract({skip, limit: pageSize});
+        
+        if (totalContract === undefined || dataContract === undefined) {
+            throw new Error("Lỗi trường hợp lệ trong phân trang");
+        }
+
+        return {
+            success: true,
+            message: 'Lấy toàn bộ danh sách hợp đồng thành công',
+            data: dataContract,
+            pagination: {
+                totalContract,
+                pageNumber,
+                pageSize,
+                totalPage: Math.ceil(totalContract / pageSize)
+            }
+        };
+    }
 }
 
 export default new ContractsService();

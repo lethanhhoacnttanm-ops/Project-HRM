@@ -7,49 +7,65 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { Button } from '@/components/ui/button';
 import {
   User,
   MoreVertical,
   Eye,
   XCircle,
-  ChevronLeft,
-  ChevronRight,
+  ArrowBigLeft,
+  ArrowBigRight
 } from "lucide-react";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import dayjs from 'dayjs';
 
-const ContractTable = ({ contracts, onOpenModal }) => {
+const ContractTable = ({ contracts, onOpenModal, pageNumber, setPageNumber, pagination, pageSize  }) => {
+
+  const handlePrevPage = () => {
+    if (pageNumber > 1) setPageNumber(pageNumber - 1);
+  };
+
+  const handleNextPage = () => {
+    if (pageNumber < pagination.totalPages) setPageNumber(pageNumber + 1);
+  };
+
+  const handleGoToPage = (pageNumber) => {
+    setPageNumber(pageNumber);
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-xs overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs font-semibold">
-          <thead>
-            <tr className="bg-slate-50/80 border-b border-gray-200 text-gray-700 font-extrabold">
-              <th className="py-3.5 px-5">ID</th>
-              <th className="py-3.5 px-5">Tên</th>
-              <th className="py-3.5 px-5">Loại</th>
-              <th className="py-3.5 px-5">Ngày bắt đầu</th>
-              <th className="py-3.5 px-5">Ngày kết thúc</th>
-              <th className="py-3.5 px-5">Trạng thái</th>
-              <th className="py-3.5 px-5 text-center">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
+        <Table className="w-full text-left border-collapse text-xs font-semibold">
+          <TableHeader>
+            <TableRow className="bg-slate-50/80 border-b border-gray-200 text-gray-700 font-exTableRowabold">
+              <TableHead className="py-3.5 px-5">ID</TableHead>
+              <TableHead className="py-3.5 px-5">Tên</TableHead>
+              <TableHead className="py-3.5 px-5">Loại</TableHead>
+              <TableHead className="py-3.5 px-5">Ngày bắt đầu</TableHead>
+              <TableHead className="py-3.5 px-5">Ngày kết thúc</TableHead>
+              <TableHead className="py-3.5 px-5">Trạng thái</TableHead>
+              <TableHead className="py-3.5 px-5 text-center">Thao tác</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody className="divide-y divide-gray-100">
             {contracts.map((item) => (
-              <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                <td className="py-3.5 px-5 font-bold text-gray-600">{item.code}</td>
+              <TableRow key={item._id} className="hover:bg-slate-50/50 transition-colors">
+                <TableCell className="py-3.5 px-5 font-bold text-gray-600">{item.contractCode}</TableCell>
 
-                <td className="py-3.5 px-5">
+                <TableCell className="py-3.5 px-5">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 shrink-0">
                       <User className="h-4 w-4" />
                     </div>
                     <div>
-                      <div className="font-bold text-gray-800">{item.name}</div>
-                      <div className="text-[11px] text-gray-400 font-normal">{item.email}</div>
+                      <div className="font-bold text-gray-800">{item?.employee?.fullName}</div>
+                      <div className="text-[11px] text-gray-400 font-normal">{item?.employee?.email}</div>
                     </div>
                   </div>
-                </td>
+                </TableCell>
 
-                <td className="py-3.5 px-5">
+                <TableCell className="py-3.5 px-5">
                   <Badge
                     variant="outline"
                     className={`border-0 px-3 py-1 rounded-xl text-[11px] font-bold ${
@@ -60,12 +76,12 @@ const ContractTable = ({ contracts, onOpenModal }) => {
                   >
                     {item.type}
                   </Badge>
-                </td>
+                </TableCell>
 
-                <td className="py-3.5 px-5 text-gray-600">{item.startDate}</td>
-                <td className="py-3.5 px-5 text-gray-600">{item.endDate}</td>
+                <TableCell className="py-3.5 px-5 text-gray-600">{dayjs(item.startDate).format("DD/MM/YY")}</TableCell>
+                <TableCell className="py-3.5 px-5 text-gray-600">{dayjs(item.endDate).format("DD/MM/YY")}</TableCell>
 
-                <td className="py-3.5 px-5">
+                <TableCell className="py-3.5 px-5">
                   {item.status === 'active' ? (
                     <span className="inline-flex items-center gap-1.5 text-emerald-600 font-bold">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -77,9 +93,9 @@ const ContractTable = ({ contracts, onOpenModal }) => {
                       Đang nghỉ
                     </span>
                   )}
-                </td>
+                </TableCell>
 
-                <td className="py-3.5 px-5 text-center">
+                <TableCell className="py-3.5 px-5 text-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer outline-none">
                       <MoreVertical className="h-4 w-4" />
@@ -105,26 +121,46 @@ const ContractTable = ({ contracts, onOpenModal }) => {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+          <TableFooter>
+          <TableRow>
+            <TableCell colSpan={7} className="p-0">
+              <div className="p-4 border-t border-gray-100 bg-slate-50/30 flex items-center justify-between text-xs text-gray-500 w-full">
+                <span>1 - {pageSize} trên {contracts.length} hợp đồng</span>
 
-      <div className="p-3.5 border-t border-gray-100 bg-slate-50/40 flex items-center justify-between text-xs text-gray-500 font-medium">
-        <span>1 - {contracts.length} trên 20 Hợp đồng</span>
-        <div className="flex items-center gap-1">
-          <button className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer text-gray-600">
-            <ChevronLeft className="h-3.5 w-3.5" />
-          </button>
-          <button className="px-3 py-1 rounded-lg bg-blue-600 text-white font-bold cursor-pointer">1</button>
-          <button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">2</button>
-          <button className="px-3 py-1 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">3</button>
-          <button className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 cursor-pointer text-gray-600">
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
-        </div>
+                <div className="flex items-center gap-1">
+                  <Button onClick={handlePrevPage} disabled={pageNumber === 1} className="px-2.5 py-1 rounded-lg border text-black border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
+                    <ArrowBigLeft />
+                  </Button>
+                  {Array.from({ length: pagination.totalPage }, (_, index) => {
+                    const pageNum = index + 1;
+                    const isActive = pageNum === pageNumber;
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        onClick={() => handleGoToPage(pageNum)}
+                        className={`px-3 py-1 rounded-lg cursor-pointer transition-colors ${isActive
+                          ? 'bg-blue-600 text-white font-bold border-transparent'
+                          : 'border text-black border-gray-200 bg-white hover:bg-gray-50'
+                          }`}
+                      >
+                        {pageNum}
+                      </Button>
+                    );
+                  })}
+                  <Button onClick={handleNextPage} disabled={pageNumber === pagination.totalPage} className="px-2.5 py-1 rounded-lg border text-black border-gray-200 bg-white hover:bg-gray-50 cursor-pointer">
+                    <ArrowBigRight />
+                  </Button>
+                </div>
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+        </Table>
       </div>
     </div>
   );

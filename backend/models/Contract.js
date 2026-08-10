@@ -30,7 +30,7 @@ const ContractSchema = new mongoose.Schema(
     },
     status: { 
       type: String, 
-      enum: ['active', 'pending', 'expired', 'cancelled'], 
+      enum: ['active', 'expired', 'cancelled'], 
       default: 'active' 
     }
   },
