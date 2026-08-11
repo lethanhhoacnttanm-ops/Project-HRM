@@ -1,6 +1,29 @@
 import ContractModel from '../models/Contract.js';
+import EmployeeModel from '../models/Employee.js';
 
 class ContractRepository {
+
+  async createNewContract(contractData) {
+    return await ContractModel.create(contractData);
+  }
+
+  async updateEmployeeStatus(employeeId, status, role) {
+    return await EmployeeModel.findByIdAndUpdate(
+      employeeId,
+      { status: status, role: role },
+      { new: true }
+    );
+  }
+
+  async getAllContract({ skip, limit }) {
+    const [totalContract, dataContract] = await Promise.all([
+      ContractModel.countDocuments(),
+      ContractModel.find().populate("employee").skip(skip).limit(limit).lean()
+    ])
+
+    return { totalContract, dataContract }
+  };
+
   async create(data) {
     return await ContractModel.create(data);
   }

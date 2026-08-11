@@ -1,4 +1,4 @@
-import { contractRepository } from "../repositories/contract.repository.js";
+import contractRepository from "../repositories/contract.repository.js";
 import { contractUtils } from "../utils/contract.util.js";
 
 class ContractsService {
