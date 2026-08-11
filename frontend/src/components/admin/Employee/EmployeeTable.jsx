@@ -49,8 +49,8 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
                     <User />
                   </div>
                   <div>
-                    <div className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                      {emp.fullname}
+                    <div className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white">
+                      {emp.fullName}
                     </div>
                     <div className="text-xs text-gray-400 dark:text-amber-50/50">{emp.email}</div>
                   </div>

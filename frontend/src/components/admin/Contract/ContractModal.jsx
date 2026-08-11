@@ -42,7 +42,7 @@ const ContractModal = ({ isOpen, onClose, mode, dataPending, dataContract, onSub
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value, 
     }));
   };
 
