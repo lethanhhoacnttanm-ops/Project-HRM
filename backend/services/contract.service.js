@@ -1,4 +1,4 @@
-import { contractRepository } from "../repositories/contract.repository.js";
+import contractRepository from "../repositories/contract.repository.js";
 import { contractUtils } from "../utils/contract.util.js";
 
 class ContractsService {
@@ -17,13 +17,12 @@ class ContractsService {
       contractCode: newContractCode,
     };
 
-    const newContract =
-      await contractRepository.createNewContract(contractDataToSave);
+    const newContract = await contractRepository.create(contractDataToSave);
 
     await contractRepository.updateEmployeeStatus(
       payload.employee,
       "active",
-      "EMPLOYEE",
+      "EMPLOYEE"
     );
 
     return {
@@ -33,30 +32,24 @@ class ContractsService {
     };
   }
 
-  async getAllContractByID({ page, limit }) {
-    const pageNumber = Math.max(1, parseInt(page, 10));
-    const pageSize = Math.max(1, parseInt(limit, 10));
-    const skip = (pageNumber - 1) * pageSize;
+  async getAllContractByID({ page = 1, limit = 10 }) {
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+    const pageSize = Math.max(1, parseInt(limit, 10) || 10);
 
-    const { totalContract, dataContract } =
-      await contractRepository.getAllContract({ skip, limit: pageSize });
-
-    if (totalContract === undefined || dataContract === undefined) {
-      throw new Error("Lỗi trường hợp lệ trong phân trang");
-    }
+    // Sử dụng trực tiếp hàm findAll() từ repository
+    const result = await contractRepository.findAll({
+      page: pageNumber,
+      limit: pageSize,
+    });
 
     return {
       success: true,
       message: "Lấy toàn bộ danh sách hợp đồng thành công",
-      data: dataContract,
-      pagination: {
-        totalContract,
-        pageNumber,
-        pageSize,
-        totalPage: Math.ceil(totalContract / pageSize),
-      },
+      data: result.data,
+      pagination: result.pagination,
     };
   }
+
   async getMyContracts(employeeId) {
     const contracts = await contractRepository.findByEmployeeId(employeeId);
     return contracts;
