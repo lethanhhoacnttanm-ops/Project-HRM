@@ -139,8 +139,8 @@ const Sidebar = () => {
   }, [openKey]);
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-100 flex flex-col h-screen sticky top-0 shrink-0 select-none">
-      <div className="h-16 px-6 flex items-center gap-2.5 border-b border-gray-50">
+    <aside className="w-64 bg-white border-r dark:bg-gray-900 dark:border-gray-800 border-gray-100 flex flex-col h-screen sticky top-0 shrink-0 select-none transition-colors duration-300">
+      <div className="h-16 px-6 flex items-center gap-2.5 border-none ">
         <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0">
           <img src="/hrm_system_logo.png" alt="Logo" className="w-full h-full object-contain" />
         </div>
@@ -173,7 +173,7 @@ const Sidebar = () => {
                   className="border-none"
                 >
                   <AccordionTrigger
-                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors hover:no-underline hover:bg-slate-50 ${isSubActive ? 'text-blue-600 bg-blue-50/50' : 'text-gray-600'
+                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-colors hover:no-underline hover:bg-slate-50 ${isSubActive ? 'text-blue-600 dark:text-black dark:bg-white bg-blue-50/50' : 'text-gray-600 dark:text-white dark:hover:text-black'
                       }`}
                   >
                     <div className="flex items-center gap-3">
@@ -190,8 +190,8 @@ const Sidebar = () => {
                           key={child.key}
                           to={child.key}
                           className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold no-underline! transition-colors ${isActive
-                              ? 'bg-blue-600 text-white font-bold shadow-xs'
-                              : 'text-gray-500 hover:text-gray-900 hover:bg-slate-50'
+                              ? 'bg-blue-600 text-white font-bold shadow-xs dark:bg-white dark:text-black'
+                              : 'text-gray-500 hover:bg-gray-100 hover:text-blue-600 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'
                             }`}
                         >
                           {child.icon}
@@ -210,8 +210,8 @@ const Sidebar = () => {
                 key={item.key}
                 to={item.key}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-colors ${isActive
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-gray-600 hover:bg-slate-50'
+                  ? 'text-blue-600 dark:text-black dark:bg-white bg-blue-50/50 shadow-xs'
+                  : 'text-gray-600 dark:text-white hover:bg-slate-50'
                   }`}
               >
                 {item.icon}
@@ -225,13 +225,13 @@ const Sidebar = () => {
       <div className="p-4 border-t border-gray-100">
         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
           <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 text-blue-600 shrink-0">
-            <User className="h-4 w-4" />
+            <User className="h-4 w-4 " />
           </div>
           <div className="overflow-hidden">
-            <div className="text-xs font-bold text-blue-600 leading-tight truncate">
+            <div className="text-xs font-bold text-blue-600 leading-tight truncate ">
               Quản trị viên
             </div>
-            <div className="text-[10px] text-gray-400 truncate">
+            <div className="text-[10px] text-gray-400 truncate dark:text-white">
               Trưởng bộ quản trị hệ thống
             </div>
           </div>

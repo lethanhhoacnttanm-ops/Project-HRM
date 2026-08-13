@@ -28,7 +28,7 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-300 shadow-xs overflow-hidden">
+    <div className="bg-white rounded-2xl border dark:border-gray-800 border-gray-300 shadow-xs overflow-hidden dark:bg-gray-900">
       <Table>
         <TableHeader>
           <TableRow>
@@ -43,21 +43,21 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
           {employees.map((emp) => {
             const data = employees.filter(item => item._id === emp._id)
             return (
-              <TableRow key={emp._id}>
-                <TableCell className="flex items-center gap-3 cursor-pointer group">
+              <TableRow key={emp._id} className="dark:bg-blue-950 dark:hover:bg-blue-900">
+                <TableCell className="flex items-center gap-3 cursor-pointer group ">
                   <div className="w-9 h-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-500 group-hover:border-blue-500 transition-colors">
                     <User />
                   </div>
                   <div>
-                    <div className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
-                      {emp.fullname}
+                    <div className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white">
+                      {emp.fullName}
                     </div>
-                    <div className="text-xs text-gray-400">{emp.email}</div>
+                    <div className="text-xs text-gray-400 dark:text-amber-50/50">{emp.email}</div>
                   </div>
                 </TableCell>
-                <TableCell className="font-medium text-gray-600">{emp.position || 'Cộng tác'}</TableCell>
+                <TableCell className="font-medium text-gray-600 dark:text-amber-50/50">{emp.position || 'Cộng tác'}</TableCell>
                 <TableCell>
-                  <span className="inline-block bg-indigo-50 text-indigo-600 text-xs font-semibold px-3 py-1 rounded-xl border border-indigo-100">
+                  <span className="inline-block bg-indigo-50 text-indigo-600 dark:text-black text-xs font-semibold px-3 py-1 rounded-xl border border-indigo-100">
                     {emp.department || 'Fullstack Developer'}
                   </span>
                 </TableCell>
@@ -118,7 +118,7 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
         <TableFooter>
           <TableRow>
             <TableCell colSpan={5} className="p-0">
-              <div className="p-4 border-t border-gray-100 bg-slate-50/30 flex items-center justify-between text-xs text-gray-500 w-full">
+              <div className="p-4  bg-slate-50/30 flex items-center justify-between text-xs text-gray-500 w-full dark:bg-gray-900">
                 <span>1 - {pageSize} trên {employees.length} nhân sự</span>
 
                 <div className="flex items-center gap-1">

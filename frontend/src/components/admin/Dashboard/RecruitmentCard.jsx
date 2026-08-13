@@ -20,9 +20,9 @@ const recruitmentData = [
 
 const RecruitmentCard = () => {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-xs">
-      <div className="flex items-center justify-between bg-violet-50 p-3 px-5 rounded-t-2xl border-b border-gray-100">
-        <h2 className="text-xl font-bold text-gray-800">Tuyển dụng</h2>
+    <div className="bg-white dark:bg-black rounded-2xl border border-gray-200 dark:border-gray-900 shadow-xs ">
+      <div className="flex items-center justify-between bg-violet-50 p-3 px-5 rounded-t-2xl border-b border-gray-100  dark:bg-gray-900 ">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white">Tuyển dụng</h2>
         
         <div className="flex items-center gap-3">
           <Select defaultValue="Thiết kế">
@@ -38,7 +38,7 @@ const RecruitmentCard = () => {
 
           <Button
             size="sm"
-            className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 h-9 rounded-lg gap-1 cursor-pointer"
+            className="bg-blue-600 hover:bg-blue-700 dark:hover:bg-blue-700 dark:hover:text-white dark:text-black dark:bg-white text-white text-xs font-semibold px-4 h-9 rounded-lg gap-1 cursor-pointer"
           >
             Xem tất cả
             <ChevronRight className="h-3.5 w-3.5" />
@@ -46,10 +46,10 @@ const RecruitmentCard = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto p-5">
+      <div className="overflow-x-auto p-5 rounded-b-2xl  dark:bg-blue-950">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="text-gray-500 border-b border-gray-100 pb-2">
+            <tr className="text-gray-500 border-b border-gray-100 dark:border-gray-600 pb-2 dark:text-white">
               <th className="py-2.5 font-bold w-28">Đầu việc</th>
               <th className="py-2.5 font-bold text-center">Ứng tuyển mới</th>
               <th className="py-2.5 font-bold text-center">Sàng lọc</th>
@@ -60,8 +60,8 @@ const RecruitmentCard = () => {
           </thead>
           <tbody>
             {recruitmentData.map((row, idx) => (
-              <tr key={idx} className="hover:bg-gray-50/50">
-                <td className="py-2.5 font-bold text-gray-800">{row.job}</td>
+              <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-blue-900 p-1">
+                <td className="py-2.5 font-bold text-gray-800 dark:text-white">{row.job}</td>
                 
                 <td className="py-2.5 px-1 text-center">
                   {row.newApp && (

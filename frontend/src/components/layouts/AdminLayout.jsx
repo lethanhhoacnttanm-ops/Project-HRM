@@ -12,7 +12,7 @@ const AdminLayout = () => {
       <div className="flex-1 flex flex-col min-w-0">
         <Header />
 
-        <main className="flex-1 p-6 bg-violet-50">
+        <main className="flex-1 p-6 bg-violet-50 dark:bg-black transition-colors duration-300 ">
           <Outlet />
         </main>
 

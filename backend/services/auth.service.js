@@ -39,7 +39,7 @@ class AuthService {
   }
 
   async registerEmployee(registerData) {
-    const { fullName, email, dateOfBirth, identityCard, password, confirmPassword, phone, gender } = registerData;
+    const { fullName, email, dateOfBirth, identityCard, password, confirmPassword, phone, gender, role = 'NONE' } = registerData;
 
     if(!fullName || !email || !dateOfBirth || !identityCard || !password || !confirmPassword || !phone || !gender){
       throw new Error('một trường đang bị thiếu hoặc sai!');
@@ -72,6 +72,7 @@ class AuthService {
       identityCard,
       phone,
       gender,
+      role,
       password: hashedPassword
     });
 

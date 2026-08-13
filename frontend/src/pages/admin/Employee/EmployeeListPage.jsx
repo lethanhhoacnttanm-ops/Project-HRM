@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
 import { BellCheck } from "lucide-react";
@@ -19,11 +19,7 @@ const EmployeeListPage = () => {
 
   const [pageSize] = useState(5);
 
-  const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1});
-
-  const [beginEmployees, setBeginEmployees] = useState([]);
-  const [beginPageNumber, setBeginPageNumber] = useState(1);
-  const [beginPaginationInfo, setbeginPaginationInfo] = useState({ totalEmp: 0, totalPages: 1 });
+  const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1 });
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('all');
@@ -32,47 +28,62 @@ const EmployeeListPage = () => {
 
 
 
-  const { loading } = useAuth();
+  const { handleRegister } = useAuth();
 
   const [modalState, setModalState] = useState({ isOpen: false, mode: 'view', data: null });
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE'); 
-        if (res?.success) {
-          setEmployees(res.dataEmp); 
-          setPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
-        }else {
-          setEmployees([]);
-        }
-      } catch (error) {
+  const fetchEmployees = useCallback(async () => {
+    try {
+      const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE');
+      if (res?.success) {
+        setEmployees(res.dataEmp);
+        setPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
+      } else {
         setEmployees([]);
-        toast.error('Thất bại', {
-          description: error.message || 'Không thể lấy danh sách nhân viên!',
-        });
       }
-    };
-
-    fetchEmployees();
+    } catch (error) {
+      setEmployees([]);
+      toast.error('Thất bại', {
+        description: error.message || 'Không thể lấy danh sách nhân viên!',
+      });
+    }
   }, [pageNumber, pageSize]);
 
   useEffect(() => {
-    const fetchPendingEmployees = async () => {
-      if (modalState.isOpen && modalState.mode === 'processRegistry') {
-        try {
-          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE', 'begin');
-          if (res?.success) {
-            setBeginEmployees(res.dataEmp || []);
-            setbeginPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
-          }
-        } catch (error) {
-          toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
-        }
+    fetchEmployees();
+  }, [fetchEmployees]);
+
+  const handleCreateEmployee = async (formData) => {
+    try {
+      console.log('Dữ liệu cha nhận được từ con:', formData);
+
+      const res = await handleRegister(formData);
+
+      toast.success('Đăng ký thành công!', {
+        description: res.message || `Tài khoản nhân viên ${res.data?.fullName} đã được khởi tạo.`,
+        position: 'top-right',
+        duration: 3000,
+      });
+      handleCloseModal();
+
+    } catch (error) {
+      const responseData = error.response?.data;
+
+      if (responseData?.errors && Array.isArray(responseData.errors)) {
+        responseData.errors.forEach(err => {
+          toast.error('Dữ liệu không hợp lệ', {
+            description: err.message || JSON.stringify(err)
+          });
+        });
+        return;
       }
-    };
-    fetchPendingEmployees();
-  }, [modalState.isOpen, modalState.mode, beginPageNumber, pageSize]);
+
+      const errorMsg = responseData?.message || "Có lỗi xảy ra, vui lòng thử lại!";
+      toast.error('Đăng ký thất bại!', {
+        description: errorMsg,
+      });
+    }
+  };
 
   const handleOpenModal = (mode, data) => {
     setModalState({ isOpen: true, mode, data });
@@ -83,7 +94,7 @@ const EmployeeListPage = () => {
   };
 
   const filteredEmployees = (employees || []).filter((emp) => {
-    const isEmployeeOnly = emp.role !== 'ADMIN' &&  emp.role !== 'NONE' ;
+    const isEmployeeOnly = emp.role !== 'ADMIN' && emp.role !== 'NONE';
     const matchSearch =
       emp.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       emp.email?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -110,43 +121,21 @@ const EmployeeListPage = () => {
 
   const isActiveEmployee = employees.filter(item => item.status === "active" && item.role === "EMPLOYEE").length
 
-  const employeeOnsite = (isActiveEmployee * 100) / totalEmployee
+  const employeeOnsite = totalEmployee === 0 ? 0 : (isActiveEmployee * 100) / totalEmployee;
 
   const handleUpdateEmployee = async (employeeId, payload) => {
     try {
       const res = await employeeService.updateEmployee(employeeId, payload);
-      
+
       if (res.success) {
         toast.success("Cập nhật thông tin thành công!");
-        
+
         setModalState({ isOpen: false, mode: 'edit', data: null });
 
-        fetchPendingEmployees();
+        fetchEmployees();
       }
     } catch (error) {
       toast.error('Lỗi', { description: 'Không thể cập nhật thông tin!' });
-    }
-  };
-
-  const handleApproveEmployee = async (employeeId) => {
-    try {
-      const payload = { 
-        status: 'pending',
-      };
-
-      const res = await employeeService.updateEmployee(employeeId, payload);
-
-      if (res?.success) {
-        toast.success('Duyệt đăng ký thành công!');
-
-        setBeginEmployees((prevList) => prevList.filter(emp => emp._id !== employeeId));
-        
-        setbeginPaginationInfo(prev => ({ ...prev, totalEmp: prev.totalEmp - 1 }));
-      }
-    } catch (error) {
-      toast.error('Lỗi', {
-        description: error.message || 'Không thể duyệt nhân viên này!'
-      });
     }
   };
 
@@ -155,10 +144,10 @@ const EmployeeListPage = () => {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight dark:text-white">
             Quản lý hồ sơ nhân viên
           </h1>
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-amber-50/50">
             Quản lý nhân lực, theo dõi hiệu suất và giám sát các nhiệm vụ của từng bộ phận.
           </p>
         </div>
@@ -167,8 +156,8 @@ const EmployeeListPage = () => {
           onClick={() => handleOpenModal('processRegistry')}
           className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-5 rounded-xl font-semibold border-none shadow-xs cursor-pointer gap-1.5"
         >
-          <BellCheck  />
-          Thông báo đăng ký 
+          <BellCheck />
+          Tạo tài khoản nhân viên
         </Button>
       </div>
 
@@ -198,15 +187,10 @@ const EmployeeListPage = () => {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         mode={modalState.mode}
-        data={modalState?.mode === 'view' ? modalState?.data : modalState?.mode === 'edit' ? modalState?.data : beginEmployees}
+        data={modalState.data}
 
-        pendingPagination={beginPaginationInfo}
-        setPendingPageNumber={setBeginPageNumber}
-        pendingPageNumber={beginPageNumber}
-
+        onSubmitCreate={handleCreateEmployee}
         onSubmit={handleUpdateEmployee}
-
-        onApprove={handleApproveEmployee}
       />
     </div>
   );

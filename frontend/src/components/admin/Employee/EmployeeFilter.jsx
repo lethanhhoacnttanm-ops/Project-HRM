@@ -1,4 +1,4 @@
-import React from 'react';
+  import React from 'react';
 import { Search, Table, LayoutGrid } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -29,24 +29,24 @@ const EmployeeFilter = ({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs dark:bg-gray-900">
           <p className="text-xs text-gray-500 font-semibold">Tổng số nhân sự</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">{Employee}</h3>
+          <h3 className="text-2xl font-extrabold text-gray-900 mt-1 dark:text-amber-50/50">{Employee}</h3>
           <p className="text-[11px] text-emerald-600 font-medium mt-2"> {newEmployee} Nhân sự mới trong tháng qua</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs dark:bg-gray-900">
           <p className="text-xs text-gray-500 font-semibold">Đang hoạt động</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">{activeEmployee}</h3>
+          <h3 className="text-2xl font-extrabold text-gray-900 mt-1 dark:text-amber-50/50">{activeEmployee}</h3>
           <p className="text-[11px] text-gray-400 font-medium mt-2">{onsite}% trên công ty</p>
         </div>
-        <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs">
+        <div className="bg-white p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs dark:bg-gray-900">
           <p className="text-xs text-gray-500 font-semibold">Đang nghỉ phép</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1">50</h3>
+          <h3 className="text-2xl font-extrabold text-gray-900 mt-1 dark:text-amber-50/50">50</h3>
           <p className="text-[11px] text-red-500 font-medium mt-2">Tuần nghỉ cao điểm</p>
         </div>
       </div>
 
-      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs space-y-4">
+      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-xs space-y-4 dark:bg-gray-900 dark:border-gray-800">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
           <div className="md:col-span-6">
             <div className="relative w-full">
@@ -56,14 +56,14 @@ const EmployeeFilter = ({
                 placeholder="Tìm kiếm theo tên, email, phòng ban..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 rounded-xl py-2 bg-gray-50/50 border-gray-200"
+                className="pl-9 rounded-xl py-2 bg-gray-50/50 border-gray-200 dark:border-gray-800"
               />
             </div>
           </div>
 
           <div className="md:col-span-3">
             <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
-              <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/50 border-gray-200">
+              <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/50 border-gray-200 dark:border-gray-800">
                 <SelectValue placeholder="Chọn phòng ban" />
               </SelectTrigger>
               <SelectContent>
@@ -75,7 +75,7 @@ const EmployeeFilter = ({
             </Select>
           </div>
 
-          <div className="md:col-span-3 flex items-center bg-gray-100 p-1 rounded-xl">
+          <div className="md:col-span-3 flex items-center bg-gray-100 dark:bg-gray-800 p-1 rounded-xl ">
             <Button
               type="button"
               variant="ghost"
@@ -116,7 +116,7 @@ const EmployeeFilter = ({
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-2 border-t border-gray-50 text-xs font-semibold">
+      <div className="flex justify-end gap-3 pt-2 border-t border-gray-50 dark:border-gray-900 text-xs font-semibold">
         <Button
           type="button"
           variant="link"

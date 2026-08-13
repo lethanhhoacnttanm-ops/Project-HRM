@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-white border-t border-gray-100 py-4 px-6 text-xs text-gray-500 flex flex-col md:flex-row items-center justify-between gap-2">
+    <footer className="bg-white border-t border-gray-100 dark:border-gray-800 py-4 px-6 text-xs text-gray-500 flex flex-col md:flex-row items-center justify-between gap-2 dark:bg-gray-900 transition-colors duration-300">
       <div>
         <span>2026 HRM System. Vì bạn xứng đáng</span>
       </div>

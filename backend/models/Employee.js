@@ -22,8 +22,8 @@ const EmployeeSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'leave', 'resigned', 'pending', 'begin'],
-      default: 'begin',
+      enum: ['active', 'leave', 'resigned', 'pending'],
+      default: 'pending',
     },
     startDate: { type: Date, default: Date.now },
     role: {

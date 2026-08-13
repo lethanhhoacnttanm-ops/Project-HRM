@@ -130,24 +130,6 @@ const LoginPage = () => {
           </Button>
         </Form>
       </Spin>
-
-      <div className="flex justify-end sm:justify-center mt-4.5 pt-3.5 border-t border-dashed border-[rgba(148,163,184,0.3)]">
-        <Segmented
-          value="login"
-          onChange={(val) => {
-            if (val === 'register') {
-              navigate('/register');
-            }
-          }}
-          block
-          size="large"
-          className="rounded-2xl! font-medium bg-gray-100"
-          options={[
-            { label: 'Đăng nhập', value: 'login' },
-            { label: 'Đăng ký', value: 'register' },
-          ]}
-        />
-      </div>
     </div>
   );
 }
