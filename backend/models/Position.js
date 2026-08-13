@@ -38,4 +38,6 @@ const positionSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-export const Position = mongoose.model('Position', positionSchema);
+const PositionModel = mongoose.model('positions', positionSchema);
+
+export default PositionModel;

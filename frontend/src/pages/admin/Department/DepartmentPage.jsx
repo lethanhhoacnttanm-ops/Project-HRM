@@ -1,16 +1,224 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DepartmentStats from "../../../components/admin/Department/DepartmentStats.jsx";
 import DepartmentTabView from "../../../components/admin/Department/DepartmentTabView.jsx";
 import DepartmentFilter from "../../../components/admin/Department/DepartmentFilter.jsx";
-import DepartmentTable from "../../../components/admin/Department/DepartmentTable.jsx";
 import DepartmentHierarchy from "../../../components/admin/Department/DepartmentHierarchy.jsx";
 import DepartmentModal from "../../../components/admin/Department/DepartmentModal.jsx";
+import DepartmentTable from "../../../components/admin/Department/DepartmentTable.jsx";
+
+import { employeeService } from '../../../services/employee.service.js';
+import { departmentService } from "../../../services/department.service.js";
+import { positionService } from "../../../services/position.service.js";
+
+import { toast } from "sonner";
+
 
 export default function DepartmentPage() {
-  const [viewMode, setViewMode] = useState("table"); 
+  const [viewMode, setViewMode] = useState("table");
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
+
+  const [pageNumber] = useState(1);
+
+  const [pageSize] = useState(5);
+
+  const [managerOptions, setManagerOptions] = useState([]);
+
+  const [dataDepartment, setDataDepartment] = useState([])
+
+  const [dataPosition, setDataPosition] = useState([])
+
+  const [dataEmployee, setDataEmployee] = useState([])
+  const [filteredPositions, setFilteredPositions] = useState([]);
+  const [levelOptions, setLevelOptions] = useState([]);
+
+  const [modalState, setModalState] = useState({ isOpen: false, mode: 'create', data: null });
+
+  useEffect(() => {
+    if (modalState.isOpen && modalState.mode === "create") {
+      const fetchManagers = async () => {
+        try {
+
+          const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'MANAGER');
+          if (res?.success) {
+            setManagerOptions(res.dataEmp);
+          } else {
+            setManagerOptions([]);
+          }
+        } catch (error) {
+          setEmployees([]);
+          toast.error('Thất bại', {
+            description: error.message || 'Không thể lấy danh sách trưởng phòng!',
+          });
+        }
+      };
+
+      fetchManagers();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "table") {
+      const fetchEmployee = async () => {
+        try {
+
+          const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE');
+          if (res?.success) {
+            setDataEmployee(res.dataEmp);
+          } else {
+            setDataEmployee([]);
+          }
+        } catch (error) {
+          setDataEmployee([]);
+          toast.error('Thất bại', {
+            description: error.message || 'Không thể lấy danh sách nhân viên!',
+          });
+        }
+      };
+
+      fetchEmployee();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "table") {
+      const fetchDepartment = async () => {
+        try {
+          const res = await departmentService.getAllList();
+          if (res?.success) {
+            setDataDepartment(res?.dataList);
+          } else {
+            setDataDepartment([]);
+          }
+        } catch (error) {
+          toast.error('Thất bại', {
+            description: error.message || 'Không thể lấy danh sách phòng ban!',
+          });
+        }
+      };
+
+      fetchDepartment();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "table") {
+      const fetchPosition = async () => {
+        try {
+          const res = await positionService.getAllList();
+          if (res?.success) {
+            setDataPosition(res?.dataList);
+          } else {
+            setDataPosition([]);
+          }
+        } catch (error) {
+          toast.error('Thất bại', {
+            description: error.message || 'Không thể lấy danh sách vị trí cho phòng ban!',
+          });
+        }
+      };
+
+      fetchPosition();
+    }
+  }, []);
+
+
+  const handleOpenModal = (mode, data) => {
+    setModalState({ isOpen: true, mode, data });
+  };
+
+  const handleCloseModal = () => {
+    setModalState({ isOpen: false, mode: 'create', data: null });
+  };
+
+  const handleCreateDepartment = async (formData) => {
+    try {
+      console.log('Dữ liệu cha nhận được từ con:', formData);
+
+      const res = await departmentService.createDepartment(formData);
+
+      toast.success('Đăng ký thành công!', {
+        description: res.message || `Tài khoản nhân viên ${res.data?.fullName} đã được khởi tạo.`,
+        position: 'top-right',
+        duration: 3000,
+      });
+      handleCloseModal();
+
+    } catch (error) {
+      const responseData = error.response?.data;
+
+      if (responseData?.errors && Array.isArray(responseData.errors)) {
+        responseData.errors.forEach(err => {
+          toast.error('Dữ liệu không hợp lệ', {
+            description: err.message || JSON.stringify(err)
+          });
+        });
+        return;
+      }
+
+      const errorMsg = responseData?.message || "Có lỗi xảy ra, vui lòng thử lại!";
+      toast.error('Đăng ký thất bại!', {
+        description: errorMsg,
+      });
+    }
+  };
+
+  const handleCreatePosition = async (formData) => {
+    try {
+      console.log('Dữ liệu cha nhận được từ con:', formData);
+
+      const res = await positionService.createPosition(formData);
+
+      toast.success('Tạo mới vị trí thành công!', {
+        description: res.message,
+        position: 'top-right',
+        duration: 3000,
+      });
+      handleCloseModal();
+
+    } catch (error) {
+      const responseData = error.response?.data;
+
+      if (responseData?.errors && Array.isArray(responseData.errors)) {
+        responseData.errors.forEach(err => {
+          toast.error('Dữ liệu không hợp lệ', {
+            description: err.message || JSON.stringify(err)
+          });
+        });
+        return;
+      }
+
+      const errorMsg = responseData?.message || "Có lỗi xảy ra, vui lòng thử lại!";
+      toast.error('Đăng ký thất bại!', {
+        description: errorMsg,
+      });
+    }
+  };
+
+  const handleDepartmentChange = (deptId) => {
+    const matched = positionOptions.filter(
+      (pos) => pos.departmentId === deptId || pos.departmentId?._id === deptId
+    );
+    setFilteredPositions(matched);
+  };
+
+  const handleSelectPosition = (posId) => {
+    const selectedPos = positionOptions?.find(
+      (p) => p._id === posId || p.value === posId
+    );
+
+    if (selectedPos && selectedPos.allowedLevels) {
+      setLevelOptions(
+        selectedPos.allowedLevels.map((lvl) => ({
+          value: lvl,
+          label: lvl,
+        }))
+      );
+    } else {
+      setLevelOptions([]);
+    }
+  };
 
   return (
     <div className="space-y-6 p-2">
@@ -34,10 +242,12 @@ export default function DepartmentPage() {
           <DepartmentFilter
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            onOpenAddModal={() => setIsAddModalOpen(true)}
+            onOpenAddModal={handleOpenModal}
           />
           <DepartmentTable
-            onSelectDepartment={(dept) => setSelectedDepartment(dept)}
+            onSelectDepartment={handleOpenModal}
+            departments={dataDepartment}
+            positions={dataPosition}
           />
         </div>
       ) : (
@@ -45,86 +255,22 @@ export default function DepartmentPage() {
       )}
 
       <DepartmentModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        title="Thêm phòng ban mới"
-      >
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Tên phòng ban
-            </label>
-            <input
-              type="text"
-              placeholder="Ví dụ: Engineering & Tech"
-              className="w-full border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Mã chi phí (Cost Center)
-            </label>
-            <input
-              type="text"
-              placeholder="Ví dụ: Cost Center: 4022"
-              className="w-full border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Trưởng phòng
-            </label>
-            <select className="w-full border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              <option>Sarah Mitchell</option>
-              <option>David Chen</option>
-              <option>Elena Rodriguez</option>
-            </select>
-          </div>
-          <div className="pt-4 flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setIsAddModalOpen(false)}
-              className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              onClick={() => setIsAddModalOpen(false)}
-              className="px-4 py-2 text-xs font-semibold bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-            >
-              Lưu phòng ban
-            </button>
-          </div>
-        </form>
-      </DepartmentModal>
+        isOpen={modalState.isOpen}
+        onClose={handleCloseModal}
+        mode={modalState.mode}
+        managerOptions={managerOptions}
 
-      <DepartmentModal
-        isOpen={!!selectedDepartment}
-        onClose={() => setSelectedDepartment(null)}
-        title="Chi tiết phòng ban"
-      >
-        {selectedDepartment && (
-          <div className="space-y-3 text-xs">
-            <div className="p-3 bg-indigo-50 rounded-lg">
-              <p className="text-slate-500">Tên phòng ban:</p>
-              <p className="font-bold text-slate-800 text-sm">{selectedDepartment.name}</p>
-            </div>
-            <div>
-              <p className="text-slate-500">Mã chi phí:</p>
-              <p className="font-semibold text-slate-700">{selectedDepartment.costCenter}</p>
-            </div>
-            <div>
-              <p className="text-slate-500">Trưởng phòng:</p>
-              <p className="font-semibold text-slate-700">{selectedDepartment.managerName}</p>
-            </div>
-            <div>
-              <p className="text-slate-500">Số lượng thành viên:</p>
-              <p className="font-semibold text-indigo-600">{selectedDepartment.members}</p>
-            </div>
-          </div>
-        )}
-      </DepartmentModal>
+        onSubmit={handleCreateDepartment}
+        onSubmitPosition={handleCreatePosition}
+        onSubmitLevel={handleSelectPosition}
+        onSubmitDepartmentChange={handleDepartmentChange}
+
+        departments={modalState.data}
+        departmentOptions={dataDepartment}
+        employeeOptions={dataEmployee}
+        positionOptions={filteredPositions}
+        levelOptions={levelOptions}
+      />
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default function DepartmentFilter({
         </Button>
 
         <Button     
-          onClick={onOpenAddModal}
+          onClick={() => onOpenAddModal('create')}
           className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md transition-all"
         >
           <Plus className="w-4 h-4" />

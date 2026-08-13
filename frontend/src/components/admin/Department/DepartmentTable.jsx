@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import {
-  Code2,
-  Palette,
-  Landmark,
-  Megaphone,
-  User,
+  Building2,
   MoreVertical,
   ChevronLeft,
   ChevronRight,
@@ -27,73 +23,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const initialDepartments = [
-  {
-    id: 1,
-    name: "Engineering & Tech",
-    costCenter: "Cost Center: 4022",
-    icon: Code2,
-    iconBg: "bg-emerald-50 text-emerald-600",
-    managerName: "Sarah Mitchell",
-    managerRole: "VP of Engineering",
-    managerAvatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-    isVacant: false,
-    members: "245 Thành viên",
-    status: true,
-  },
-  {
-    id: 2,
-    name: "Design & UX",
-    costCenter: "Cost Center: 4025",
-    icon: Palette,
-    iconBg: "bg-emerald-50 text-emerald-600",
-    managerName: "David Chen",
-    managerRole: "Creative Director",
-    managerAvatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-    isVacant: false,
-    members: "32 Thành viên",
-    status: true,
-  },
-  {
-    id: 3,
-    name: "Finance & Payroll",
-    costCenter: "Cost Center: 1001",
-    icon: Landmark,
-    iconBg: "bg-emerald-50 text-emerald-600",
-    managerName: "Elena Rodriguez",
-    managerRole: "CFO",
-    managerAvatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    isVacant: false,
-    members: "18 Thành viên",
-    status: true,
-  },
-  {
-    id: 4,
-    name: "Marketing",
-    costCenter: "Cost Center: 2055",
-    icon: Megaphone,
-    iconBg: "bg-emerald-50 text-emerald-600",
-    managerName: "Position Vacant",
-    managerRole: "Hiring in progress",
-    isVacant: true,
-    members: "85 Thành viên",
-    status: true,
-  },
-];
 
-export default function DepartmentTable({ onSelectDepartment }) {
-  const [departments, setDepartments] = useState(initialDepartments);
-
-  const toggleStatus = (id) => {
-    setDepartments((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, status: !item.status } : item
-      )
-    );
-  };
+export default function DepartmentTable({ onSelectDepartment, departments, positions }) {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
@@ -119,17 +50,18 @@ export default function DepartmentTable({ onSelectDepartment }) {
         </TableHeader>
 
         <TableBody className="divide-y divide-slate-100 text-xs">
+          {console.log(departments)}
+          {console.log(positions)}
           {departments.map((row) => {
-            const IconComponent = row.icon;
             return (
               <TableRow
-                key={row.id}
+                key={row?._id}
                 className="hover:bg-slate-50/80 transition-colors"
               >
                 <TableCell className="py-4 px-6">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${row.iconBg}`}>
-                      <IconComponent className="w-4 h-4" />
+                      <Building2 className="w-4 h-4 text-blue-500" />
                     </div>
                     <div>
                       <p className="font-bold text-slate-800 text-sm">
@@ -143,31 +75,12 @@ export default function DepartmentTable({ onSelectDepartment }) {
                 </TableCell>
 
                 <TableCell className="py-4 px-6">
-                  <div className="flex items-center gap-3">
-                    {row.isVacant ? (
-                      <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                        <User className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <img
-                        src={row.managerAvatar}
-                        alt={row.managerName}
-                        className="w-8 h-8 rounded-full object-cover border"
-                      />
-                    )}
-                    <div>
-                      <p
-                        className={`font-semibold ${
-                          row.isVacant ? "text-rose-600" : "text-slate-800"
-                        }`}
-                      >
-                        {row.managerName}
-                      </p>
-                      <p className="text-[11px] text-slate-400">
-                        {row.managerRole}
-                      </p>
-                    </div>
-                  </div>
+                  <Badge
+                    variant="secondary"
+                    className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none"
+                  >
+                    {row.manager || "Lê Thanh Hòa"}
+                  </Badge>
                 </TableCell>
 
                 <TableCell className="py-4 px-6">
@@ -175,22 +88,24 @@ export default function DepartmentTable({ onSelectDepartment }) {
                     variant="secondary"
                     className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none"
                   >
-                    {row.members}
+                    {"300 nhân sự"}
                   </Badge>
                 </TableCell>
 
                 <TableCell className="py-4 px-6 text-center">
                   <div className="flex justify-center">
-                    <Switch
-                      checked={row.status}
-                      onCheckedChange={() => toggleStatus(row.id)}
-                    />
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-50  text-green-600 hover:bg-indigo-100 font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none"
+                    >
+                      {row.status === "ACTIVE" ? "Hoạt động" : "Không hoạt động"}
+                    </Badge>
                   </div>
                 </TableCell>
 
                 <TableCell className="py-4 px-6 text-center">
                   <DropdownMenu>
-                    <DropdownMenuTrigger>
+                    <DropdownMenuTrigger render={(
                       <Button
                         variant="ghost"
                         size="icon"
@@ -198,15 +113,30 @@ export default function DepartmentTable({ onSelectDepartment }) {
                       >
                         <MoreVertical className="w-4 h-4" />
                       </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-40 rounded-xl">
+                    )} />
+                    <DropdownMenuContent align="end" className="w-40 rounded-xl space-y-1">
                       <DropdownMenuItem
-                        onClick={() => onSelectDepartment(row)}
-                        className="text-xs font-medium cursor-pointer"
+                        onClick={() => onSelectDepartment('detail', row)}
+                        className="text-xs font-medium cursor-pointer bg-yellow-50 text-yellow-700"
                       >
                         Xem thông tin
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-xs font-medium cursor-pointer">
+                      <DropdownMenuItem
+                        onClick={() => onSelectDepartment('employees', row)}
+                        className="text-xs font-medium cursor-pointer bg-orange-50 text-orange-700"
+                      >
+                        Thêm nhân sự
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => onSelectDepartment('position', row)}
+                        className="text-xs font-medium cursor-pointer bg-violet-50 text-violet-700"
+                      >
+                        Thêm vị trí
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => onSelectDepartment('edit', row)}
+                        className="text-xs font-medium cursor-pointer"
+                      >
                         Chỉnh sửa
                       </DropdownMenuItem>
                       <DropdownMenuItem className="text-xs font-medium text-rose-600 focus:text-rose-600 cursor-pointer">

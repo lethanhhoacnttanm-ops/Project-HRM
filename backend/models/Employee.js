@@ -10,10 +10,14 @@ const EmployeeSchema = new mongoose.Schema(
     gender: { type: String, enum: ['Nam', 'Nữ', 'Khác'] },
     dateOfBirth: { type: Date },
     identityCard: { type: String, unique: true, sparse: true },
-    position: { 
+    position: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'positions',
       default: null,
+    },
+    level: {
+      type: String, 
+      default: 'Intern'
     },
     department: {
       type: mongoose.Schema.Types.ObjectId,
