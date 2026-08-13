@@ -1,14 +1,9 @@
 import axiosClient from '../config/axios';
 
 export const employeeService = {
-  getAllEmployees: async (page, limit, role, status) => { 
+  getAllEmployees: async (page, limit, role, status) => {
     return await axiosClient.get('/employees', {
-      params: {
-        page: page,
-        limit: limit,
-        role: role,
-        status: status
-      },
+      params: { page, limit, role, status },
     });
   },
 
@@ -17,14 +12,14 @@ export const employeeService = {
   },
 
   getMyProfile: async () => {
-    return await axiosClient.get('/allemployees/me');
+    return await axiosClient.get('/employees/me');
   },
 
   updateMyProfile: async (data) => {
-    return await axiosClient.put('/allemployees/me', data);
+    return await axiosClient.put('/employees/me', data);
   },
 
   changePassword: async (data) => {
-    return await axiosClient.put('/allemployees/me/password', data);
+    return await axiosClient.put('/employees/me/password', data);
   },
 };

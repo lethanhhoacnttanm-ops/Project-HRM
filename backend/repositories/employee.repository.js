@@ -40,10 +40,6 @@ class EmployeeRepository {
     return await EmployeeModel.findOne({ role });
   }
 
-  async findById(id) {
-    return await EmployeeModel.findById(id);
-  }
-
   async findByIdWithPassword(id) {
     return await EmployeeModel.findById(id).select("+password");
   }

@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { employeeService } from "@/services/employee.service";
-// import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from "@/hooks/useAuth";
 
 const ProfilePage = () => {
-  // const { user, handleLogin } = useAuth(); // dùng để refresh user sau khi update
+  const { user, handleLogin } = useAuth(); // dùng để refresh user sau khi update
   const [activeTab, setActiveTab] = useState("profile"); // profile | account
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
