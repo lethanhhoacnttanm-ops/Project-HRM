@@ -44,6 +44,15 @@ class EmployeeRepository {
     return await EmployeeModel.findById(id).select("+password");
   }
 
+  async updatedEmploye(id, payload) {
+    const result = await EmployeeModel.findByIdAndUpdate(
+      id, 
+      payload, 
+      { new: true, runValidators: true } 
+    ).lean();
+    return result;
+  }
+
   async updateEditFileById(id, payload) {
       const result = await EmployeeModel.findByIdAndUpdate(
       id, 

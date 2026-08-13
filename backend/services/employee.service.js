@@ -54,6 +54,17 @@ class EmployeeService {
         return updatedData;
     }
 
+    async updateEmployeePosition(id, payload) {
+        const existingEmp = await employeeRepository.findById(id);
+        if (!existingEmp) {
+            throw new Error("Không tìm thấy nhân viên này!");
+        }
+
+        const updatedData = await employeeRepository.updatedEmploye(id, payload);
+
+        return updatedData;
+    }
+
     // ===== EMP-Profile =====
     async getMyProfile(employeeId) {
         const employee = await employeeRepository.findById(employeeId);

@@ -1,10 +1,13 @@
 import express from 'express';
 import employeesController from '../controllers/employee.controller.js';
 import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
+import employeeController from '../controllers/employee.controller.js';
 
 const router = express.Router();
 
 router.get('/', verifyToken, checkRole('ADMIN'), employeesController.getAllEmployees);
+
+router.put('/assign-department', verifyToken, checkRole('ADMIN'), employeeController.assignEmployeeToDepartment);
 
 router.put('/:id', verifyToken, checkRole('ADMIN'), employeesController.updateEmployee);
 

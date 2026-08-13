@@ -41,6 +41,30 @@ class EmployeesController {
     }
   }
 
+   async assignEmployeeToDepartment (req, res) {
+    try {
+      const { employeeId, departmentId, positionId, level } = req.body;
+
+      const updatedEmployee = await employeeService.updateEmployeePosition(
+        employeeId,
+        {
+          department: departmentId,
+          position: positionId,
+          level: level
+        },
+        { new: true }
+      ).populate('department').populate('position');
+
+      return res.status(200).json({
+        success: true,
+        message: "Gán nhân sự vào phòng ban thành công!",
+        data: updatedEmployee
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, error: error.message });
+    }
+  };
+
   
 
   // ===== EMP-Profile =====

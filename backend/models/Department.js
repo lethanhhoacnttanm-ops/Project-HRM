@@ -2,33 +2,32 @@ import mongoose from 'mongoose';
 
 const DepartmentSchema = new mongoose.Schema(
   {
-    name: { 
-        type: String, 
-        required: true, 
-        trim: true 
+    name: {
+      type: String,
+      required: true,
+      trim: true
     },
-    costCenter: { 
-        type: String, 
-        required: true 
-    }, 
-    icon: { 
-        type: String, 
-        default: '' 
+    costCenter: {
+      type: String,
+      required: true,
+      unique: true,
+      uppercase: true,
+      trim: true
     },
     manager: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'employees',
       default: null,
     },
-    parentDepartment: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'departments',
-      default: null,
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE'],
+      default: 'ACTIVE'
     },
-    status: { 
-        type: Boolean, 
-        default: true 
-    },
+    description: {
+      type: String,
+      default: ''
+    }
   },
   { timestamps: true }
 );
