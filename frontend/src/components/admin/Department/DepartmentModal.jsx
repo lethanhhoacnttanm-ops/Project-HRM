@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form, Input, Select } from 'antd';
 import { Building2, Hash, AlignLeft, Users, User2, Briefcase } from 'lucide-react';
 
-const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSubmitPosition, departments, departmentOptions, employeeOptions, positionOptions, levelOptions, onSubmitLevel, onSubmitDepartmentChange }) => {
+const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSubmitEmployee, onSubmitPosition, departments, departmentOptions, employeeOptions, positionOptions, levelOptions, onSubmitLevel, onSubmitDepartmentChange }) => {
   const isCreate = mode === "create";
   const isDetails = mode === "detail";
   const isEdit = mode === "edit"
@@ -18,12 +18,6 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
   const isEmployee = mode === "employees"
 
   const [form] = Form.useForm();
-
-  console.log("📦 FULL PROPS TỪ CHA XUỐNG MODAL:", {
-    departmentOptions,
-    positionOptions,
-    employeeOptions
-  });
 
   const getModalTitle = () => {
     if (isCreate) return 'Thêm phòng ban mới';
@@ -72,6 +66,36 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
     console.log("Payload gán nhân sự:", payload);
     onSubmitEmployee(payload);
   };
+
+  // Gom nhóm dữ liệu liên quan đến phòng ban hiện tại ngay trên frontend
+  const departmentWithDetails = React.useMemo(() => {
+    if (!departments || typeof departments !== 'object') return null;
+
+    const deptId = departments._id;
+
+    // 1. Lọc các vị trí thuộc phòng ban này
+    const positions = positionOptions?.filter(
+      (pos) => pos.departmentId === deptId || pos.departmentId?._id === deptId
+    ) || [];
+
+    // 2. Lọc các nhân viên thuộc phòng ban này
+    const employees = employeeOptions?.filter(
+      (emp) => emp.department === deptId || emp.department?._id === deptId
+    ) || [];
+
+    // 3. Trích xuất danh sách cấp bậc (level) độc lập của nhân viên trong phòng
+    const levels = [...new Set(employees.map((emp) => emp.level))].filter(Boolean);
+
+    // Trả về một object duy nhất chứa tất cả thông tin đã gộp
+    return {
+      ...departments,
+      positions,                                    // Mảng các object vị trí
+      employees,                                    // Mảng các object nhân viên
+      totalEmployees: employees.length,             // Tổng số nhân sự
+      positionNames: positions.map(p => p.name).join(", "), // Chuỗi tên vị trí để hiển thị
+      levelsText: levels.join(", ")                 // Chuỗi cấp bậc để hiển thị
+    };
+  }, [departments, positionOptions, employeeOptions]);
 
   return (
     <Dialog
@@ -158,32 +182,33 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
           </Form>
         )}
 
-        {isDetails && (
+        {isDetails && departmentWithDetails && (
           <div className="space-y-6">
             <div className="flex items-center gap-4 p-5 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-2xl">
               <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <Building2 className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Phòng {departments.name}</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Phòng {departmentWithDetails.name}</h3>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-lg">
-                    <Hash className="w-3 h-3" /> {departments.costCenter}
+                    <Hash className="w-3 h-3" /> {departmentWithDetails.costCenter}
                   </span>
                   <span className="inline-flex items-center gap-1 text-xs font-medium px-2 py-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg">
-                    {departments.status === "ACTIVE" ? "Đang hoạt động" : "Ngưng hoạt động"}
+                    {departmentWithDetails.status === "ACTIVE" ? "Đang hoạt động" : "Ngưng hoạt động"}
                   </span>
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+
               <div className="p-4 bg-slate-50 dark:bg-[#141414] rounded-xl border border-gray-100 dark:border-gray-800">
                 <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1 text-xs font-medium">
                   <User2 className="w-4 h-4" /> Trưởng phòng
                 </div>
                 <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-                  {departments.manager === null ? "Chưa có trưởng phòng" : departments.manager}
+                  {departmentWithDetails.manager || "Chưa có trưởng phòng"}
                 </div>
               </div>
 
@@ -192,7 +217,25 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                   <Users className="w-4 h-4" /> Tổng nhân sự
                 </div>
                 <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm">
-                  Chưa có nhân sự
+                  {departmentWithDetails.totalEmployees > 0 ? `${departmentWithDetails.totalEmployees} nhân viên` : "Chưa có nhân sự"}
+                </div>
+              </div>
+
+              <div className="p-4 bg-slate-50 dark:bg-[#141414] rounded-xl border border-gray-100 dark:border-gray-800">
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1 text-xs font-medium">
+                  <Users className="w-4 h-4" /> Vị trí công việc
+                </div>
+                <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
+                  {departmentWithDetails.positionNames || "Chưa có vị trí"}
+                </div>
+              </div>
+
+              <div className="p-4 bg-slate-50 dark:bg-[#141414] rounded-xl border border-gray-100 dark:border-gray-800">
+                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1 text-xs font-medium">
+                  <Users className="w-4 h-4" /> Cấp bậc nhân sự
+                </div>
+                <div className="font-semibold text-gray-900 dark:text-gray-100 text-sm truncate">
+                  {departmentWithDetails.levelsText || "Chưa có cấp bậc"}
                 </div>
               </div>
 
@@ -201,9 +244,10 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                   <AlignLeft className="w-4 h-4" /> Chức năng / Nhiệm vụ
                 </div>
                 <div className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
-                  {departments.description}
+                  {departmentWithDetails.description || "Chưa có mô tả cho phòng ban này."}
                 </div>
               </div>
+
             </div>
 
             <div className="flex justify-end pt-2">
@@ -318,6 +362,9 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
               <h4 className="text-base font-bold text-gray-900 dark:text-white">
                 Gán nhân viên vào cơ cấu tổ chức
               </h4>
+              {
+                console.log("Dữ liệu", positionOptions)
+              }
             </div>
 
             <Form.Item
@@ -332,7 +379,10 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                 className="w-full [&>.ant-select-selector]:rounded-xl!"
                 showSearch
                 optionFilterProp="label"
-                options={employeeOptions}
+                options={employeeOptions?.map((emp) => ({
+                  value: emp._id,
+                  label: emp.fullName
+                }))}
               />
             </Form.Item>
 
@@ -350,7 +400,10 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                   form.setFieldsValue({ position: undefined, level: undefined });
                   if (onSubmitDepartmentChange) onSubmitDepartmentChange(deptId);
                 }}
-                options={departmentOptions}
+                options={departmentOptions?.map((emp) => ({
+                  value: emp._id,
+                  label: emp.name
+                }))}
               />
             </Form.Item>
 
@@ -366,9 +419,12 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                 className="w-full [&>.ant-select-selector]:rounded-xl!"
                 onChange={(posId) => {
                   form.setFieldsValue({ level: undefined });
-                  if (onSubmitLevel) onSubmitLevel(posId); 
+                  if (onSubmitLevel) onSubmitLevel(posId);
                 }}
-                options={positionOptions}
+                options={positionOptions?.map((pos) => ({
+                  value: pos._id,
+                  label: pos.name
+                }))}
               />
             </Form.Item>
 
@@ -376,7 +432,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
               <Select
                 size="large"
                 placeholder="-- Chọn cấp bậc --"
-                options={levelOptions} 
+                options={levelOptions}
               />
             </Form.Item>
 

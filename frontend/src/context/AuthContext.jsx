@@ -75,23 +75,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const handleRegister = async (formData) => {
-    setLoading(true);
-    try {
-      const response = await authService.register(formData);
-      if (response.success) {
-        setUser(response.data);
-      }
-      return response;
-    } catch (error) {
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ setUser ,user, loading, isInitializing, handleRegister, handleLogin, handleLogout }}>
+    <AuthContext.Provider value={{ setUser ,user, loading, isInitializing, handleLogin, handleLogout }}>
       {isInitializing ? (
         <div className="min-h-screen flex items-center justify-center bg-slate-50">
           <div className="text-xs font-bold text-gray-400 animate-pulse">Đang tải dữ liệu...</div>

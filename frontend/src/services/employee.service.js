@@ -7,6 +7,14 @@ export const employeeService = {
     });
   },
 
+  register: async (registerData) => {
+    return await axiosClient.post('/employees/register', registerData);
+  },
+
+  assignEmployee: async (payload) => {
+    return await axiosClient.put('/employees/assign-department', payload);
+  },
+
   updateEmployee: async (id, payload) => {
     return await axiosClient.put(`/employees/${id}`, payload);
   },
