@@ -10,7 +10,7 @@ import {
   LogOut,
 } from 'lucide-react';
 
-import { attendanceService } from '@/services/attendanceService';
+import { attendanceService } from '@/services/attendance.service';
 
 const statusStyle = {
   'Đúng giờ': {

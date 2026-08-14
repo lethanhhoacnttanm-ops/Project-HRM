@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { leaveService } from '@/services/leaveService';
+import { leaveService } from '@/services/leaveService.js';
 
 const LEAVE_TYPES = ['Nghỉ phép năm', 'Nghỉ ốm', 'Nghỉ việc riêng'];
 
@@ -121,7 +121,7 @@ const LeaveRequestPage = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Nghỉ phép</h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             Gửi yêu cầu nghỉ phép và theo dõi trạng thái phê duyệt
           </p>
         </div>
@@ -135,13 +135,13 @@ const LeaveRequestPage = () => {
       {showForm && (
         <form
           onSubmit={onSubmit}
-          className="rounded-xl border bg-white p-6 shadow-sm space-y-4"
+          className="space-y-4 rounded-xl border bg-white p-6 shadow-sm"
         >
-          <h2 className="font-semibold text-lg">Tạo đơn nghỉ phép</h2>
+          <h2 className="text-lg font-semibold">Tạo đơn nghỉ phép</h2>
 
           <div className="space-y-1.5">
             <Label>Loại nghỉ</Label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {LEAVE_TYPES.map((type) => (
                 <button
                   key={type}
@@ -186,7 +186,10 @@ const LeaveRequestPage = () => {
 
           {previewDays > 0 && (
             <p className="text-sm text-muted-foreground">
-              Số ngày nghỉ: <span className="font-semibold text-foreground">{previewDays} ngày</span>
+              Số ngày nghỉ:{' '}
+              <span className="font-semibold text-foreground">
+                {previewDays} ngày
+              </span>
             </p>
           )}
 
@@ -226,9 +229,11 @@ const LeaveRequestPage = () => {
       )}
 
       {/* Danh sách đơn */}
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
-        <div className="px-4 py-3 border-b bg-muted/30">
-          <h2 className="font-semibold text-sm">Đơn của tôi ({leaves.length})</h2>
+      <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+        <div className="border-b bg-muted/30 px-4 py-3">
+          <h2 className="text-sm font-semibold">
+            Đơn của tôi ({leaves.length})
+          </h2>
         </div>
 
         {loading ? (
@@ -245,16 +250,17 @@ const LeaveRequestPage = () => {
         ) : (
           <div className="divide-y">
             {leaves.map((leave) => {
-              const style = statusStyle[leave.status] || statusStyle['Chờ duyệt'];
+              const style =
+                statusStyle[leave.status] || statusStyle['Chờ duyệt'];
               const Icon = style.icon;
               return (
                 <div
                   key={leave._id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/20"
+                  className="flex flex-col justify-between gap-3 p-4 hover:bg-muted/20 sm:flex-row sm:items-center"
                 >
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-sm">{leave.leaveType}</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="text-sm font-semibold">{leave.leaveType}</p>
                       <span
                         className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${style.className}`}
                       >
@@ -273,7 +279,7 @@ const LeaveRequestPage = () => {
                       </p>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground shrink-0">
+                  <p className="shrink-0 text-xs text-muted-foreground">
                     Nộp: {formatDate(leave.createdAt)}
                   </p>
                 </div>
