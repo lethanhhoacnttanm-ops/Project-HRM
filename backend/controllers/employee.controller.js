@@ -51,9 +51,8 @@ class EmployeesController {
           department: departmentId,
           position: positionId,
           level: level
-        },
-        { new: true }
-      ).populate('department').populate('position');
+        }
+      )
 
       return res.status(200).json({
         success: true,
@@ -64,6 +63,29 @@ class EmployeesController {
       return res.status(500).json({ success: false, error: error.message });
     }
   };
+
+  async register(req, res) {
+      try {
+        const { employee } = await employeeService.registerEmployee(req.body);
+       
+        return res.status(201).json({
+          success: true,
+          message: 'Đăng ký tài khoản nhân viên thành công! Chờ quản trị viên duyệt',
+          data: {
+            id: employee._id,
+            employeeCode: employee.code,
+            fullName: employee.fullName,
+            email: employee.email,
+            role: employee.role,
+          },
+        });
+      } catch (error) {
+        return res.status(400).json({
+          success: false,
+          message: error.message,
+        });
+      }
+  }
 
   
 

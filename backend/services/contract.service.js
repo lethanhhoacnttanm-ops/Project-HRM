@@ -1,5 +1,6 @@
 import contractRepository from "../repositories/contract.repository.js";
 import { contractUtils } from "../utils/contract.util.js";
+import { generateEmployeeCode } from "../utils/generateEmployeeCode.js";
 
 class ContractsService {
   async postNewContractEmployee(payload) {
@@ -17,12 +18,15 @@ class ContractsService {
       contractCode: newContractCode,
     };
 
+    const code = generateEmployeeCode()
+
     const newContract = await contractRepository.create(contractDataToSave);
 
     await contractRepository.updateEmployeeStatus(
       payload.employee,
       "active",
-      "EMPLOYEE"
+      "EMPLOYEE",
+      code
     );
 
     return {
@@ -36,7 +40,6 @@ class ContractsService {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
     const pageSize = Math.max(1, parseInt(limit, 10) || 10);
 
-    // Sử dụng trực tiếp hàm findAll() từ repository
     const result = await contractRepository.findAll({
       page: pageNumber,
       limit: pageSize,

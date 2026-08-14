@@ -22,7 +22,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import dayjs from 'dayjs';
 
 const ContractModal = ({ isOpen, onClose, mode, dataPending, dataContract, onSubmit, pendingPagination, setPendingPageNumbe, pendingPageNumbe }) => {
-  const isView = mode === 'view';
+  const isDetail = mode === 'detail';
   const isCreate = mode === 'create';
   const isCancel = mode === 'cancel';
 
@@ -83,41 +83,40 @@ const ContractModal = ({ isOpen, onClose, mode, dataPending, dataContract, onSub
       <DialogContent className="sm:max-w-120 rounded-2xl p-6">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-gray-800">
-            {isCreate ? 'Tạo hợp đồng mới' : isView ? 'Chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
+            {isCreate ? 'Tạo hợp đồng mới' : isDetail ? 'Chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            {isCreate ? 'Tạo hợp đồng mới cho nhân viên' : isView ? 'Xem chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
+            {isCreate ? 'Tạo hợp đồng mới cho nhân viên' : isDetail ? 'Xem chi tiết hợp đồng' : 'Xác nhận hủy hợp đồng'}
           </DialogDescription>
         </DialogHeader>
 
-        {isView && (
+        {isDetail && (
           <div className="space-y-4 py-3 text-xs">
-            {dataContract.map(emp => (
-            <div key={emp._id} className="p-3 bg-slate-50 rounded-xl space-y-2">
+            {console.log(dataContract)}
+            <div key={dataContract._id} className="p-3 bg-slate-50 rounded-xl space-y-2">
               <p>
                 <span className="text-gray-400 w-28 inline-block">Mã HĐ:</span>{' '}
-                <strong className="text-gray-800">{emp?.contractCode}</strong>
+                <strong className="text-gray-800">{dataContract?.contractCode}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Nhân viên:</span>{' '}
-                <strong className="text-gray-800">{emp?.employee?.fullName}</strong>
+                <strong className="text-gray-800">{dataContract?.employee?.fullName}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Email:</span>{' '}
-                <strong className="text-gray-800">{emp?.employee?.email}</strong>
+                <strong className="text-gray-800">{dataContract?.employee?.email}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Loại HĐ:</span>{' '}
-                <strong className="text-indigo-600">{emp?.type}</strong>
+                <strong className="text-indigo-600">{dataContract?.type}</strong>
               </p>
               <p>
                 <span className="text-gray-400 w-28 inline-block">Thời hạn:</span>{' '}
                 <strong className="text-gray-800">
-                  {dayjs(emp?.startDate).format('DD/MM/YYYY')} - {dayjs(emp?.endDate).format('DD/MM/YYYY')}
+                  {dayjs(dataContract?.startDate).format('DD/MM/YYYY')} - {dayjs(dataContract?.endDate).format('DD/MM/YYYY')}
                 </strong>
               </p>
             </div>
-            ))}
             <div className="flex justify-end pt-2">
               <Button type="button" variant="outline" onClick={onClose} className="rounded-xl">
                 Đóng
@@ -183,7 +182,7 @@ const ContractModal = ({ isOpen, onClose, mode, dataPending, dataContract, onSub
                         >
                           <div className="flex flex-col">
                             <span className="font-medium text-slate-800">
-                              {emp.fullName || emp.fullname}
+                              {emp.fullName}
                             </span>
                             {emp.email && (
                               <span className="text-xs text-slate-500">{emp.email}</span>

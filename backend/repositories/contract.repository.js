@@ -7,10 +7,10 @@ class ContractRepository {
     return await ContractModel.create(contractData);
   }
 
-  async updateEmployeeStatus(employeeId, status, role) {
+  async updateEmployeeStatus(employeeId, status, role, code) {
     return await EmployeeModel.findByIdAndUpdate(
       employeeId,
-      { status: status, role: role },
+      { status: status, role: role, code: code },
       { new: true }
     );
   }

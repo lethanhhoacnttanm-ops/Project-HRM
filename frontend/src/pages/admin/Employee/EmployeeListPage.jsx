@@ -26,10 +26,7 @@ const EmployeeListPage = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [viewMode, setViewMode] = useState('table');
 
-
-
-  const { handleRegister } = useAuth();
-
+  
   const [modalState, setModalState] = useState({ isOpen: false, mode: 'view', data: null });
 
   const fetchEmployees = useCallback(async () => {
@@ -57,7 +54,7 @@ const EmployeeListPage = () => {
     try {
       console.log('Dữ liệu cha nhận được từ con:', formData);
 
-      const res = await handleRegister(formData);
+      const res = await employeeService.register(formData)
 
       toast.success('Đăng ký thành công!', {
         description: res.message || `Tài khoản nhân viên ${res.data?.fullName} đã được khởi tạo.`,
