@@ -3,33 +3,8 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
-@custom-variant dark (&:is(.dark *));
-
-.ant-menu-light .ant-menu-item-selected {
-  border-right: 4px solid #2563eb !important; 
-  border-radius: 12px !important;   
-  background-color: #eff6ff !important; 
-  font-weight: 700 !important;
-}
-
-.ant-menu-light .ant-menu-item:hover {
-  border-radius: 12px !important;
-}
-
-/* 1. Kích hoạt Dark Mode dựa trên class .dark thay vì hệ thống */
-@variant dark (&:where(.dark, .dark *));
-
-/* 2. Cài đặt màu nền toàn cục cho toàn bộ ứng dụng */
-@layer base {
-  body {
-    @apply bg-white text-gray-900 transition-colors duration-300;
-  }
-
-  /* Khi thẻ html có class dark, body sẽ tự động lật màu */
-  .dark body {
-    @apply bg-gray-900 text-gray-100;
-  }
-}
+/* Cấu hình Custom Variant cho Dark Mode chuẩn Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -148,9 +123,18 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground transition-colors duration-300 font-sans;
   }
-  html {
-    @apply font-sans;
-  }
+}
+
+/* Custom CSS cho Ant Design Menu giữ nguyên không đổi */
+.ant-menu-light .ant-menu-item-selected {
+  border-right: 4px solid #2563eb !important; 
+  border-radius: 12px !important;   
+  background-color: #eff6ff !important; 
+  font-weight: 700 !important;
+}
+
+.ant-menu-light .ant-menu-item:hover {
+  border-radius: 12px !important;
 }
