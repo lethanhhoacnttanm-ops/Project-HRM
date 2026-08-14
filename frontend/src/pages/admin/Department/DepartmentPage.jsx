@@ -204,11 +204,14 @@ export default function DepartmentPage() {
   };
 
   const handleSelectPosition = (posId) => {
-    const selectedPos = positionOptions?.find(
+    console.log("Đang chọn vị trí với ID:", posId);
+    const selectedPos = dataPosition?.find(
       (p) => p._id === posId || p.value === posId
     );
+    console.log("Vị trí tìm thấy:", selectedPos);
 
     if (selectedPos && selectedPos.allowedLevels) {
+      console.log("Levels tìm thấy:", selectedPos.allowedLevels);
       setLevelOptions(
         selectedPos.allowedLevels.map((lvl) => ({
           value: lvl,
@@ -216,9 +219,28 @@ export default function DepartmentPage() {
         }))
       );
     } else {
+      console.log("Không tìm thấy AllowedLevels cho vị trí này!");
       setLevelOptions([]);
     }
   };
+
+  const handleAssignEmployee = async (payload) => {
+    try {
+      console.log("🚀 Đang gửi payload gán nhân sự:", payload);
+
+      const response = await employeeService.assignEmployee(payload);
+
+      if (response && response.success) {
+        toast.success(response.message || "Gán nhân sự vào phòng ban thành công!");
+
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi gán nhân sự:", error);
+      toast.error(error?.response?.data?.error || "Gán nhân sự thất bại, vui lòng thử lại!");
+    }
+  };
+
 
   return (
     <div className="space-y-6 p-2">
@@ -264,11 +286,12 @@ export default function DepartmentPage() {
         onSubmitPosition={handleCreatePosition}
         onSubmitLevel={handleSelectPosition}
         onSubmitDepartmentChange={handleDepartmentChange}
+        onSubmitEmployee={handleAssignEmployee}
 
         departments={modalState.data}
         departmentOptions={dataDepartment}
         employeeOptions={dataEmployee}
-        positionOptions={filteredPositions}
+        positionOptions={dataPosition}
         levelOptions={levelOptions}
       />
     </div>

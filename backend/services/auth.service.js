@@ -38,49 +38,6 @@ class AuthService {
     return employee;
   }
 
-  async registerEmployee(registerData) {
-    const { fullName, email, dateOfBirth, identityCard, password, confirmPassword, phone, gender, role = 'NONE' } = registerData;
-
-    if(!fullName || !email || !dateOfBirth || !identityCard || !password || !confirmPassword || !phone || !gender){
-      throw new Error('một trường đang bị thiếu hoặc sai!');
-    }
-
-    if (password !== confirmPassword) {
-      throw new Error('Mật khẩu xác nhận không trùng khớp!');
-    }
-
-    const existingEmail = await employeeRepository.findByEmail(email);
-    if (existingEmail) {
-      throw new Error('Email này đã tồn tại trong hệ thống!');
-    }
-
-    const existingIdentity = await employeeRepository.findByIdentityCard(identityCard);
-    if (existingIdentity) {
-      throw new Error('Số CCCD/CMND này đã được sử dụng!');
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const code = generateEmployeeCode();
-
-    const newEmployee = await employeeRepository.create({
-      code: role === "NONE" ? `PENDING_${Date.now()}` : code,
-      fullName,
-      email,
-      dateOfBirth,
-      identityCard,
-      phone,
-      gender,
-      role,
-      password: hashedPassword
-    });
-
-    const employeeResponse = newEmployee.toObject ? newEmployee.toObject() : { ...newEmployee };
-    delete employeeResponse.password;
-
-    return { employee: employeeResponse };
-  }
 
   async createAdminAccount(adminData) {
     const { fullName, email, password } = adminData;

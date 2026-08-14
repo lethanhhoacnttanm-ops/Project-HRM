@@ -2,13 +2,13 @@ import EmployeeModel from "../models/Employee.js";
 
 class EmployeeRepository {
 
-  async FindWithPagination({ skip, limit, filter = {}}) {
+  async FindWithPagination({ skip, limit, filter = {} }) {
     const [totalEmp, dataEmp] = await Promise.all([
       EmployeeModel.countDocuments(filter),
       EmployeeModel.find(filter).skip(skip).limit(limit).lean()
     ])
 
-    return {totalEmp, dataEmp}
+    return { totalEmp, dataEmp }
   }
 
   async findAllEmpoyees() {
@@ -46,20 +46,24 @@ class EmployeeRepository {
 
   async updatedEmploye(id, payload) {
     const result = await EmployeeModel.findByIdAndUpdate(
-      id, 
-      payload, 
-      { new: true, runValidators: true } 
-    ).lean();
+      id,
+      payload,
+      { new: true, runValidators: true }
+    )
+      .populate('department')
+      .populate('position')
+      .lean();
+
     return result;
   }
 
   async updateEditFileById(id, payload) {
-      const result = await EmployeeModel.findByIdAndUpdate(
-      id, 
-      payload, 
-      { new: true, runValidators: true } 
+    const result = await EmployeeModel.findByIdAndUpdate(
+      id,
+      payload,
+      { new: true, runValidators: true }
     ).lean();
-    
+
     return result;
   }
 

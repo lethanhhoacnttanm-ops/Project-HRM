@@ -18,7 +18,7 @@ const ContractListPage = () => {
   const [contractType, setContractType] = useState('Tất cả');
   const [status, setStatus] = useState('Tất cả');
 
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(6);
 
   const [beginEmployees, setBeginEmployees] = useState([]);
   const [beginPageNumber, setBeginPageNumber] = useState(1);
@@ -174,7 +174,7 @@ const ContractListPage = () => {
         onClose={handleCloseModal}
         mode={modalState.mode}
         dataPending={beginEmployees}
-        dataContract={contracts}
+        dataContract={modalState.data}
 
         pendingPagination={beginPaginationInfo}
         setPendingPageNumber={setBeginPageNumber}

@@ -49,29 +49,6 @@ class AuthController {
       message: 'Đăng xuất thành công!',
     });
   }
-
-  async register(req, res) {
-    try {
-      const { employee } = await authService.registerEmployee(req.body);
-     
-      return res.status(201).json({
-        success: true,
-        message: 'Đăng ký tài khoản nhân viên thành công! Chờ quản trị viên duyệt',
-        data: {
-          id: employee._id,
-          employeeCode: employee.code,
-          fullName: employee.fullName,
-          email: employee.email,
-          role: employee.role,
-        },
-      });
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  }
 }
 
 export default new AuthController();

@@ -39,6 +39,7 @@ const ContractTable = ({ contracts, onOpenModal, pageNumber, setPageNumber, pagi
         <Table className="w-full text-left border-collapse text-xs font-semibold">
           <TableHeader>
             <TableRow className="bg-slate-50/80 border-b border-gray-200 text-gray-700 font-exTableRowabold">
+             {console.log(contracts)}
               <TableHead className="py-3.5 px-5">ID</TableHead>
               <TableHead className="py-3.5 px-5">Tên</TableHead>
               <TableHead className="py-3.5 px-5">Loại</TableHead>
@@ -103,7 +104,7 @@ const ContractTable = ({ contracts, onOpenModal, pageNumber, setPageNumber, pagi
                     
                     <DropdownMenuContent align="end" className="w-48 rounded-xl">
                       <DropdownMenuItem
-                        onClick={() => onOpenModal('view', item)}
+                        onClick={() => onOpenModal('detail', item)}
                         className="cursor-pointer gap-2 text-xs font-semibold"
                       >
                         <Eye className="h-4 w-4 text-gray-500" />

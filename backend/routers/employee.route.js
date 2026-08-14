@@ -2,10 +2,14 @@ import express from 'express';
 import employeesController from '../controllers/employee.controller.js';
 import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
 import employeeController from '../controllers/employee.controller.js';
+import { validateRegisterRules, handleValidationRegister } from '../middleware/validateRegister.middleware.js';
+
 
 const router = express.Router();
 
 router.get('/', verifyToken, checkRole('ADMIN'), employeesController.getAllEmployees);
+
+router.post('/register', verifyToken, checkRole('ADMIN'), validateRegisterRules, handleValidationRegister, employeeController.register);
 
 router.put('/assign-department', verifyToken, checkRole('ADMIN'), employeeController.assignEmployeeToDepartment);
 
