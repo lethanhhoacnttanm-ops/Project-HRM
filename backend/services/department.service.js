@@ -27,6 +27,12 @@ class DepartmentService {
     }
   }
 
+  async putNewManager(departmentId, managerId) {
+    const putManager = await departmentRepository.updateNewManager(departmentId,managerId)
+
+    return putManager;
+  }
+
   async getDepartmentDetail(id) {
     const department = await departmentRepository.getInfoDepartment(id);
     if (!department) {

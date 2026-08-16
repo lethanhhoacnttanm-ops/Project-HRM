@@ -7,5 +7,6 @@ const router = express.Router();
 router.post('/', verifyToken, checkRole('ADMIN'), departmentController.postNewDepartment);
 router.get('/', verifyToken, checkRole('ADMIN'), departmentController.getAllListDepartment)
 router.get('/detailsDepartment/:id', verifyToken, checkRole('ADMIN'), departmentController.getAllDepartmentDetailt)
+router.get('/new-manager', verifyToken, checkRole('ADMIN'), departmentController.putNewManagerToDepartment)
 
 export default router;

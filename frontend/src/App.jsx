@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { Toaster } from 'sonner';
 
-import { ConfigProvider, theme as antTheme } from 'antd';
 import { useTheme } from './hooks/usetheme.js';
 
 import AuthLayout from './components/auth/AuthLayout.jsx';
@@ -53,13 +52,9 @@ import SupportRequestPage from './pages/employee/SupportRequestPage.jsx';
 
 
 function App() {
-  const { theme } = useTheme();
+  const { theme } = useTheme();                                     
   return (
-    <ConfigProvider
-      theme={{
-        algorithm: theme === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
-      }}
-    >
+    <>
       <Toaster position="top-right" richColors closeButton theme={theme} />
 
       <Routes>
@@ -118,7 +113,7 @@ function App() {
         <Route path="/unauthorized" element={<div>Bạn không có quyền truy cập!</div>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-    </ConfigProvider>
+    </>
   );
 }
 

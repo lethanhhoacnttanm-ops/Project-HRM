@@ -18,7 +18,7 @@ const ContractFilter = ({
   setStatus,
 }) => {
   return (
-    <div className="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-xs">
+    <div className="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-xs dark:bg-gray-900 dark:border-gray-800">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         <div className="md:col-span-6">
           <div className="relative w-full">
@@ -28,14 +28,14 @@ const ContractFilter = ({
               placeholder="Tìm kiếm theo tên, email, phòng ban,..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 rounded-xl py-2 bg-gray-50/40 border-gray-200"
+              className="pl-9 rounded-xl py-2 bg-gray-50/40 border-gray-200 dark:border-gray-800"
             />
           </div>
         </div>
 
         <div className="md:col-span-3">
           <Select value={contractType} onValueChange={setContractType}>
-            <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/40 border-gray-200">
+            <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/40 border-gray-200 dark:border-gray-800">
               <SelectValue placeholder="Loại hợp đồng" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -47,7 +47,7 @@ const ContractFilter = ({
           </Select>
         </div>
 
-        <div className="md:col-span-3">
+        <div className="md:col-span-3 dark:bg-gray-800 rounded-xl">
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/40 border-gray-200">
               <SelectValue placeholder="Trạng thái" />
