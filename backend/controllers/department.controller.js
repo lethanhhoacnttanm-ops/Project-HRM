@@ -36,6 +36,22 @@ class DepartmentController {
     }
   }
 
+  async putNewManagerToDepartment(req, res) {
+    try {
+      const { manager, departments } = req.body;
+
+      const updatedManager = await departmentService.putNewManager( departments, manager )
+
+      return res.status(200).json({
+        success: true,
+        message: "Gán trưởng phòng vào phòng ban thành công!",
+        data: updatedManager
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, error: error.message });
+    }
+  };
+
   async getAllDepartmentDetailt(req, res) {
     try {
 

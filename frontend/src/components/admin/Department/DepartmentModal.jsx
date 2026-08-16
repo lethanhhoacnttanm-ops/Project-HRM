@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,14 +10,52 @@ import { Button } from "@/components/ui/button";
 import { Form, Input, Select } from 'antd';
 import { Building2, Hash, AlignLeft, Users, User2, Briefcase } from 'lucide-react';
 
-const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSubmitEmployee, onSubmitPosition, departments, departmentOptions, employeeOptions, positionOptions, levelOptions, onSubmitLevel, onSubmitDepartmentChange }) => {
+const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSubmitEmployee, onSubmitManager, onSubmitPosition, departments, departmentOptions, employeeOptions, positionOptions, levelOptions, onSubmitLevel, onSubmitDepartmentChange }) => {
   const isCreate = mode === "create";
   const isDetails = mode === "detail";
   const isEdit = mode === "edit"
+  const isManager = mode === "manager"
   const isPosition = mode === "position"
   const isEmployee = mode === "employees"
 
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (isEmployee) {
+      if (departments && departments._id) {
+        form.setFieldsValue({
+          department: departments._id,
+          position: undefined,
+          level: undefined
+        });
+
+        if (onSubmitDepartmentChange) {
+          onSubmitDepartmentChange(departments._id);
+        }
+      } else {
+        form.setFieldsValue({ department: undefined, position: undefined, level: undefined });
+      }
+    }
+  }, [isEmployee, departments, form, onSubmitDepartmentChange]);
+
+  useEffect(() => {
+    if (departments) {
+      form.setFieldsValue({
+        department: departments._id,
+        manager: departments.manager?._id || departments.manager
+      });
+    } else {
+      form.resetFields(); 
+    }
+  }, [departments, form]);
+
+  const availablePositions = React.useMemo(() => {
+    if (!positionOptions) return [];
+    if (departments && departments._id) {
+      return positionOptions.filter(p => p.departmentId === departments._id || p.departmentId?._id === departments._id);
+    }
+    return positionOptions;
+  }, [positionOptions, departments]);
 
   const getModalTitle = () => {
     if (isCreate) return 'Thêm phòng ban mới';
@@ -62,40 +100,42 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
       positionId: values.position,
       level: values.level
     };
-
-    console.log("Payload gán nhân sự:", payload);
     onSubmitEmployee(payload);
   };
 
-  // Gom nhóm dữ liệu liên quan đến phòng ban hiện tại ngay trên frontend
+  const handleFinishManager = (values) => {
+    const payload = {
+      manager: values.manager,
+      departments: values.department
+    };
+    onSubmitManager(payload);
+  };
+
   const departmentWithDetails = React.useMemo(() => {
     if (!departments || typeof departments !== 'object') return null;
 
     const deptId = departments._id;
 
-    // 1. Lọc các vị trí thuộc phòng ban này
     const positions = positionOptions?.filter(
       (pos) => pos.departmentId === deptId || pos.departmentId?._id === deptId
     ) || [];
 
-    // 2. Lọc các nhân viên thuộc phòng ban này
     const employees = employeeOptions?.filter(
       (emp) => emp.department === deptId || emp.department?._id === deptId
     ) || [];
 
-    // 3. Trích xuất danh sách cấp bậc (level) độc lập của nhân viên trong phòng
     const levels = [...new Set(employees.map((emp) => emp.level))].filter(Boolean);
 
-    // Trả về một object duy nhất chứa tất cả thông tin đã gộp
     return {
       ...departments,
-      positions,                                    // Mảng các object vị trí
-      employees,                                    // Mảng các object nhân viên
-      totalEmployees: employees.length,             // Tổng số nhân sự
-      positionNames: positions.map(p => p.name).join(", "), // Chuỗi tên vị trí để hiển thị
-      levelsText: levels.join(", ")                 // Chuỗi cấp bậc để hiển thị
+      positions,
+      employees,
+      totalEmployees: employees.length,
+      positionNames: positions.map(p => p.name).join(", "),
+      levelsText: levels.join(", ")
     };
   }, [departments, positionOptions, employeeOptions]);
+
 
   return (
     <Dialog
@@ -396,14 +436,12 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                 size="large"
                 placeholder="-- Chọn phòng ban --"
                 className="w-full [&>.ant-select-selector]:rounded-xl!"
+                disabled={Boolean(departments && departments._id)}
                 onChange={(deptId) => {
                   form.setFieldsValue({ position: undefined, level: undefined });
                   if (onSubmitDepartmentChange) onSubmitDepartmentChange(deptId);
                 }}
-                options={departmentOptions?.map((emp) => ({
-                  value: emp._id,
-                  label: emp.name
-                }))}
+                options={departmentOptions?.map((d) => ({ value: d._id, label: d.name }))}
               />
             </Form.Item>
 
@@ -421,10 +459,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                   form.setFieldsValue({ level: undefined });
                   if (onSubmitLevel) onSubmitLevel(posId);
                 }}
-                options={positionOptions?.map((pos) => ({
-                  value: pos._id,
-                  label: pos.name
-                }))}
+                options={availablePositions?.map((pos) => ({ value: pos._id, label: pos.name }))}
               />
             </Form.Item>
 
@@ -433,6 +468,53 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                 size="large"
                 placeholder="-- Chọn cấp bậc --"
                 options={levelOptions}
+              />
+            </Form.Item>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+              <Button type="button" variant="outline" onClick={onClose} className="rounded-xl h-10 px-5">
+                Hủy
+              </Button>
+              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-10 px-6 border-none">
+                Xác nhận gán
+              </Button>
+            </div>
+          </Form>
+        )}
+
+        {isManager && (
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleFinishManager}
+            requiredMark={false}
+            className="space-y-4"
+          >
+            <div className="p-4 bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/40 rounded-2xl mb-4">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                Bổ nhiệm trưởng phòng - Phòng {departments.name} {console.log("data phòng ban đây", departments)}
+              </span>
+              <h4 className="text-base font-bold text-gray-900 dark:text-white">
+                Gán trưởng phòng vào cơ cấu tổ chức
+              </h4>
+            </div>
+
+            <Form.Item
+              name="manager"
+              label={<span className="text-xs font-semibold text-gray-700 dark:text-gray-300">Chọn Trưởng Phòng</span>}
+              rules={[{ required: true, message: 'Vui lòng chọn trưởng phòng!' }]}
+              className="mb-0"
+            >
+              <Select
+                size="large"
+                placeholder="-- Chọn trưởng phòng --"
+                className="w-full [&>.ant-select-selector]:rounded-xl!"
+                showSearch
+                optionFilterProp="label"
+                options={managerOptions?.map((emp) => ({
+                  value: emp._id,
+                  label: emp.fullName
+                }))}
               />
             </Form.Item>
 

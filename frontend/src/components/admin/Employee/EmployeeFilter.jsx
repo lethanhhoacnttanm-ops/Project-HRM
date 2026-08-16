@@ -66,7 +66,7 @@ const EmployeeFilter = ({
               <SelectTrigger className="w-full h-10 rounded-xl bg-gray-50/50 border-gray-200 dark:border-gray-800">
                 <SelectValue placeholder="Chọn phòng ban" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="rounded-xl">
                 <SelectItem value="all">Tất cả phòng ban</SelectItem>
                 <SelectItem value="SmartTeach">SmartTeach</SelectItem>
                 <SelectItem value="CI/CD">CI/CD</SelectItem>

@@ -41,21 +41,21 @@ export default function PromotionStats() {
         return (
           <div
             key={item.id}
-            className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col justify-between"
+            className="p-5 bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-xl shadow-sm dark:shadow-slate-900/40 flex flex-col justify-between transition-all duration-200 hover:shadow-md dark:hover:border-gray-700"
           >
             <div className="flex items-start justify-between">
               <div className={`p-2.5 rounded-lg ${item.iconBg}`}>
                 <Icon className="w-5 h-5" />
               </div>
               {item.badge && (
-                <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/80 px-2.5 py-1 rounded-full">
                   {item.badge}
                 </span>
               )}
             </div>
             <div className="mt-4">
-              <p className="text-sm font-medium text-slate-500">{item.title}</p>
-              <h3 className="text-2xl font-bold text-slate-800 mt-1">{item.value}</h3>
+              <p className="text-sm font-medium text-slate-500 dark:text-gray-400">{item.title}</p>
+              <h3 className="text-2xl font-bold text-slate-800 dark:text-white mt-1">{item.value}</h3>
             </div>
           </div>
         );

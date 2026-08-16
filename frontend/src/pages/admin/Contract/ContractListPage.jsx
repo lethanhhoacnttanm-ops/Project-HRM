@@ -134,8 +134,8 @@ const ContractListPage = () => {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Quản lý hợp đồng lao động</h1>
-          <p className="text-xs text-gray-500 font-medium mt-1">
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight dark:text-white">Quản lý hợp đồng lao động</h1>
+          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-amber-50/50">
             Giám sát các vấn đề pháp lý liên quan đến việc làm, theo dõi thời hạn hợp đồng và đảm bảo tuân thủ pháp luật.
           </p>
         </div>

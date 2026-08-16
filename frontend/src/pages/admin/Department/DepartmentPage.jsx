@@ -197,7 +197,7 @@ export default function DepartmentPage() {
   };
 
   const handleDepartmentChange = (deptId) => {
-    const matched = positionOptions.filter(
+    const matched = dataPosition.filter(
       (pos) => pos.departmentId === deptId || pos.departmentId?._id === deptId
     );
     setFilteredPositions(matched);
@@ -241,15 +241,47 @@ export default function DepartmentPage() {
     }
   };
 
+  const handleAddManager = async (payload) => {
+    try {
+      const response = await departmentService.updateManagerForDepartment(payload);
+
+      if (response && response.success) {
+        toast.success(response.message || "Gán trưởng phòng mới vào phòng ban thành công!");
+
+        handleCloseModal();
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi gán trưởng phòng:", error);
+      toast.error(error?.response?.data?.error || "Gán trưởng phòng thất bại, vui lòng thử lại!");
+    }
+  };
+
+  const filteredDepartment = dataDepartment.filter((item) => {
+    const matchSearch = item?.name.toLowerCase().includes(searchTerm.toLowerCase()) || item?.costCenter.toLowerCase().includes(searchTerm.toLowerCase())
+    return matchSearch;
+  })
+
+  const totalDepartments = Array.isArray(dataDepartment) ? dataDepartment.length : 0;
+
+  const totalEmployees = Array.isArray(dataEmployee) ? dataEmployee.length : 0;
+
+  const unassignedEmployees = Array.isArray(dataEmployee)
+    ? dataEmployee.filter((emp) => !emp.positionId && !emp.departmentId).length
+    : 0;
+
+  const vacantLeadershipPositions = Array.isArray(dataDepartment)
+    ? dataDepartment.filter((dept) => dept.manager === null || dept.manager === undefined).length
+    : 0;
+
 
   return (
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Quản lý phòng ban
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-amber-50/50 mt-1">
             Tổ chức và quản lý các phòng ban và cơ cấu đội nhóm trong công ty của bạn.
           </p>
         </div>
@@ -257,7 +289,12 @@ export default function DepartmentPage() {
         <DepartmentTabView viewMode={viewMode} setViewMode={setViewMode} />
       </div>
 
-      <DepartmentStats />
+      <DepartmentStats
+        totalDepartments={totalDepartments}
+        totalEmployees={totalEmployees}
+        vacantLeadershipPositions={vacantLeadershipPositions}
+        unassignedEmployees={unassignedEmployees}
+      />
 
       {viewMode === "table" ? (
         <div className="space-y-4">
@@ -268,7 +305,7 @@ export default function DepartmentPage() {
           />
           <DepartmentTable
             onSelectDepartment={handleOpenModal}
-            departments={dataDepartment}
+            departments={filteredDepartment}
             positions={dataPosition}
           />
         </div>
@@ -287,12 +324,14 @@ export default function DepartmentPage() {
         onSubmitLevel={handleSelectPosition}
         onSubmitDepartmentChange={handleDepartmentChange}
         onSubmitEmployee={handleAssignEmployee}
+        onSubmitManager={handleAddManager}
 
         departments={modalState.data}
         departmentOptions={dataDepartment}
         employeeOptions={dataEmployee}
-        positionOptions={dataPosition}
+        positionOptions={filteredPositions.length ? filteredPositions : dataPosition}
         levelOptions={levelOptions}
+
       />
     </div>
   );

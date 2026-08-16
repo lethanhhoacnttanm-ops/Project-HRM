@@ -65,7 +65,7 @@ const EmployeeModal = ({ isOpen, onClose, onSubmitCreate, mode, data, onSubmit }
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl rounded-2xl p-6">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-gray-800">
+          <DialogTitle className="text-lg font-bold text-gray-800 dark:text-amber-50/50">
             {getModalTitle()}
           </DialogTitle>
           <DialogDescription className="sr-only">

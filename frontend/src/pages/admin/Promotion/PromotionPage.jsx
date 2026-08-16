@@ -15,16 +15,16 @@ export default function PromotionPage() {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Tiến độ thăng tiến
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Tổ chức và quản lý các phòng ban và cơ cấu đội nhóm trong công ty của bạn.
           </p>
         </div>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md transition-all self-start sm:self-auto"
+          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md transition-all self-start sm:self-auto cursor-pointer border-0"
         >
           <PlusCircle className="w-5 h-5" />
           <span>Tạo đề xuất thăng tiến</span>
@@ -35,7 +35,7 @@ export default function PromotionPage() {
 
       <div className="rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         <PromotionTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        <PromotionTable  activeTab={activeTab} />
+        <PromotionTable activeTab={activeTab} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
