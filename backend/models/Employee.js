@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { PASSWORD_ERROR_MESSAGE, PASSWORD_REGEX } from '../../frontend/src/utils/validators.js'
 
 const EmployeeSchema = new mongoose.Schema(
   {
@@ -16,7 +17,7 @@ const EmployeeSchema = new mongoose.Schema(
       default: null,
     },
     level: {
-      type: String, 
+      type: String,
       default: 'Intern'
     },
     department: {
@@ -35,7 +36,17 @@ const EmployeeSchema = new mongoose.Schema(
       enum: ['ADMIN', 'MANAGER', 'EMPLOYEE', 'NONE'],
       default: 'NONE',
     },
-    password: { type: String, required: true, select: false },
+    password: {
+      type: String,
+      required: true,
+      select: false,
+      validate: {
+        validator: function (value) {
+          return PASSWORD_REGEX.test(value);
+        },
+        message: PASSWORD_ERROR_MESSAGE,
+      },
+    },
   },
   { timestamps: true }
 );

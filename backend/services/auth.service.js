@@ -45,13 +45,14 @@ class AuthService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const employeeCode = generateAdminCode();
+    const generatedCode = generateAdminCode();
 
     const newAdminPayload = {
       fullName: fullName || 'Super Admin',
       email,
-      employeeCode,
-      password: hashedPassword,
+      code: generatedCode,
+      password: hashedPassword, 
+      status: "active",
       identityCard: process.env.ADMIN_IDENTITY,
       role: 'ADMIN',
     };
