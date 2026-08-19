@@ -13,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -24,13 +23,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 
-export default function DepartmentTable({ onSelectDepartment, departments, positions }) {
+export default function DepartmentTable({ onSelectDepartment, departments, allEmployees }) {
+
+  const getEmployeeCountByDept = (deptId, employeesList) => {
+    if (!Array.isArray(employeesList) || !deptId) return 0;
+
+    return employeesList.filter(emp => {
+      const empDept = emp.departmentId?._id || emp.departmentId || emp.department;
+      if (!empDept) return false;
+
+      const extractedId = typeof empDept === 'object' ? empDept._id : empDept;
+
+      return String(extractedId) === String(deptId);
+    }).length;
+  };
 
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm dark:shadow-slate-900/40">
       <Table>
         <TableHeader className="bg-slate-50/80 dark:bg-slate-800/60">
           <TableRow className="hover:bg-transparent border-slate-200 dark:border-slate-800">
+            {console.log(departments)}
             <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider">
               Tên phòng ban
             </TableHead>
@@ -77,7 +90,7 @@ export default function DepartmentTable({ onSelectDepartment, departments, posit
                     variant="secondary"
                     className="bg-indigo-50 text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-300 font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none"
                   >
-                    {row.manager || "Chưa có"}
+                    {row.manager || "Chưa cập nhật"}
                   </Badge>
                 </TableCell>
 
@@ -86,7 +99,10 @@ export default function DepartmentTable({ onSelectDepartment, departments, posit
                     variant="secondary"
                     className="bg-indigo-50 text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-300 font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none"
                   >
-                    {row.totalEmployees !== undefined ? `${row.totalEmployees} nhân sự` : "300 nhân sự"}
+                    {(() => {
+                      const count = getEmployeeCountByDept(row._id, allEmployees);
+                      return count > 0 ? `${count} nhân sự` : "Chưa có nhân sự";
+                    })()}
                   </Badge>
                 </TableCell>
 

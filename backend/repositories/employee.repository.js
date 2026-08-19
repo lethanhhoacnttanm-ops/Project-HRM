@@ -5,7 +5,7 @@ class EmployeeRepository {
   async FindWithPagination({ skip, limit, filter = {} }) {
     const [totalEmp, dataEmp] = await Promise.all([
       EmployeeModel.countDocuments(filter),
-      EmployeeModel.find(filter).skip(skip).limit(limit).lean()
+      EmployeeModel.find(filter).skip(skip).limit(limit).populate({ path: 'position', select: 'name'}).populate({ path: 'department', select: 'name'}).lean()
     ])
 
     return { totalEmp, dataEmp }
@@ -55,6 +55,14 @@ class EmployeeRepository {
       .lean();
 
     return result;
+  }
+
+  async updateEmployeeLevel(employeeId, newLevel) {
+    return await EmployeeModel.findByIdAndUpdate(
+      employeeId,
+      { $set: { level: newLevel } },
+      { new: true }
+    );
   }
 
   async updateEditFileById(id, payload) {

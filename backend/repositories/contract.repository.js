@@ -8,11 +8,16 @@ class ContractRepository {
   }
 
   async updateEmployeeStatus(employeeId, status, role, code) {
-    return await EmployeeModel.findByIdAndUpdate(
+    console.log("Đang update nhân viên ID:", employeeId);
+    console.log("Mã nhân viên mới sinh ra:", code);
+    const updatedEmp = await EmployeeModel.findByIdAndUpdate(
       employeeId,
       { status: status, role: role, code: code },
-      { new: true }
+      { new: true, runValidators: true }
     );
+
+    console.log("Kết quả sau khi update:", updatedEmp);
+    return updatedEmp;
   }
 
   async getAllContract({ skip, limit }) {
