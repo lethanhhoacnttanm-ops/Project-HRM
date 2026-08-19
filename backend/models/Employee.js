@@ -47,6 +47,17 @@ const EmployeeSchema = new mongoose.Schema(
         message: PASSWORD_ERROR_MESSAGE,
       },
     },
+    performanceRating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0.0,
+      required: true
+    },
+    timeinrole: {
+      type: Date,
+      default: null 
+    }
   },
   { timestamps: true }
 );

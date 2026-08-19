@@ -1,6 +1,6 @@
 import contractRepository from "../repositories/contract.repository.js";
 import { contractUtils } from "../utils/contract.util.js";
-import { generateEmployeeCode } from "../utils/generateEmployeeCode.js";
+import { generateUniqueEmployeeCode } from "../utils/generateEmployeeCode.js";
 
 class ContractsService {
   async postNewContractEmployee(payload) {
@@ -18,16 +18,19 @@ class ContractsService {
       contractCode: newContractCode,
     };
 
-    const code = generateEmployeeCode()
+    const code = await generateUniqueEmployeeCode()
+    console.log("Mã nhân viên mới sinh ra không trùng lặp:", code);
 
     const newContract = await contractRepository.create(contractDataToSave);
 
-    await contractRepository.updateEmployeeStatus(
+    const updatedEmployee = await contractRepository.updateEmployeeStatus(
       payload.employee,
       "active",
       "EMPLOYEE",
       code
     );
+
+    console.log("Nhân viên sau khi update:", updatedEmployee);
 
     return {
       success: true,

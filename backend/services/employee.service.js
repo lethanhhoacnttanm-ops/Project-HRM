@@ -1,7 +1,7 @@
 import employeeRepository from '../repositories/employee.repository.js';
 import bcrypt from 'bcryptjs';
 import { dateUtils } from '../utils/date.js';
-import { generateEmployeeCode } from '../utils/generateEmployeeCode.js';
+import { generateUniqueEmployeeCode } from '../utils/generateEmployeeCode.js';
 
 
 class EmployeeService {
@@ -65,7 +65,7 @@ class EmployeeService {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const code = generateEmployeeCode();
+        const code = generateUniqueEmployeeCode();
 
         const newEmployee = await employeeRepository.create({
             code: role === "NONE" ? `PENDING_${Date.now()}` : code,

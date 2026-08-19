@@ -1,6 +1,5 @@
 import bcrypt from 'bcryptjs';
 import employeeRepository from '../repositories/employee.repository.js';
-import { generateEmployeeCode } from '../utils/generateEmployeeCode.js';
 import { generateAdminCode } from '../utils/generateAdminCode.js'
 import { generateToken } from '../utils/jwt.js';
 import { body } from 'express-validator';

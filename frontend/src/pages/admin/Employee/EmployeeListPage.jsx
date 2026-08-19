@@ -9,7 +9,6 @@ import EmployeeTable from '../../../components/admin/Employee/EmployeeTable.jsx'
 import EmployeeCard from '../../../components/admin/Employee/EmployeeCard.jsx';
 import EmployeeModal from '../../../components/admin/Employee/EmployeeModal.jsx';
 
-import { useAuth } from '../../../hooks/useAuth.js';
 import { employeeService } from '../../../services/employee.service.js';
 
 const EmployeeListPage = () => {

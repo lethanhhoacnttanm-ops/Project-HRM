@@ -36,7 +36,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
         form.setFieldsValue({ department: undefined, position: undefined, level: undefined });
       }
     }
-  }, [isEmployee, departments, form, onSubmitDepartmentChange]);
+  }, [isEmployee, departments?._id]);
 
   useEffect(() => {
     if (departments) {
@@ -402,9 +402,6 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
               <h4 className="text-base font-bold text-gray-900 dark:text-white">
                 Gán nhân viên vào cơ cấu tổ chức
               </h4>
-              {
-                console.log("Dữ liệu", positionOptions)
-              }
             </div>
 
             <Form.Item

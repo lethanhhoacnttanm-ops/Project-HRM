@@ -306,7 +306,7 @@ export default function DepartmentPage() {
           <DepartmentTable
             onSelectDepartment={handleOpenModal}
             departments={filteredDepartment}
-            positions={dataPosition}
+            allEmployees={dataEmployee}
           />
         </div>
       ) : (

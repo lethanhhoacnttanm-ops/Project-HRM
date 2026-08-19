@@ -1,7 +1,6 @@
 import axiosClient from '../config/axios.js';
 
 export const contractService = {
-  // Admin (giữ nguyên)
   createNewContract: async (employeeId, payload) => {
     const dataToSend = {
       ...payload,
