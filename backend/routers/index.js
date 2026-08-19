@@ -7,6 +7,9 @@ import positionRouter from './position.route.js'
 import payrollRouter from './payroll.route.js';
 import attendanceRouter from './attendance.route.js';
 import promotionRouter from './promotion.route.js'
+import leaveRequestRouter from './leaveRequest.route.js'
+import notificationRouter from './notification.route.js'
+import supportRouter from './support.route.js'
 
 const mainRouter = express.Router();
 
@@ -18,6 +21,9 @@ mainRouter.use('/positions', positionRouter)
 mainRouter.use('/payrolls', payrollRouter)
 mainRouter.use('/attendances', attendanceRouter)
 mainRouter.use('/promotions', promotionRouter)
+mainRouter.use('/leave-requests', leaveRequestRouter)
+mainRouter.use('/notifications', notificationRouter)
+mainRouter.use('/support', supportRouter)
 
 export default mainRouter;
 
