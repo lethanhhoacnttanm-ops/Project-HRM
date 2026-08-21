@@ -10,6 +10,8 @@ import promotionRouter from './promotion.route.js'
 import leaveRequestRouter from './leaveRequest.route.js'
 import notificationRouter from './notification.route.js'
 import supportRouter from './support.route.js'
+import benefitRouter from './benefit.route.js'
+import performanceRouter from './performance.route.js'
 
 const mainRouter = express.Router();
 
@@ -24,6 +26,8 @@ mainRouter.use('/promotions', promotionRouter)
 mainRouter.use('/leave-requests', leaveRequestRouter)
 mainRouter.use('/notifications', notificationRouter)
 mainRouter.use('/support', supportRouter)
+mainRouter.use('/benefits', benefitRouter)
+mainRouter.use('/performance', performanceRouter)
 
 export default mainRouter;
 
