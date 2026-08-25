@@ -29,9 +29,9 @@ mainRouter.use('/jobs', jobRouter)
 mainRouter.use('/candidates', candidateRouter)
 mainRouter.use('/leave-requests', leaveRequestRouter)
 mainRouter.use('/notifications', notificationRouter)
-mainRouter.use('/support', supportRouter)
+mainRouter.use('/supports', supportRouter)
 mainRouter.use('/benefits', benefitRouter)
-mainRouter.use('/performance', performanceRouter)
+mainRouter.use('/performances', performanceRouter)
 
 export default mainRouter;
 
