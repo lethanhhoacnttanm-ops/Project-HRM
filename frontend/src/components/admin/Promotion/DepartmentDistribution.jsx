@@ -1,28 +1,67 @@
-import React from "react";
+import React from 'react';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-const departments = ["Tech", "Sales", "Ops", "Admin", "HR"];
 
-export default function DepartmentDistribution() {
-  return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between min-h-55 dark:bg-gray-900 dark:border-gray-800 shadow-sm">
-      <h3 className="text-base font-bold text-slate-800 dark:text-white">Phân bố theo phòng ban</h3>
+const DepartmentBarChart = ({ dataDepartment, dataEmployee }) => {
 
-      <div className="flex items-end justify-between pt-10 px-4 gap-4">
-        {departments.map((dept, index) => (
-          <div key={index} className="flex flex-col items-center gap-2 flex-1">
-            <div className="w-full max-w-8 h-24 bg-indigo-50 dark:bg-gray-800 rounded-t-xl overflow-hidden flex items-end">
-              <div
-                className="w-full bg-indigo-600 dark:bg-indigo-500 rounded-t-xl transition-all duration-500"
-                style={{ height: `${dept.percentage || 60}%` }}
-              ></div>
-            </div>
+  const departmentCountMap = {};
 
-            <span className="text-xs font-semibold text-slate-500 dark:text-gray-400 text-center truncate w-full">
-              {typeof dept === 'object' ? dept.name : dept}
-            </span>
-          </div>
-        ))}
+  dataEmployee.forEach(emp => {
+    
+    const deptName = emp.department?.name || 'Khác';
+    
+    if (!departmentCountMap[deptName]) {
+      departmentCountMap[deptName] = 0;
+    }
+    departmentCountMap[deptName] += 1;
+  });
+
+  const chartData = Object.keys(departmentCountMap).map(name => ({
+    name: name,
+    employees: departmentCountMap[name]
+  }));
+
+  return (                                                                                                
+    <div className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xs">
+      <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 mb-4">
+        Phân bố theo phòng ban
+      </h3>
+      {console.log(dataDepartment)}
+{console.log(dataEmployee)}
+      <div className="h-48 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData} barSize={28}>
+            <XAxis
+              dataKey="name"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }}
+            />
+
+            <Tooltip
+              cursor={{ fill: 'transparent' }}
+              content={({ active, payload }) => {
+                if (active && payload && payload.length) {
+                  return (
+                    <div className="bg-slate-900 text-white text-xs px-3 py-1.5 rounded-xl shadow-lg">
+                      <span className="font-bold">{payload[0].payload.name}</span>: {payload[0].value} nhân viên
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
+
+            <Bar
+              dataKey="employees"
+              fill="#6366f1"
+              radius={[12, 12, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
-}
+};
+
+export default DepartmentBarChart;

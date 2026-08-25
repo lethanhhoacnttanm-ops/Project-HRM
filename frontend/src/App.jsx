@@ -73,7 +73,7 @@ function App() {
             <Route path="employees" element={<EmployeeListPage />} />
             <Route path="contracts" element={<ContractListPage />} />
             <Route path="recruitment" element={<JobPostingPage />} />
-            <Route path="candidate-approval" element={<CandidateApprovalPage />} />
+            <Route path="candidates" element={<CandidateApprovalPage />} />
             <Route path="promotion" element={<PromotionPage />} />
             <Route path="departments" element={<DepartmentPage />} />
             <Route path="training" element={<TrainingPage />} />
