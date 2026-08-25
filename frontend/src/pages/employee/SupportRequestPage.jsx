@@ -11,7 +11,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { supportService } from '@/services/supportService';
+import { supportService } from '@/services/support.service';
 
 const CATEGORIES = [
   'Công nghệ thông tin',

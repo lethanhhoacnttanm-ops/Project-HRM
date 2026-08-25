@@ -9,7 +9,7 @@ import {
   CalendarCheck,
 } from 'lucide-react';
 
-import { notificationService } from '@/services/notificationService';
+import { notificationService } from '@/services/notification.service';
 
 const TYPE_FILTERS = ['Tất cả', 'Hệ thống', 'Lương', 'Hiệu suất', 'Nghỉ phép'];
 

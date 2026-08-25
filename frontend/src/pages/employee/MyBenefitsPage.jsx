@@ -9,7 +9,7 @@ import {
   Users,
 } from 'lucide-react';
 
-import { benefitService } from '@/services/benefitService';
+import { benefitService } from '@/services/benefit.service';
 
 const TYPE_FILTERS = ['Tất cả', 'Bảo hiểm', 'Phụ cấp', 'Đãi ngộ'];
 
