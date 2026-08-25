@@ -7,6 +7,8 @@ import positionRouter from './position.route.js'
 import payrollRouter from './payroll.route.js';
 import attendanceRouter from './attendance.route.js';
 import promotionRouter from './promotion.route.js'
+import jobRouter from './job.routes.js'
+import candidateRouter from './candidate-approval.route.js'
 
 const mainRouter = express.Router();
 
@@ -18,6 +20,8 @@ mainRouter.use('/positions', positionRouter)
 mainRouter.use('/payrolls', payrollRouter)
 mainRouter.use('/attendances', attendanceRouter)
 mainRouter.use('/promotions', promotionRouter)
+mainRouter.use('/jobs', jobRouter)
+mainRouter.use('/candidates', candidateRouter)
 
 export default mainRouter;
 

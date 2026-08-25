@@ -80,8 +80,8 @@ const EmployeeModal = ({ isOpen, onClose, onSubmitCreate, mode, data, onSubmit }
                 {data.avatarUrl || <User />}
               </div>
               <div>
-                <h3 className="font-bold text-gray-800 dark:text-gray-100 text-base">{data.fullName || data.fullname}</h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">{data.position || 'Nhân viên'}</p>
+                <h3 className="font-bold text-gray-800 dark:text-gray-100 text-base">{data.fullName}</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{data.position?.name || 'Nhân viên'}</p>
               </div>
             </div>
 
@@ -92,7 +92,9 @@ const EmployeeModal = ({ isOpen, onClose, onSubmitCreate, mode, data, onSubmit }
               </div>
               <div className="p-3 border border-gray-100 dark:border-gray-700 rounded-xl dark:bg-[#141414]">
                 <span className="text-gray-400 block">Phòng ban</span>
-                <span className="font-semibold text-indigo-600 dark:text-indigo-400">{data.department || "Chưa cập nhật"}</span>
+                <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+                  {data.department?.name || "Chưa cập nhật"}
+                </span>
               </div>
               <div className="p-3 border border-gray-100 dark:border-gray-700 rounded-xl dark:bg-[#141414]">
                 <span className="text-gray-400 block">Trạng thái</span>

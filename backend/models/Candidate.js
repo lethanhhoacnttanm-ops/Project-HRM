@@ -20,6 +20,11 @@ const CandidateSchema = new mongoose.Schema(
         ref: 'jobs', 
         required: true 
     },
+
+    appliedPosition: {
+        role: { type: String, required: true }, 
+        level: { type: String, required: true }  
+    },
     
     cvFileUrl: { 
         type: String, 
