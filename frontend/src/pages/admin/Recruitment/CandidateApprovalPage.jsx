@@ -1,27 +1,63 @@
-import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import CandidateStats from '../../../components/admin/candidate-approval/CandidateStats';
 import CandidateBoard from '../../../components/admin/candidate-approval/CandidateBoard';
 import CandidateDetailModal from '../../../components/admin/candidate-approval/CandidateDetailModal';
-
-const initialCandidates = [
-  { id: 1, name: 'Nguyễn Văn An', jobTitle: 'Kỹ sư sản phẩm cấp cao', email: 'an.nguyen@gmail.com', phone: '0912 345 678', appliedDate: '24/07/2026', stage: 'new', stageName: 'Hồ sơ mới' },
-  { id: 2, name: 'Trần Thị Bích', jobTitle: 'Trưởng nhóm thiết kế UI/UX', email: 'bich.tran@gmail.com', phone: '0987 654 321', appliedDate: '22/07/2026', stage: 'interview', stageName: 'Phỏng vấn' },
-  { id: 3, name: 'Lê Hoàng Nam', jobTitle: 'Backend Developer', email: 'nam.le@gmail.com', phone: '0901 112 223', appliedDate: '20/07/2026', stage: 'evaluating', stageName: 'Đánh giá / Test' },
-  { id: 4, name: 'Phạm Minh Khoa', jobTitle: 'Business Analyst', email: 'khoa.pham@gmail.com', phone: '0933 445 566', appliedDate: '18/07/2026', stage: 'offered', stageName: 'Trúng tuyển' },
-];
+import candidateService from '@/services/candidate.service';
+import jobService from '@/services/job.service';
 
 const CandidateApprovalPage = () => {
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
   const jobId = searchParams.get('jobId');
 
-  const [candidates] = useState(initialCandidates);
+  const [jobInfo, setJobInfo] = useState(location.state?.jobData || null);
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchApprovalData = async () => {
+      if (!jobId) {
+        message.warning('Không tìm thấy mã dự án (jobId) trên URL!');
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await jobService.getJobDetailsForApproval(jobId);
+        
+        // Cấu trúc response.data trả về là: { jobInfo: {...}, candidates: [...] }
+        const payload = response.data || response;
+
+        if (payload) {
+          // 1. Gán thông tin job để hiển thị tiêu đề, khách hàng, ngân sách
+          if (payload.jobInfo) {
+            setJobInfo(payload.jobInfo);
+          }
+          
+          // 2. Gán danh sách ứng viên vào bảng Kanban
+          if (payload.candidates) {
+            setCandidates(payload.candidates);
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu duyệt hồ sơ:", error);
+        message.error('Không thể tải thông tin trang duyệt.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApprovalData();
+  }, [jobId]);
 
   const handleOpenModal = (candidate) => {
     setSelectedCandidate(candidate);
@@ -33,25 +69,39 @@ const CandidateApprovalPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
+            <Button
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate(-1)}
+              className="rounded-xl text-xs font-bold cursor-pointer"
+            >
+              Quay lại
+            </Button>
             {jobId && (
               <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-xl text-xs font-bold border border-indigo-100">
-                Lọc theo mã: {jobId}
+                Mã dự án: {jobId}
               </span>
             )}
           </div>
 
           <h1 className="text-3xl font-black text-gray-900 tracking-tight pt-2">
-            {jobId ? `Duyệt ứng viên bài đăng ${jobId}` : 'Duyệt tất cả hồ sơ ứng viên'}
+            {console.log(jobInfo)}
+            {jobInfo ? `Duyệt ứng viên dự án: ${jobInfo.title}` : (jobId ? `Đang tải thông tin dự án (${jobId})...` : 'Duyệt tất cả hồ sơ ứng viên')}
           </h1>
           <p className="text-xs text-gray-500 font-medium">
-            Quản lý tiến độ tuyển dụng, đánh giá năng lực và phê duyệt các ứng viên tiềm năng.
+            {jobInfo
+              ? `Khách hàng: ${jobInfo.client || 'Nội bộ'} | Ngân sách: ${jobInfo.budget}`
+              : 'Quản lý tiến độ tuyển dụng, đánh giá năng lực và phê duyệt các ứng viên tiềm năng.'}
           </p>
         </div>
       </div>
 
-      <CandidateStats />
+      <CandidateStats candidates={candidates} />
 
-      <CandidateBoard candidates={candidates} onOpenModal={handleOpenModal} />
+      <CandidateBoard
+        candidates={candidates}
+        onOpenModal={handleOpenModal}
+        loading={loading}
+      />
 
       <CandidateDetailModal
         isOpen={isModalOpen}

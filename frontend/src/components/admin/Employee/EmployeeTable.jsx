@@ -178,7 +178,7 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
 
         <TableFooter>
           <TableRow className="border-t border-gray-200 dark:border-gray-800 bg-transparent hover:bg-transparent">
-            <TableCell colSpan={5} className="p-0">
+            <TableCell colSpan={6} className="p-0">
               <div className="p-4 bg-slate-50/30 dark:bg-gray-900 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 w-full">
                 <span>1 - {pageSize} trên {employees.length} nhân sự</span>
 

@@ -307,7 +307,7 @@ export default function PromotionPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <DepartmentDistribution />
+          <DepartmentDistribution dataDepartment={dataDepartment} dataEmployee={dataEmployee} />
         </div>
         <div className="lg:col-span-1">
           <PerformanceInsightCard />

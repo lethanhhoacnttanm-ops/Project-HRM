@@ -44,13 +44,22 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  block,        
+  htmlType,   
+  type,
   ...props
 }) {
+  const computedType = htmlType || type;
   return (
     <ButtonPrimitive
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props} />
+      type={computedType}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        block ? "w-full" : "" 
+      )}
+      {...props} 
+    />
   );
 }
 

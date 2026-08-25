@@ -1,121 +1,127 @@
-import React from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, XCircle, User, Mail, Phone } from "lucide-react";
+import React, { useState } from 'react';
+import { Modal, Button, Input, Rate, message } from 'antd';
+import { User, FileText, CheckCircle, Clock, Save } from 'lucide-react';
+// import candidateService from '../../../services/candidate.service'; // Nếu cần gọi API cập nhật ghi chú/đánh giá
 
-const CandidateDetailModal = ({ isOpen, onClose, candidate }) => {
+const CandidateDetailModal = ({ isOpen, onClose, candidate, onUpdateCandidate }) => {
+  const [notes, setNotes] = useState(candidate?.interviewNotes || '');
+  const [rating, setRating] = useState(candidate?.rating || 0);
+  const [loading, setLoading] = useState(false);
+
+  if (!candidate) return null;
+
+  const handleSaveEvaluation = async () => {
+    try {
+      setLoading(true);
+      // await candidateService.updateEvaluation(candidate._id, { interviewNotes: notes, rating });
+      
+      message.success('Đã lưu đánh giá ứng viên thành công!');
+      if (onUpdateCandidate) {
+        onUpdateCandidate({ ...candidate, interviewNotes: notes, rating });
+      }
+    } catch (error) {
+      message.error('Lỗi khi lưu đánh giá.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-170 rounded-2xl p-6">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-gray-800">
-            Hồ sơ ứng viên
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            Chi tiết đánh giá và thông tin CV của ứng viên
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4 py-2">
-          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-indigo-100 text-indigo-600 font-bold flex items-center justify-center text-xl shrink-0">
-                <User className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-extrabold text-gray-800 text-base">
-                  {candidate?.name}
-                </h3>
-                <p className="text-xs text-indigo-600 font-semibold">
-                  {candidate?.jobTitle}
-                </p>
-                <div className="flex items-center gap-3 text-xs text-gray-400 mt-1">
-                  <span className="flex items-center gap-1">
-                    <Mail className="h-3.5 w-3.5" /> {candidate?.email}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Phone className="h-3.5 w-3.5" /> {candidate?.phone}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <Badge
-              variant="secondary"
-              className="bg-purple-100 text-purple-700 hover:bg-purple-100 rounded-lg font-bold border-0 px-3 py-1"
-            >
-              {candidate?.stageName || 'Hồ sơ mới'}
-            </Badge>
+    <Modal
+      title={
+        <div className="text-base font-bold text-gray-900 dark:text-gray-100 pb-2 border-b border-gray-100 dark:border-gray-800">
+          Chi tiết hồ sơ ứng viên
+        </div>
+      }
+      open={isOpen}
+      onCancel={onClose}
+      footer={null}
+      width={650}
+      centered
+      className="rounded-3xl overflow-hidden"
+    >
+      <div className="space-y-6 py-3 max-h-[75vh] overflow-y-auto px-1">
+        <div className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-gray-800/50 rounded-2xl">
+          <div className="w-14 h-14 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-xl shrink-0">
+            {candidate.fullName ? candidate.fullName.charAt(0).toUpperCase() : <User />}
           </div>
-
-          <Tabs defaultValue="eval" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 rounded-xl bg-slate-100 p-1">
-              <TabsTrigger value="eval" className="rounded-lg text-xs font-bold">
-                Đánh giá & Ghi chú phỏng vấn
-              </TabsTrigger>
-              <TabsTrigger value="cv" className="rounded-lg text-xs font-bold">
-                Xem File CV
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="eval" className="space-y-3 text-xs pt-3">
-              <div>
-                <label className="font-bold text-gray-700 block mb-1.5">
-                  Nhận xét chuyên môn / Thái độ:
-                </label>
-                <Textarea
-                  rows={4}
-                  placeholder="Nhập nhận xét phỏng vấn tại đây..."
-                  className="rounded-xl text-xs resize-none"
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="cv" className="pt-3">
-              <div className="p-8 border-2 border-dashed border-gray-200 rounded-xl text-center text-gray-400 text-xs">
-                [ Bản xem trước File CV PDF của ứng viên ]
-              </div>
-            </TabsContent>
-          </Tabs>
-
-          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <Button
-              variant="destructive"
-              onClick={onClose}
-              className="rounded-xl font-bold gap-1.5 bg-red-600 hover:bg-red-700"
+          <div className="flex-1">
+            <h3 className="font-bold text-gray-900 dark:text-gray-100 text-base">{candidate.fullName}</h3>
+            <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-0.5">
+              Vị trí: {candidate.appliedPosition?.role} ({candidate.appliedPosition?.level})
+            </p>
+          </div>
+          {candidate.cvFileUrl && (
+            <a 
+              href={candidate.cvFileUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 flex items-center gap-1.5 transition-all shadow-sm"
             >
-              <XCircle className="h-4 w-4" />
-              Từ chối ứng viên
-            </Button>
+              <FileText className="w-4 h-4" /> Xem CV
+            </a>
+          )}
+        </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={onClose}
-                className="rounded-xl font-bold"
-              >
-                Đóng
-              </Button>
-              <Button
-                onClick={onClose}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-xl font-bold gap-1.5"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Phê duyệt / Chuyển vòng tiếp
-              </Button>
-            </div>
+        <div className="grid grid-cols-2 gap-3 text-xs">
+          <div className="p-3 border border-gray-100 dark:border-gray-700 rounded-xl dark:bg-[#141414]">
+            <span className="text-gray-400 block font-medium">Email liên hệ</span>
+            <span className="font-semibold text-gray-800 dark:text-gray-200 break-all">{candidate.email}</span>
+          </div>
+          <div className="p-3 border border-gray-100 dark:border-gray-700 rounded-xl dark:bg-[#141414]">
+            <span className="text-gray-400 block font-medium">Số điện thoại</span>
+            <span className="font-semibold text-gray-800 dark:text-gray-200">{candidate.phone}</span>
+          </div>
+          <div className="p-3 border border-gray-100 dark:border-gray-700 rounded-xl dark:bg-[#141414]">
+            <span className="text-gray-400 block font-medium">Giai đoạn hiện tại (Stage)</span>
+            <span className="font-semibold text-emerald-600 dark:text-emerald-400 uppercase">
+              {candidate.stage}
+            </span>
+          </div>
+          <div className="p-3 border border-gray-100 dark:border-gray-700 rounded-xl dark:bg-[#141414]">
+            <span className="text-gray-400 block font-medium">Ngày nộp đơn</span>
+            <span className="font-semibold text-gray-800 dark:text-gray-200">
+              {new Date(candidate.appliedDate || candidate.createdAt).toLocaleDateString('vi-VN')}
+            </span>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <div className="space-y-4 pt-2 border-t border-gray-100 dark:border-gray-800">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-indigo-600" /> Đánh giá & Nhật ký phỏng vấn
+          </h4>
+
+          <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-gray-800/30 rounded-xl border border-slate-100 dark:border-slate-800">
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">Chấm điểm năng lực:</span>
+            <Rate allowHalf value={rating} onChange={setRating} />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">Ghi chú từ hội đồng tuyển dụng:</label>
+            <Input.TextArea
+              rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Nhập nhận xét về kỹ năng, thái độ hoặc kết quả test của ứng viên..."
+              className="rounded-xl text-xs p-3"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button onClick={onClose} className="rounded-xl text-xs font-bold">Đóng</Button>
+          <Button 
+            type="primary" 
+            icon={<Save className="w-3.5 h-3.5" />} 
+            loading={loading}
+            onClick={handleSaveEvaluation}
+            className="bg-indigo-600 rounded-xl text-xs font-bold flex items-center gap-1"
+          >
+            Lưu đánh giá
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 };
 

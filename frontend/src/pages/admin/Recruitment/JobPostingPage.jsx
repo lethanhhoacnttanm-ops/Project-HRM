@@ -1,77 +1,138 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 import RecruitmentStats from '../../../components/admin/job-posting/RecruitmentStats';
 import JobFilter from '../../../components/admin/job-posting/JobFilter';
 import JobCardList from '../../../components/admin/job-posting/JobCardList';
-import RecruitmentTips from '../../../components/admin/job-posting/RecruitmentTips';
 import JobModal from '../../../components/admin/job-posting/JobModal';
 
-const initialJobs = [
-  {
-    id: 'JOB-01',
-    title: 'Kỹ sư sản phẩm cấp cao',
-    department: 'Business Analyst',
-    location: 'Từ xa',
-    type: 'Toàn thời gian',
-    salary: '10.000 - 15.000',
-    candidateCount: 12,
-    requirements: ['Có hơn 5 năm kinh nghiệm lập trình React/Node.js', 'Có kinh nghiệm lãnh đạo các nhóm Agile.'],
-  },
-  {
-    id: 'JOB-02',
-    title: 'Trưởng nhóm thiết kế UI/UX',
-    department: 'Thiết kế',
-    location: 'Từ xa',
-    type: 'Toàn thời gian',
-    salary: '10.000 - 15.000',
-    candidateCount: 8,
-    requirements: ['Có hơn 5 năm kinh nghiệm thiết kế UI/UX', 'Có kinh nghiệm lãnh đạo các nhóm Agile.'],
-  },
-  {
-    id: 'JOB-03',
-    title: 'Kỹ sư sản phẩm cấp cao',
-    department: 'Business Analyst',
-    location: 'Từ xa',
-    type: 'Toàn thời gian',
-    salary: '10.000 - 15.000',
-    candidateCount: 5,
-    requirements: ['Có hơn 5 năm kinh nghiệm lập trình React/Node.js', 'Có kinh nghiệm lãnh đạo các nhóm Agile.'],
-  },
-];
+import { positionService } from "../../../services/position.service.js";
+import jobService from '@/services/job.service';
+
+import { toast } from 'sonner'
+
 
 const JobPostingPage = () => {
-  const [jobs] = useState(initialJobs);
   const [searchTerm, setSearchTerm] = useState('');
   const [department, setDepartment] = useState('all');
   const [contractType, setContractType] = useState('all');
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredJobs = jobs.filter((j) => {
+  const navigate = useNavigate();
+
+  const [dataPosition, setDataPosition] = useState([])
+  const [dataJobs, setDataJobs] = useState([])
+
+  const [pageNumber, setPageNumber] = useState(1);
+
+  const [pageSize] = useState(5);
+
+  const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1 });
+
+  const [modalState, setModalState] = useState({ isOpen: false, mode: 'create', data: null });
+
+  const filteredJobs = dataJobs.filter((j) => {
     const matchSearch = j.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchDept = department === 'all' || j.department === department;
     const matchType = contractType === 'all' || j.type === contractType;
     return matchSearch && matchDept && matchType;
   });
 
+  useEffect(() => {
+    const fetchPosition = async () => {
+      try {
+        const res = await positionService.getAllList();
+        if (res?.success) {
+          setDataPosition(res?.dataList);
+        } else {
+          setDataPosition([]);
+        }
+      } catch (error) {
+        toast.error('Thất bại', {
+          description: error.message || 'Không thể lấy danh sách vị trí cho phòng ban!',
+        });
+      }
+    };
+
+    fetchPosition();
+  }, []);
+
+  const fetchJobs = useCallback(async () => {
+    try {
+      const res = await jobService.getAllJobs(pageNumber, pageSize);
+      if (res?.success) {
+        setDataJobs(res.dataJobs);
+        setPaginationInfo(res.pagination || { totalJobs: 0, totalPage: 1 });
+      } else {
+        setDataJobs([]);
+      }
+    } catch (error) {
+      setDataJobs([]);
+      toast.error('Thất bại', {
+        description: error.message || 'Không thể lấy danh sách bài đăng!',
+      });
+    }
+  }, [pageNumber, pageSize]);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
+
+  const handleCreateJob = async (values) => {
+    try {
+
+      const result = await jobService.createJob(values);
+
+      if (result.success || result.status === 'success' || result) {
+        toast.success("Tạo bài đăng dự án thành công!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi tạo bài đăng:", error);
+      toast.error(error.message || "Không thể tạo bài đăng lúc này!");
+    }
+  };
+
+  const handleNavigateApproval = async (jobId) => {
+    try {
+      const response = await jobService.getJobDetailsForApproval(jobId);
+
+      if (response && (response.success !== false)) {
+        const jobData = response.data || response;
+
+        navigate(`/admin-page/candidates?jobId=${jobId}`, { state: { jobData } });
+      } else {
+        console.warn("API không trả về success thành công:", response);
+      }
+    } catch (error) {
+      console.error("Lỗi khi chuẩn bị dữ liệu chuyển trang:", error);
+    }
+  };
+  const handleOpenModal = (mode, data) => {
+    setModalState({ isOpen: true, mode, data });
+  };
+
+  const handleCloseModal = () => {
+    setModalState({ isOpen: false, mode: 'create', data: null });
+  };
+
   return (
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Quản lý tuyển dụng</h1>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Quản lý Dự án & Tuyển dụng nội bộ</h1>
           <p className="text-xs text-gray-500 font-medium mt-1 max-w-2xl">
-            Hãy định hình con đường sự nghiệp của bạn trong công ty. Khám phá những cơ hội mới, giới thiệu những đồng nghiệp tài năng hoặc theo dõi quá trình ứng tuyển của bạn.
+            Tiếp nhận các dự án ngoài, định biên vị trí (BA, Dev, Tester) và phân bổ nhân sự nội bộ để tối ưu hóa nguồn lực và tạo cơ sở đánh giá hiệu suất.
           </p>
         </div>
 
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => handleOpenModal('create')}
           className="bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-xl font-bold border-none shadow-2xs cursor-pointer"
         >
-          Tạo bài đăng
+          Tạo dự án / bài đăng
         </Button>
       </div>
 
@@ -86,13 +147,21 @@ const JobPostingPage = () => {
         setContractType={setContractType}
       />
 
-      <JobCardList jobs={filteredJobs} />
+      <JobCardList dataJobs={dataJobs} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} propState={setModalState} onNavigateApproval={handleNavigateApproval} />
 
-      <RecruitmentTips />
+      <JobModal
+        isOpen={modalState.isOpen}
+        onClose={handleCloseModal}
+        mode={modalState.mode}
 
-      <JobModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        dataPosition={dataPosition}
+        dataJobs={modalState.data}
+        onSubmit={handleCreateJob}
+      />
     </div>
   );
 };
+
+JobPostingPage.displayName = "JobPostingPage";
 
 export default JobPostingPage;

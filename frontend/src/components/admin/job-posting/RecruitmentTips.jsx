@@ -27,7 +27,6 @@ const RecruitmentTips = () => {
         </div>
       </div>
 
-      {/* Khối bên phải: Huấn luyện nghề nghiệp */}
       <div className="lg:col-span-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-2xs flex flex-col items-center text-center justify-between space-y-4">
         <div className="w-16 h-16 rounded-2xl bg-purple-200 transform rotate-12 flex items-center justify-center text-2xl shadow-xs">
           🎓

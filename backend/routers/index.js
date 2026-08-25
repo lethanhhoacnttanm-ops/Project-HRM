@@ -7,6 +7,8 @@ import positionRouter from './position.route.js'
 import payrollRouter from './payroll.route.js';
 import attendanceRouter from './attendance.route.js';
 import promotionRouter from './promotion.route.js'
+import jobRouter from './job.routes.js'
+import candidateRouter from './candidate-approval.route.js'
 import leaveRequestRouter from './leaveRequest.route.js'
 import notificationRouter from './notification.route.js'
 import supportRouter from './support.route.js'
@@ -23,6 +25,8 @@ mainRouter.use('/positions', positionRouter)
 mainRouter.use('/payrolls', payrollRouter)
 mainRouter.use('/attendances', attendanceRouter)
 mainRouter.use('/promotions', promotionRouter)
+mainRouter.use('/jobs', jobRouter)
+mainRouter.use('/candidates', candidateRouter)
 mainRouter.use('/leave-requests', leaveRequestRouter)
 mainRouter.use('/notifications', notificationRouter)
 mainRouter.use('/support', supportRouter)

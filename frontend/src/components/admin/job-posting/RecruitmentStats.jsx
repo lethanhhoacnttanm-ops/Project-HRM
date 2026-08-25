@@ -33,7 +33,7 @@ const RecruitmentStats = () => {
             <div className="w-12 h-12 rounded-full bg-purple-300 flex items-center justify-center text-white font-extrabold text-lg mb-2 shadow-xs">
               20
             </div>
-            <span className="text-xs font-bold text-gray-700">Đơn nộp</span>
+            <p className="text-xs font-medium text-slate-500">Dự án đang mở</p>
           </div>
 
           <div className="h-0.5 w-12 bg-gray-200 hidden sm:block"></div>
@@ -42,7 +42,7 @@ const RecruitmentStats = () => {
             <div className="w-12 h-12 rounded-full bg-green-300 flex items-center justify-center text-white font-extrabold text-lg mb-2 shadow-xs">
               10
             </div>
-            <span className="text-xs font-bold text-gray-700">Phỏng vấn</span>
+            <p className="text-xs font-medium text-slate-500">Tổng đơn đăng ký</p>
           </div>
 
           <div className="h-0.5 w-12 bg-gray-200 hidden sm:block"></div>
@@ -51,7 +51,7 @@ const RecruitmentStats = () => {
             <div className="w-12 h-12 rounded-full bg-blue-300 flex items-center justify-center text-white font-extrabold text-lg mb-2 shadow-xs">
               06
             </div>
-            <span className="text-xs font-bold text-gray-700">Đánh giá</span>
+            <p className="text-xs font-medium text-slate-500">Vị trí đã phân bổ</p>
           </div>
 
           <div className="h-0.5 w-12 bg-gray-200 hidden sm:block"></div>
@@ -60,7 +60,7 @@ const RecruitmentStats = () => {
             <div className="w-12 h-12 rounded-full bg-pink-300 flex items-center justify-center text-white font-extrabold text-lg mb-2 shadow-xs">
               02
             </div>
-            <span className="text-xs font-bold text-gray-700">Đã thuê</span>
+            <p className="text-xs font-medium text-slate-500">Đang chờ xét duyệt</p>
           </div>
         </div>
       </div>
