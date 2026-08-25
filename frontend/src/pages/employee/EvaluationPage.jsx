@@ -9,7 +9,7 @@ import {
   Hourglass,
 } from 'lucide-react';
 
-import { performanceService } from '@/services/performanceService';
+import { performanceService } from '@/services/performance.service';
 
 const statusStyle = {
   'Hoàn thành': {
