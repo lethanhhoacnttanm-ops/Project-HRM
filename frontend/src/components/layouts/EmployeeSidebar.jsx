@@ -18,21 +18,47 @@ import {
   X,
 } from 'lucide-react';
 
-const menuItems = [
-  { path: '/employee/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
-  { path: '/employee/profile', label: 'Hồ sơ cá nhân', icon: User },
-  { path: '/employee/my-contract', label: 'Hợp đồng của tôi', icon: FileText },
-  { path: '/employee/payslip', label: 'Phiếu lương', icon: Wallet },
-  { path: '/employee/attendance', label: 'Chấm công', icon: CalendarDays },
-  { path: '/employee/leave-request', label: 'Nghỉ phép', icon: CalendarCheck },
-  { path: '/employee/my-benefits', label: 'Phúc lợi', icon: Gift },
-  { path: '/employee/evaluation', label: 'Đánh giá hiệu suất', icon: Star },
-  { path: '/employee/training-register', label: 'Đào tạo', icon: BookOpen },
-  { path: '/employee/internal-jobs', label: 'Việc làm nội bộ', icon: Briefcase },
-  { path: '/employee/career-path', label: 'Thăng tiến sự nghiệp', icon: TrendingUp },
-  { path: '/employee/personal-report', label: 'Báo cáo cá nhân', icon: BarChart3 },
-  { path: '/employee/notifications', label: 'Thông báo', icon: Bell },
-  { path: '/employee/support', label: 'Hỗ trợ', icon: Headphones },
+// Nhóm menu theo Epic
+const menuGroups = [
+  {
+    title: null, // không hiện tiêu đề
+    items: [
+      { path: '/employee/dashboard', label: 'Tổng quan', icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: 'Hồ sơ & Tài khoản', // Epic 1
+    items: [
+      { path: '/employee/profile', label: 'Hồ sơ cá nhân', icon: User },
+    ],
+  },
+  {
+    title: 'Vận hành HR', // Epic 2
+    items: [
+      { path: '/employee/my-contract', label: 'Hợp đồng của tôi', icon: FileText },
+      { path: '/employee/payslip', label: 'Phiếu lương', icon: Wallet },
+      { path: '/employee/attendance', label: 'Chấm công', icon: CalendarDays },
+      { path: '/employee/leave-request', label: 'Nghỉ phép', icon: CalendarCheck },
+    ],
+  },
+  {
+    title: 'Tương tác & Thông tin', // Epic 3
+    items: [
+      { path: '/employee/notifications', label: 'Thông báo', icon: Bell },
+      { path: '/employee/support', label: 'Hỗ trợ', icon: Headphones },
+      { path: '/employee/my-benefits', label: 'Phúc lợi', icon: Gift },
+      { path: '/employee/evaluation', label: 'Đánh giá hiệu suất', icon: Star },
+    ],
+  },
+  {
+    title: 'Phát triển & Cơ hội', // Epic 4
+    items: [
+      { path: '/employee/training-register', label: 'Đào tạo', icon: BookOpen },
+      { path: '/employee/internal-jobs', label: 'Việc làm nội bộ', icon: Briefcase },
+      { path: '/employee/career-path', label: 'Thăng tiến sự nghiệp', icon: TrendingUp },
+      { path: '/employee/personal-report', label: 'Báo cáo cá nhân', icon: BarChart3 },
+    ],
+  },
 ];
 
 const EmployeeSidebar = ({ collapsed, setCollapsed, user }) => {
@@ -63,28 +89,44 @@ const EmployeeSidebar = ({ collapsed, setCollapsed, user }) => {
         </button>
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
-                ${
-                  isActive
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                }`
-              }
-            >
-              <Icon size={20} className="flex-shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          );
-        })}
+      {/* Menu theo nhóm Epic */}
+      <nav className="flex-1 overflow-y-auto py-3 px-3">
+        {menuGroups.map((group, groupIndex) => (
+          <div key={groupIndex} className={groupIndex > 0 ? 'mt-4' : ''}>
+            {/* Tiêu đề nhóm */}
+            {group.title && !collapsed && (
+              <p className="px-3 mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                {group.title}
+              </p>
+            )}
+            {group.title && collapsed && (
+              <div className="mx-2 mb-1 border-t border-gray-100" />
+            )}
+
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                      ${
+                        isActive
+                          ? 'bg-blue-50 text-blue-600'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      }`
+                    }
+                  >
+                    <Icon size={20} className="flex-shrink-0" />
+                    {!collapsed && <span>{item.label}</span>}
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* User info */}
