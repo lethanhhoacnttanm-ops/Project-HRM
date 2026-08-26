@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { ENV } from '../env.js';
+import EmployeeModel from '../models/Employee.js';
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token || req.headers.authorization?.split(' ')[1];
 
   if (!token) {
@@ -13,7 +14,19 @@ export const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; 
+
+    const userId = decoded.id || decoded._id;
+
+    const user = await EmployeeModel.findById(userId);
+    
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Tài khoản không tồn tại trong hệ thống!',
+      });
+    }
+
+    req.user = user; 
     next();
   } catch (error) {
     return res.status(403).json({

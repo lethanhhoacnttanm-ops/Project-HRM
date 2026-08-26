@@ -2,20 +2,59 @@ import mongoose from 'mongoose';
 
 const CourseSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true },
-    category: {
+    title: {
       type: String,
-      enum: ['SỰ TUÂN THỦ', 'KỸ NĂNG MỀM', 'KỸ THUẬT'],
       required: true,
+      trim: true
     },
-    duration: { type: String, required: true }, 
-    modulesCount: { type: Number, default: 1 },
-    tag: {
+    imageUrl: {
       type: String,
-      enum: ['Bắt buộc', 'Môn tự chọn', 'Trình độ cao', 'Thiết yếu'],
-      default: 'Môn tự chọn',
+      default: "",
+      trim: true
     },
-    coverImage: { type: String, default: '' },
+    description: {
+      type: String,
+      trim: true
+    },
+    provider: {
+      type: String,
+      default: 'Udemy Business'
+    },
+    courseUrl: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    durationHours: {
+      type: Number,
+      default: 0
+    },
+    instructorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'employees',
+      default: null
+    },
+    department: {
+      type: String,
+      required: true,
+      enum: [
+        "Software Development",
+        "QA/QC",
+        "Business Analysis & Product",
+        "UI/UX Design",
+        "DevOps & System"
+      ]
+    },
+    position: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    targetLevel: {
+      type: String,
+      required: true,
+      enum: ["Intern", "Fresher", "Junior", "Middle"]
+    }
   },
   { timestamps: true }
 );

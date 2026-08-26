@@ -14,6 +14,8 @@ import notificationRouter from './notification.route.js'
 import supportRouter from './support.route.js'
 import benefitRouter from './benefit.route.js'
 import performanceRouter from './performance.route.js'
+import courseRouter from './course.route.js'
+import courseprogressRouter from './courseprogress.routes.js'
 
 const mainRouter = express.Router();
 
@@ -29,9 +31,11 @@ mainRouter.use('/jobs', jobRouter)
 mainRouter.use('/candidates', candidateRouter)
 mainRouter.use('/leave-requests', leaveRequestRouter)
 mainRouter.use('/notifications', notificationRouter)
-mainRouter.use('/support', supportRouter)
+mainRouter.use('/supports', supportRouter)
 mainRouter.use('/benefits', benefitRouter)
-mainRouter.use('/performance', performanceRouter)
+mainRouter.use('/performances', performanceRouter)
+mainRouter.use('/courses', courseRouter)
+mainRouter.use('/course-progress', courseprogressRouter)
 
 export default mainRouter;
 
