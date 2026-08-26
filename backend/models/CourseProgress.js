@@ -2,23 +2,35 @@ import mongoose from 'mongoose';
 
 const CourseProgressSchema = new mongoose.Schema(
   {
-    employee: {
+    employeeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'employees',
-      required: true,
+      required: true
     },
-    course: {
+    courseId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'courses',
-      required: true,
+      required: true
     },
-    progress: { type: Number, default: 0, min: 0, max: 100 },
+
+    assignedDepartment: { type: String, required: true },
+    assignedPosition: { type: String, required: true },
+    assignedLevel: { type: String, required: true },
+
     status: {
       type: String,
-      enum: ['Completed', 'In Progress', 'Overdue'],
-      default: 'In Progress',
+      enum: ['Not Started', 'In Progress', 'Completed'],
+      default: 'Not Started'
     },
-    hasCertificate: { type: Boolean, default: false },
+    progressPercent: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100
+    },
+    completedAt: {
+      type: Date
+    }
   },
   { timestamps: true }
 );

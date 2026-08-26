@@ -34,16 +34,13 @@ const CandidateApprovalPage = () => {
         setLoading(true);
         const response = await jobService.getJobDetailsForApproval(jobId);
         
-        // Cấu trúc response.data trả về là: { jobInfo: {...}, candidates: [...] }
         const payload = response.data || response;
 
         if (payload) {
-          // 1. Gán thông tin job để hiển thị tiêu đề, khách hàng, ngân sách
           if (payload.jobInfo) {
             setJobInfo(payload.jobInfo);
           }
           
-          // 2. Gán danh sách ứng viên vào bảng Kanban
           if (payload.candidates) {
             setCandidates(payload.candidates);
           }
