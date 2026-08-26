@@ -6,10 +6,11 @@ const ShiftSchema = new mongoose.Schema(
     code: { type: String, required: true, unique: true, uppercase: true }, 
     checkInTime: { type: String, required: true }, 
     checkOutTime: { type: String, required: true }, 
-    breakTime: { type: String, default: '' }, 
+    breakTime: { type: String, default: '0 phút' },
+    appliedEmployeesCount: { type: Number, default: 0 },
     status: {
       type: String,
-      enum: ['Đang áp dụng', 'Xoay ca', 'Tạm dừng'],
+      enum: ['Đang áp dụng', 'Xoay ca', 'Đã hủy'],
       default: 'Đang áp dụng',
     },
   },

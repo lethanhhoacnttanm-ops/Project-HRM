@@ -16,6 +16,7 @@ import benefitRouter from './benefit.route.js'
 import performanceRouter from './performance.route.js'
 import courseRouter from './course.route.js'
 import courseprogressRouter from './courseprogress.routes.js'
+import shiftsRouter from './shift.route.js'
 
 const mainRouter = express.Router();
 
@@ -36,6 +37,7 @@ mainRouter.use('/benefits', benefitRouter)
 mainRouter.use('/performances', performanceRouter)
 mainRouter.use('/courses', courseRouter)
 mainRouter.use('/course-progress', courseprogressRouter)
+mainRouter.use('/shifts', shiftsRouter)
 
 export default mainRouter;
 

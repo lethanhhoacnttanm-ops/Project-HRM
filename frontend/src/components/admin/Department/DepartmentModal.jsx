@@ -140,9 +140,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
+      onOpenChange={onClose}
     >
       <DialogContent className="sm:max-w-2xl rounded-2xl p-6 dark:bg-[#1f1f1f] dark:border-gray-700">
         <DialogHeader className="border-b pb-4 mb-4 border-gray-100 dark:border-gray-700">

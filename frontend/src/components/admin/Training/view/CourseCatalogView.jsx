@@ -1,26 +1,26 @@
 import React from "react";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  BookOpen, 
-  Clock, 
-  Layers, 
-  ExternalLink 
+import {
+  ChevronLeft,
+  ChevronRight,
+  BookOpen,
+  Clock,
+  Layers,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 
-export default function CourseCatalogView({  dataCourse = [], pagination, pageSize, pageNumber, setPageNumber }) {
+export default function CourseCatalogView({ dataCourse, pagination, pageSize, pageNumber, setPageNumber }) {
 
   const handlePrevPage = () => {
     if (pageNumber > 1) {
-      setPageNumber(pageNumber - 1);
+      setPageNumber(prev => prev - 1);
     }
   };
 
   const handleNextPage = () => {
-    if (pagination && pageNumber < pagination.totalPages) {
-      setPageNumber(pageNumber + 1);
+    if (pagination && pageNumber < pagination.totalPage) {
+      setPageNumber(prev => prev + 1);
     }
   };
 
@@ -41,13 +41,13 @@ export default function CourseCatalogView({  dataCourse = [], pagination, pageSi
           </div>
         </div>
 
-        {pagination && (
+        
           <div className="text-xs font-semibold text-slate-600 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
-            Trang <span className="text-indigo-600 font-bold">{pageNumber}</span> / <span className="font-bold">{pagination.totalPages || 1}</span> 
-            <span className="text-slate-400 mx-2">|</span> 
-            Tổng số: <span className="text-slate-900 font-bold">{pagination.totalCourse || 0}</span> khóa học
+            {console.log(pagination)}
+            Trang <span className="text-indigo-600 font-bold">{pageNumber}</span> / <span className="font-bold">{pagination?.totalPage}</span>
+            <span className="text-slate-400 mx-2">|</span>
+            Tổng số: <span className="text-slate-900 font-bold">{pagination?.totalCourse}</span> khóa học
           </div>
-        )}
       </div>
 
       <div className="relative px-2 sm:px-10">
@@ -79,8 +79,8 @@ export default function CourseCatalogView({  dataCourse = [], pagination, pageSi
               <Card key={course._id || course.id} className="border border-slate-200/80 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between bg-white">
                 <div>
                   <div className="relative h-36 w-full bg-slate-100 overflow-hidden">
-                    <img 
-                      src={course.imageUrl || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop"} 
+                    <img
+                      src={course.imageUrl || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=600&auto=format&fit=crop"}
                       alt={course.title}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     />
@@ -114,9 +114,9 @@ export default function CourseCatalogView({  dataCourse = [], pagination, pageSi
                 </div>
 
                 <CardFooter className="p-4 pt-2 border-t border-slate-100">
-                  <a 
-                    href={course.courseUrl} 
-                    target="_blank" 
+                  <a
+                    href={course.courseUrl}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-indigo-600 text-white text-xs font-semibold py-2 rounded-xl transition-all shadow-2xs"
                   >
