@@ -30,7 +30,7 @@ export default function AttendanceFilter({
   return (
     <div className="flex flex-col md:flex-row items-center gap-3 p-4 bg-white border-b border-slate-100">
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger render={( 
           <Button
             variant="outline"
             className="w-full md:w-auto flex items-center justify-start gap-2 border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50/50 hover:bg-slate-100 rounded-xl px-3.5 py-2 h-9 shadow-none"
@@ -44,7 +44,8 @@ export default function AttendanceFilter({
               )}
             </span>
           </Button>
-        </PopoverTrigger>
+        )}/>
+           
         <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
           <Calendar
             mode="single"

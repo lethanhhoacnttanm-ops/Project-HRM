@@ -25,7 +25,7 @@ class CourseService {
 
   async getAllCourse({ page, limit }) {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
-    const pageSize = Math.max(1, parseInt(limit, 10) || 4);
+    const pageSize = Math.max(1, parseInt(limit, 10) || 8);
     const skip = (pageNumber - 1) * pageSize;
 
     const { totalCourse, dataCourse } = await courseRepository.FindWithPagination({

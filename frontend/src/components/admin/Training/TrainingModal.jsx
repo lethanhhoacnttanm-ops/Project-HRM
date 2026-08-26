@@ -174,7 +174,7 @@ export default function TrainingModal({ isOpen, onClose, mode, onSubmit, details
                     const defaultPos = POSITIONS_BY_DEPT[val]?.[0]?.value;
                     form.setFieldValue("position", defaultPos);
                   }}
-                  defaultValue="Software Development"
+                  initialValues="Software Development"
                 >
                   <SelectTrigger className="h-10 text-xs rounded-xl border-slate-200 bg-white">
                     <SelectValue placeholder="Chọn phòng ban" />
@@ -196,7 +196,7 @@ export default function TrainingModal({ isOpen, onClose, mode, onSubmit, details
               >
                 <Select
                   onValueChange={(val) => form.setFieldValue("targetLevel", val)}
-                  defaultValue="Intern"
+                  initialValues="Intern"
                 >
                   <SelectTrigger className="h-10 text-xs rounded-xl border-slate-200 bg-white">
                     <SelectValue placeholder="Chọn cấp bậc" />

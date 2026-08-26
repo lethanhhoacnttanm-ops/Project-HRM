@@ -23,21 +23,28 @@ export default function TrainingPage() {
   const [dataCourse, setDataCourse] = useState([]);
   const [managerOptions, setManagerOptions] = useState([]);
   const [dataCourseProgress, setDataCourseProgress] = useState([]);
+  const [catalogPage, setCatalogPage] = useState(1);
+  const [catalogPagination, setCatalogPagination] = useState({ totalCourse: 0, totalPage: 1 });
+  const [progressPage, setProgressPage] = useState(1);
+  const [progressPagination, setProgressPagination] = useState({ totalCourseProgress: 0, totalPage: 1 });
+
   const [pageNumber, setPageNumber] = useState(1);
+  const pageSize = 8
 
-  const [pageSize] = useState(5);
-
-  const [paginationInfo, setPaginationInfo] = useState({ total: 0, totalPage: 1 });
 
   const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
   const closeModal = () => setModalState({ isOpen: false, mode: "assign", data: null });
 
   const fetchCourses = useCallback(async () => {
     try {
-      const res = await courseService.getAllCourses(pageNumber, pageSize);
-      if (res?.success) {
-        setDataCourse(res.dataCourse);
-        setPaginationInfo(res.pagination || { totalCourse: 0, totalPage: 1 });
+      const res = await courseService.getAllCourses(catalogPage, pageSize);
+      console.log("Dữ liệu API trả về:", res);
+      if (res && res.success) {
+        setDataCourse(res.dataCourse || []);
+
+        if (res.pagination) {
+          setCatalogPagination(res.pagination);
+        }
       } else {
         setDataCourse([]);
       }
@@ -47,19 +54,19 @@ export default function TrainingPage() {
         description: error.message || 'Không thể lấy danh sách nhân viên!',
       });
     }
-  }, [pageNumber, pageSize]);
+  }, [catalogPage, pageSize]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [pageNumber, pageSize, fetchCourses]);
+    fetchCourses(catalogPage);
+  }, [catalogPage]);
 
   const fetchCourseProgress = useCallback(async () => {
     try {
-      const response = await courseprogressService.getAllCourseProgressAPI(pageNumber, pageSize)
+      const response = await courseprogressService.getAllCourseProgressAPI(progressPage, pageSize)
 
       if (response?.success) {
         setDataCourseProgress(response.data);
-        setPaginationInfo(response.pagination || { totalCourse: 0, totalPage: 1 });
+        setProgressPagination(response.pagination || { totalCourse: 0, totalPage: 1 });
       }
     } catch (error) {
       console.error("Lỗi lấy danh sách course progress:", error);
@@ -71,8 +78,8 @@ export default function TrainingPage() {
   }, []);
 
   useEffect(() => {
-    fetchCourseProgress(pageNumber, pageSize);
-  }, [pageNumber, pageSize, fetchCourseProgress]);
+    fetchCourseProgress(progressPage);
+  }, [progressPage]);
 
   const fetchManagers = useCallback(async () => {
     try {
@@ -103,6 +110,7 @@ export default function TrainingPage() {
 
       if (response.success) {
         toast.success("Tạo khóa học thành công vào lộ trình!");
+        await fetchCourses();
       }
     } catch (error) {
       console.error("Lỗi tạo khóa học:", error);
@@ -147,11 +155,11 @@ export default function TrainingPage() {
       <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6">
         <TrainingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {activeTab === "catalog" && <CourseCatalogView dataCourse={dataCourse} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} />}
+        {activeTab === "catalog" && <CourseCatalogView dataCourse={dataCourse} pagination={catalogPagination} pageSize={8} pageNumber={catalogPage} setPageNumber={setCatalogPage} />}
         {activeTab === "program" && (
           <TrainingProgramView onOpenModal={() => openModal("create")} />
         )}
-        {activeTab === "progress" && <EmployeeProgressView dataCourseProgress={dataCourseProgress} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} onSelectCourseProgress={openModal} />}
+        {activeTab === "progress" && <EmployeeProgressView dataCourseProgress={dataCourseProgress} pagination={progressPagination} pageSize={4} pageNumber={progressPage} setPageNumber={setProgressPage} onSelectCourseProgress={openModal} />}
       </div>
 
       {modalState.isOpen && (
