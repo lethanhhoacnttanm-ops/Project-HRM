@@ -9,6 +9,7 @@ import AttendanceModal from "../../../components/admin/Attendance/AttendanceModa
 import { Button } from "@/components/ui/button";
 
 import shiftService from "@/services/shift.service.js";
+import { attendanceService } from "@/services/attendance.service.js";
 
 import { toast } from 'sonner';
 
@@ -20,9 +21,12 @@ export default function AttendancePage() {
   });
   const [loading, setLoading] = useState(true)
   const [dataShift, setDataShift] = useState([]);
+  const [dataAttendance, setDataAttendance] = useState([]);
 
   const [pageNumber, setPageNumber] = useState(1);
   const [shiftPagination, setShiftPagination] = useState({ totalShift: 0, totalPage: 1 });
+  const [attendancePage, setAttendancePage] = useState(1);
+  const [attendancePagination, setAttendancePagination] = useState({ totalAttendance: 0, totalPage: 1 });
   const pageSize = 4
 
   const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
@@ -54,6 +58,32 @@ export default function AttendancePage() {
   useEffect(() => {
     fetchShifts(pageNumber);
   }, [pageNumber]);
+
+  const fetchAttendance = useCallback(async () => {
+    try {
+      const res = await attendanceService.FindWithPagination(attendancePage, pageSize);
+      if (res && res.success) {
+        setDataAttendance(res.dataAttendance || []);
+
+        if (res.pagination) {
+          setAttendancePagination(res.pagination);
+        }
+      } else {
+        setDataAttendance([]);
+      }
+    } catch (error) {
+      setDataAttendance([]);
+      toast.error('Thất bại', {
+        description: error.message || 'Không thể lấy danh sách chấm công!',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [attendancePage, pageSize]);
+
+  useEffect(() => {
+    fetchAttendance(attendancePage);
+  }, [attendancePage]);
 
   const handleCreateShiftSubmit = async (values) => {
     try {
@@ -95,7 +125,7 @@ export default function AttendancePage() {
       <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6">
         <AttendanceTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {activeTab === "daily" && <DailyAttendanceView />}
+        {activeTab === "daily" && <DailyAttendanceView dataAttendance={dataAttendance} pagination={attendancePagination} pageSize={4} pageNumber={attendancePage} setPageNumber={setAttendancePage} />}
         {activeTab === "shifts" && (
           <ShiftManagementView onOpenModal={() => openModal("create_shift")} dataShift={dataShift} pagination={shiftPagination} pageSize={4} pageNumber={pageNumber} setPageNumber={setPageNumber}/>
         )}
