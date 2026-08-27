@@ -1,5 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { Form, TimePicker } from 'antd';
+import { Button } from "@/components/ui/button";
 import {
   Loader2,
   CalendarDays,
@@ -8,8 +10,10 @@ import {
   AlertTriangle,
   XCircle,
   LogOut,
+  Calendar, Briefcase
 } from 'lucide-react';
-
+import EmployeeCheckInForm from '@/components/employee/EmployeeCheckInForm';
+import EmployeeCheckOutForm from '@/components/employee/EmployeeCheckOutForm';
 import { attendanceService } from '@/services/attendance.service';
 
 const statusStyle = {
@@ -48,6 +52,18 @@ const AttendancePage = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [attendanceStatus, setAttendanceStatus] = useState('LOADING');
+  const [activeRecord, setActiveRecord] = useState(null);
+
+  const stats = useMemo(() => {
+    const total = records.length;
+    const onTime = records.filter((r) => r.status === 'Đúng giờ').length;
+    const late = records.filter((r) => r.status === 'Đi muộn').length;
+    const absent = records.filter((r) => r.status === 'Vắng mặt').length;
+    const earlyLeave = records.filter((r) => r.status === 'Về sớm').length;
+    return { total, onTime, late, absent, earlyLeave };
+  }, [records]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,14 +82,35 @@ const AttendancePage = () => {
     fetchData();
   }, [month, year]);
 
-  const stats = useMemo(() => {
-    const total = records.length;
-    const onTime = records.filter((r) => r.status === 'Đúng giờ').length;
-    const late = records.filter((r) => r.status === 'Đi muộn').length;
-    const absent = records.filter((r) => r.status === 'Vắng mặt').length;
-    const earlyLeave = records.filter((r) => r.status === 'Về sớm').length;
-    return { total, onTime, late, absent, earlyLeave };
-  }, [records]);
+
+  const checkTodayStatus = async () => {
+    try {
+      const res = await attendanceService.getTodayStatus();
+      if (res && res.success) {
+        if (!res.data) {
+          setAttendanceStatus('CHECKIN');
+        } else if (res.data.checkOut === '--:--') {
+          setAttendanceStatus('CHECKOUT');
+          setActiveRecord(res.data);
+        } else {
+
+          setAttendanceStatus('COMPLETED');
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi kiểm tra trạng thái chấm công:", error);
+      setAttendanceStatus('CHECKIN');
+    }
+  };
+
+  useEffect(() => {
+    checkTodayStatus();
+  }, []);
+
+  if (attendanceStatus === 'LOADING') {
+    return <div className="text-center py-10 text-xs text-slate-400">Đang đồng bộ trạng thái chấm công...</div>;
+  }
+
 
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
   const yearOptions = [year - 1, year, year + 1];
@@ -195,6 +232,36 @@ const AttendancePage = () => {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+      </div>
+
+      <div className="max-w-md mx-auto">
+        {/* 1. Nếu chưa check-in -> Hiện form Check-in */}
+        {attendanceStatus === 'CHECKIN' && (
+          <EmployeeCheckInForm
+            onSuccess={() => checkTodayStatus()} // Sau khi check-in xong sẽ tự chuyển trạng thái qua Check-out
+          />
+        )}
+
+        {/* 2. Nếu đã check-in rồi -> Form check-in biến mất, hiện form Check-out */}
+        {attendanceStatus === 'CHECKOUT' && (
+          <EmployeeCheckOutForm
+            activeRecord={activeRecord}
+            onSuccess={() => checkTodayStatus()} // Sau khi checkout xong sẽ đổi giao diện thành hoàn tất
+          />
+        )}
+
+        {/* 3. Nếu đã hoàn thành cả ngày */}
+        {attendanceStatus === 'COMPLETED' && (
+          <div className="bg-white rounded-2xl border border-emerald-100 shadow-sm p-6 text-center space-y-3">
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800">Đã hoàn thành chấm công hôm nay!</h3>
+            <p className="text-xs text-slate-400">
+              Bạn đã ghi nhận đủ thời gian vào và ra ca. Cảm ơn sự nỗ lực của bạn.
+            </p>
           </div>
         )}
       </div>
