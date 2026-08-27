@@ -18,6 +18,7 @@ import courseRouter from './course.route.js'
 import courseprogressRouter from './courseprogress.routes.js'
 import shiftsRouter from './shift.route.js'
 import internalJobRouter from './internalJob.route.js';
+import reportRouter from './report.route.js';
 
 const mainRouter = express.Router();
 
@@ -40,6 +41,7 @@ mainRouter.use('/courses', courseRouter)
 mainRouter.use('/course-progress', courseprogressRouter)
 mainRouter.use('/shifts', shiftsRouter)
 mainRouter.use('/internal-jobs', internalJobRouter);
+mainRouter.use('/reports', reportRouter);
 
 export default mainRouter;
 
