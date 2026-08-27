@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Divider, notification, Checkbox, Spin } from 'antd';
+import { App as AntdApp, Form, Input, Button, Divider, Checkbox, Spin } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserOutlined, LockOutlined, GoogleOutlined, CheckCircleFilled } from '@ant-design/icons';
 import { useAuth } from '../../hooks/useAuth.js';
@@ -9,6 +9,7 @@ const LoginPage = () => {
   const [form] = Form.useForm();
   const { handleLogin, loading } = useAuth();
   const navigate = useNavigate();
+  const { notification } = AntdApp.useApp();
 
   const [isFocused, setIsFocused] = useState(false);
 

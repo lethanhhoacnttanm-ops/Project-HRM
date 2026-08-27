@@ -3,8 +3,8 @@ import { AuthProvider } from '../context/AuthContext';
 
 // Layouts
 import EmployeeLayout from '../components/layouts/EmployeeLayout';
-import AdminLayout from '../components/layouts/AdminLayout'; // của partner
-import AuthLayout from '../components/auth/AuthLayout'; // nếu partner có
+// import AdminLayout from '../components/layouts/AdminLayout'; // của partner
+// import AuthLayout from '../components/auth/AuthLayout'; // nếu partner có
 
 // Auth pages
 import LoginPage from '../pages/auth/LoginPage';

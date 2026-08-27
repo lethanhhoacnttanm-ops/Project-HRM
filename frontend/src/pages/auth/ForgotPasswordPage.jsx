@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form, Input, Button, notification } from 'antd';
+import { App as AntdApp, Form, Input, Button } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRightOutlined, MailOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 
@@ -7,6 +7,7 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { notification } = AntdApp.useApp();
 
   const openNotification = (type, message, description) => {
     notification[type]({
