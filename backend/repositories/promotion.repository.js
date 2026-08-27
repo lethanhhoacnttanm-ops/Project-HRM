@@ -18,7 +18,7 @@ class PromotionRepository {
     return await PromotionModel.findByIdAndUpdate(
       id,
       { $set: updateData },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
   }
 
@@ -26,8 +26,8 @@ class PromotionRepository {
     const query = status ? { status } : {};
 
     const [totalPromotion, dataPromotion] = await Promise.all([
-      PromotionModel.countDocuments(query), 
-      PromotionModel.find(query).skip(skip).limit(limit).lean() 
+      PromotionModel.countDocuments(query),
+      PromotionModel.find(query).skip(skip).limit(limit).lean(),
     ]);
 
     return { totalPromotion, dataPromotion };
@@ -35,6 +35,12 @@ class PromotionRepository {
 
   async findAllListPromotion() {
     return await PromotionModel.find();
+  }
+
+  async findByEmployeeId(employeeId) {
+    return await PromotionModel.find({ employeeId })
+      .sort({ createdAt: -1 })
+      .lean();
   }
 }
 
