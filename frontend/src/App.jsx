@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { Toaster } from 'sonner';
+import { App as AntdApp } from 'antd';
 
 import { useTheme } from './hooks/usetheme.js';
 
@@ -54,7 +55,7 @@ import SupportRequestPage from './pages/employee/SupportRequestPage.jsx';
 function App() {
   const { theme } = useTheme();                                     
   return (
-    <>
+    <AntdApp>
       <Toaster position="top-right" richColors closeButton theme={theme} />
 
       <Routes>
@@ -113,7 +114,7 @@ function App() {
         <Route path="/unauthorized" element={<div>Bạn không có quyền truy cập!</div>} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
-    </>
+    </AntdApp>
   );
 }
 

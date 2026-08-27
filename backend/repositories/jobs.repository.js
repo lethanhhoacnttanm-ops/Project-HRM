@@ -22,6 +22,19 @@ class JobsRepository {
   async findById(id) {
     return await JobModel.findById(id); 
   }
+
+    async findActiveJobs() {
+    return await JobModel.find({ status: 'active' })
+      .populate('department', 'name')
+      .sort({ deadline: 1 })
+      .lean();
+  }
+
+  async findActiveById(id) {
+    return await JobModel.findOne({ _id: id, status: 'active' })
+      .populate('department', 'name')
+      .lean();
+  }
 }
 
 export default new JobsRepository();
