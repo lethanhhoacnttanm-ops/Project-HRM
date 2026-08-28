@@ -52,7 +52,6 @@ export default function DepartmentStats({ totalDepartments, totalEmployees, unas
       iconBg: vacantLeadershipPositions > 0 
         ? "bg-rose-100 text-rose-500 dark:bg-rose-900/50 dark:text-rose-400" 
         : "bg-blue-100 text-blue-600 dark:bg-blue-950/80 dark:text-blue-400",
-      // Đã sửa lại định dạng border chuẩn cho card thứ 4
       borderColor: vacantLeadershipPositions > 0 
         ? "border-rose-200 dark:border-rose-900/60" 
         : "border-slate-200 dark:border-slate-800",

@@ -1,5 +1,5 @@
-import React from "react";
-import { MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
+import React, {useState} from "react";
+import { MoreVertical, ChevronLeft, ChevronRight, User, Star } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -7,8 +7,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,46 +16,56 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import PerformanceFilter from "../../../components/admin/Performance/PerformanceFilter.jsx";
 
-const evaluations = [
-  {
-    id: 1,
-    name: "Sarah Jenkins",
-    role: "Senior Product Designer",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-    department: "Thiết kế",
-    evaluator: "Michael Chen",
-    score: "4.8",
-    status: "Hoàn thành",
-    statusBg: "bg-teal-100 text-teal-700",
-  },
-  {
-    id: 2,
-    name: "James Wilson",
-    role: "Lead Developer",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-    department: "Kỹ thuật",
-    evaluator: "Sofia Rodriguez",
-    score: "4.5",
-    status: "Đang thực hiện",
-    statusBg: "bg-indigo-100 text-indigo-700",
-  },
-  {
-    id: 3,
-    name: "Priya Sharma",
-    role: "Marketing Specialist",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    department: "Marketing",
-    evaluator: "Alex Rivera",
-    score: "3.9",
-    status: "Chờ duyệt",
-    statusBg: "bg-slate-100 text-slate-600",
-  },
-];
 
-export default function PerformanceTable() {
+
+export default function PerformanceTable({ dataPerformance, pageNumber, setPageNumber, pagination, pageSize }) {
+  
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedDepartment, setSelectedDepartment] = useState("all");
+    const [selectedQuarter, setSelectedQuarter] = useState("q3_2024");
+
+  const handlePrevPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(prev => prev - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (pagination && pageNumber < pagination.totalPage) {
+      setPageNumber(prev => prev + 1);
+    }
+  };
+
+  const getPageNumbers = (totalPages = 1, current = 1) => {
+    let pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (current <= 3) {
+        pages = [1, 2, 3, 4, '...', totalPages];
+      } else if (current >= totalPages - 2) {
+        pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      } else {
+        pages = [1, '...', current - 1, current, current + 1, '...', totalPages];
+      }
+    }
+    return pages;
+  };
+
   return (
     <div className="bg-white rounded-b-2xl overflow-hidden">
+      <PerformanceFilter
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedDepartment={selectedDepartment}
+        setSelectedDepartment={setSelectedDepartment}
+        selectedQuarter={selectedQuarter}
+        setSelectedQuarter={setSelectedQuarter}
+      />
       <Table>
         <TableHeader className="bg-slate-50/80">
           <TableRow>
@@ -71,9 +81,6 @@ export default function PerformanceTable() {
             <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
               ĐIỂM GẦN NHẤT
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
-              TRẠNG THÁI
-            </TableHead>
             <TableHead className="py-4 px-6 text-center text-slate-500 font-bold text-xs uppercase">
               THAO TÁC
             </TableHead>
@@ -81,41 +88,46 @@ export default function PerformanceTable() {
         </TableHeader>
 
         <TableBody className="divide-y divide-slate-100 text-xs">
-          {evaluations.map((row) => (
-            <TableRow key={row.id} className="hover:bg-slate-50/80 transition-colors">
+          {dataPerformance.map((row) => (
+            <TableRow key={row._id} className="hover:bg-slate-50/80 transition-colors">
               <TableCell className="py-4 px-6">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={row.avatar}
-                    alt={row.name}
-                    className="w-9 h-9 rounded-full object-cover border"
-                  />
+                  {row.employee?.avatarUrl ? (
+                    <img
+                      src={row.employee?.avatarUrl}
+                      alt={row.employee?.fullName}
+                      className="w-9 h-9 rounded-full object-cover border"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                      <User className="w-4 h-4" />
+                    </div>
+                  )}
                   <div>
-                    <p className="font-bold text-slate-800">{row.name}</p>
-                    <p className="text-[11px] text-slate-400">{row.role}</p>
+                    <p className="font-bold text-slate-800">{row.employee?.fullName}</p>
+                    <p className="text-[11px] text-slate-400">{row.employee?.code}</p>
                   </div>
                 </div>
               </TableCell>
 
               <TableCell className="py-4 px-6 font-medium text-slate-600">
-                {row.department}
+                {row.employee?.department?.name}
               </TableCell>
 
               <TableCell className="py-4 px-6 font-medium text-slate-600">
-                {row.evaluator}
+                {row.evaluator?.fullName}
               </TableCell>
 
-              <TableCell className="py-4 px-6">
-                <span className="font-bold text-indigo-600 text-sm">{row.score}</span>
-                <span className="text-slate-400 text-xs font-medium">/5.0</span>
-              </TableCell>
-
-              <TableCell className="py-4 px-6">
-                <Badge
-                  className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${row.statusBg}`}
-                >
-                  {row.status}
-                </Badge>
+              <TableCell className="py-4 px-6 flex items-center gap-1.5">
+                {(() => {
+                  const avgScore = ((row.outsourcingScore + row.trainingScore) / 2).toFixed(1);
+                  return (
+                    <span className="font-bold text-indigo-600">
+                      {avgScore} / 5.0
+                    </span>
+                  );
+                })()}
+                <Star className="w-4 h-4 text-green-400 fill-green-400 drop-shadow-sm" />
               </TableCell>
 
               <TableCell className="py-4 px-6 text-center">
@@ -136,32 +148,67 @@ export default function PerformanceTable() {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        <TableFooter className="bg-white border-t border-slate-100">
+          <TableRow className="hover:bg-transparent">
+            <TableCell colSpan={8} className="p-0">
+              <div className="flex items-center justify-between px-6 py-4 text-xs text-slate-500">
 
-      <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 text-xs text-slate-500">
-        <p>Đang hiển thị 1-10 trong số 1.200 nhân viên</p>
-        <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon" className="h-7 w-7 text-slate-400 hover:bg-slate-50">
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button className="h-7 w-7 bg-indigo-600 text-white font-bold text-xs p-0">
-            1
-          </Button>
-          <Button variant="ghost" className="h-7 w-7 text-slate-600 text-xs p-0">
-            2
-          </Button>
-          <Button variant="ghost" className="h-7 w-7 text-slate-600 text-xs p-0">
-            3
-          </Button>
-          <span className="text-slate-400 px-1">...</span>
-          <Button variant="ghost" className="h-7 w-7 text-slate-600 text-xs p-0">
-            120
-          </Button>
-          <Button variant="outline" size="icon" className="h-7 w-7 text-slate-400 hover:bg-slate-50">
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+                <p>
+                  Trang <span className="font-bold text-indigo-600">{pageNumber}</span> / <span className="font-bold text-slate-800">{pagination?.totalPage || 1}</span>
+                  <span className="text-slate-300 mx-2">|</span>
+                  Tổng số: <span className="font-bold text-slate-800">{pagination?.totalItems || dataPerformance?.length || 0}</span> đơn
+                </p>
+
+                <div className="flex items-center gap-1">
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePrevPage}
+                    disabled={pageNumber <= 1}
+                    className={`h-7 w-7 text-slate-400 hover:bg-slate-50 ${pageNumber <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+
+                  {getPageNumbers(pagination?.totalPage, pageNumber).map((page, index) => {
+                    if (page === '...') {
+                      return <span key={index} className="text-slate-400 px-1">...</span>;
+                    }
+
+                    const isCurrent = page === pageNumber;
+
+                    return (
+                      <Button
+                        key={index}
+                        onClick={() => setPageNumber(page)}
+                        className={`h-7 w-7 font-bold text-xs p-0 shadow-none transition-all ${isCurrent
+                          ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                          : 'bg-transparent text-slate-600 hover:bg-slate-100'
+                          }`}
+                      >
+                        {page}
+                      </Button>
+                    );
+                  })}
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleNextPage}
+                    disabled={!pagination || pageNumber >= pagination.totalPage}
+                    className={`h-7 w-7 text-slate-400 hover:bg-slate-50 ${(!pagination || pageNumber >= pagination.totalPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+
+                </div>
+
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
     </div>
   );
 }

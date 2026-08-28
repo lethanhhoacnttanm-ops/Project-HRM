@@ -10,7 +10,9 @@ import {
   ShieldCheck, 
   Briefcase, 
   Layout, 
-  ServerCog 
+  ServerCog,
+  Kanban,
+  CloudCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -174,6 +176,70 @@ const TRAINING_PROGRAMS_DATA = [
         output: "Xây dựng hệ thống Design System chuẩn hóa, bảo vệ phương án thiết kế."
       }
     ]
+  },
+  {
+    id: "prog-6",
+    department: "DevOps & System",
+    deptIcon: CloudCog, 
+    position: "DevOps Engineer / System Admin",
+    levels: [
+      {
+        levelName: "Intern",
+        duration: "1 - 2 tháng",
+        courses: ["Linux & Shell Scripting cơ bản", "Networking Fundamentals (TCP/IP, DNS)", "Git & Version Control"],
+        output: "Thao tác mượt mà trên môi trường Linux, hiểu cách cấu hình mạng cơ bản."
+      },
+      {
+        levelName: "Fresher",
+        duration: "2 - 3 tháng",
+        courses: ["Docker & Containerization", "CI/CD Pipeline cơ bản (GitHub Actions / GitLab CI)", "Nginx / Apache Web Server"],
+        output: "Đóng gói ứng dụng qua Docker, thiết lập các pipeline build/deploy tự động đơn giản."
+      },
+      {
+        levelName: "Junior",
+        duration: "6 - 12 tháng",
+        courses: ["Kubernetes (K8s) Fundamentals", "Cloud Providers (AWS / GCP / Azure)", "Infrastructure as Code (Terraform cơ bản)"],
+        output: "Quản trị cụm k8s, dựng hạ tầng cloud tự động hóa bằng code."
+      },
+      {
+        levelName: "Middle",
+        duration: "Trên 1 năm",
+        courses: ["Advanced Kubernetes & Helm", "Monitoring & Logging (Prometheus, Grafana, ELK)", "System Security & Disaster Recovery"],
+        output: "Vận hành hệ thống lớn chịu tải cao, thiết lập hệ thống cảnh báo và bảo mật tự động."
+      }
+    ]
+  },
+  {
+    id: "prog-7",
+    department: "Project Management Office(PMO)/Project Management(PM)",
+    deptIcon: Kanban, 
+    position: "Project Manager / Scrum Master",
+    levels: [
+      {
+        levelName: "Intern",
+        duration: "1 - 2 tháng",
+        courses: ["Agile & Scrum Framework căn bản", "Jira & Confluence Management", "Quy trình phát triển phần mềm (SDLC)"],
+        output: "Hiểu rõ vận hành Scrum, quản lý task và cập nhật tiến độ trên Jira."
+      },
+      {
+        levelName: "Fresher",
+        duration: "2 - 3 tháng",
+        courses: ["Risk Management cơ bản", "Stakeholder Communication", "Estimation Techniques (Planning Poker, Story Points)"],
+        output: "Tổ chức các buổi Daily Standup, hỗ trợ PMO theo dõi tiến độ dự án outsourcing."
+      },
+      {
+        levelName: "Junior",
+        duration: "6 - 12 tháng",
+        courses: ["Resource & Budget Planning", "Advanced Conflict Resolution", "Contract & Vendor Management"],
+        output: "Chủ động điều phối nguồn lực dev/test, xử lý các điểm nghẽn phát sinh trong sprint."
+      },
+      {
+        levelName: "Middle",
+        duration: "Trên 1 năm",
+        courses: ["Strategic Portfolio Management", "Enterprise Agile Transformation", "Leadership & Negotiation Skills"],
+        output: "Quản trị danh mục dự án lớn, đàm phán scope và tối ưu hóa biên độ lợi nhuận với khách hàng."
+      }
+    ]
   }
 ];
 
@@ -186,7 +252,7 @@ export default function TrainingProgramView({ onOpenModal }) {
     ? TRAINING_PROGRAMS_DATA 
     : TRAINING_PROGRAMS_DATA.filter(p => p.department === selectedDept);
 
-  const departments = ["All", "Software Development", "QA/QC", "Business Analysis & Product", "UI/UX Design"];
+  const departments = ["All", "Software Development", "QA/QC", "Business Analysis & Product", "UI/UX Design", "DevOps & System", "Project Management Office(PMO) / Project Management(PM)"];
 
   const handleDeptChange = (dept) => {
     setSelectedDept(dept);

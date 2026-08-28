@@ -43,7 +43,6 @@ export default function DepartmentTable({ onSelectDepartment, departments, allEm
       <Table>
         <TableHeader className="bg-slate-50/80 dark:bg-slate-800/60">
           <TableRow className="hover:bg-transparent border-slate-200 dark:border-slate-800">
-            {console.log(departments)}
             <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider">
               Tên phòng ban
             </TableHead>
@@ -174,41 +173,6 @@ export default function DepartmentTable({ onSelectDepartment, departments, allEm
           })}
         </TableBody>
       </Table>
-
-      <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-900">
-        <p>Hiển thị 1–4 trong số 12 phòng ban</p>
-        <div className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-7 w-7 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button className="h-7 w-7 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs p-0 border-0">
-            1
-          </Button>
-          <Button
-            variant="ghost"
-            className="h-7 w-7 text-slate-600 dark:text-slate-300 font-medium text-xs p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            2
-          </Button>
-          <Button
-            variant="ghost"
-            className="h-7 w-7 text-slate-600 dark:text-slate-300 font-medium text-xs p-0 hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            3
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="h-7 w-7 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
     </div>
   );
 }

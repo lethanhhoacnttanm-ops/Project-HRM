@@ -69,7 +69,7 @@ export default function LeaveFilter({
         </label>
         <div className="flex items-center gap-2">
           <Popover>
-            <PopoverTrigger asChild>
+            <PopoverTrigger render={(
               <Button
                 variant="outline"
                 className="w-32 border-slate-200 text-xs text-slate-600 bg-slate-50/50 rounded-xl h-9 justify-start font-normal shadow-none px-3"
@@ -77,7 +77,7 @@ export default function LeaveFilter({
                 <CalendarIcon className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
                 {fromDate ? format(fromDate, "dd/MM/yyyy") : "mm/dd/yyyy"}
               </Button>
-            </PopoverTrigger>
+            )}/>
             <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
               <Calendar mode="single" selected={fromDate} onSelect={setFromDate} />
             </PopoverContent>

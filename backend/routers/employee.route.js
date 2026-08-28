@@ -7,6 +7,8 @@ import { validateRegisterRules, handleValidationRegister } from '../middleware/v
 
 const router = express.Router();
 
+router.get('/all-list-v1', verifyToken, checkRole('ADMIN'), employeeController.getListAllEmployees)
+
 router.get('/', verifyToken, checkRole('ADMIN'), employeesController.getAllEmployees);
 
 router.post('/register', verifyToken, checkRole('ADMIN'), validateRegisterRules, handleValidationRegister, employeeController.register);

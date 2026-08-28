@@ -39,20 +39,28 @@ class ContractsService {
     };
   }
 
-  async getAllContractByID({ page = 1, limit = 10 }) {
-    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
-    const pageSize = Math.max(1, parseInt(limit, 10) || 10);
+  async getAllContractByID({ page, limit }) {
+    const pageNumber = Math.max(1, parseInt(page, 10));
+    const pageSize = Math.max(1, parseInt(limit, 10));
+    const skip = (pageNumber - 1) * pageSize;
 
-    const result = await contractRepository.findAll({
-      page: pageNumber,
+    const { dataContract, totalContract } = await contractRepository.findAll({
+      skip,
       limit: pageSize,
     });
 
+    if (totalContract=== undefined || dataContract === undefined) {
+      throw new Error("Lỗi trường hợp lệ trong phân trang");
+    }
+
     return {
-      success: true,
-      message: "Lấy toàn bộ danh sách hợp đồng thành công",
-      data: result.data,
-      pagination: result.pagination,
+      dataContract,
+      pagination: {
+        totalContract,
+        pageNumber,
+        pageSize,
+        totalPage: Math.ceil(totalContract / pageSize)
+      },
     };
   }
 

@@ -15,7 +15,6 @@ export const contractService = {
     });
   },
 
-  // ===== Employee =====
   getMyContracts: async () => {
     return await axiosClient.get('/contracts/me');
   },

@@ -70,8 +70,6 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
       manager: values.manager || null
     };
 
-    console.log("🔥 FULL PAYLOAD GỬI ĐI:", JSON.stringify(payload, null, 2));
-
     if (isCreate) {
       onSubmit(payload)
     }
@@ -88,7 +86,6 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
     };
 
     if (isPosition) {
-      console.log("Payload:", payload);
       onSubmitPosition(payload)
     }
   };

@@ -5,6 +5,15 @@ import { generateUniqueEmployeeCode } from '../utils/generateEmployeeCode.js';
 
 
 class EmployeeService {
+
+    async getAllListEmployees(){
+        const listEmployee = await employeeRepository.findAllEmployees();
+
+        return {
+            data: listEmployee
+        }
+    }
+
     async getAllEmployee({ page, limit, role, status }) {
         const pageNumber = Math.max(1, parseInt(page, 10));
         const pageSize = Math.max(1, parseInt(limit, 10));
