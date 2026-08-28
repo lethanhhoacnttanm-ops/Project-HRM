@@ -121,10 +121,10 @@ export default function TrainingPage() {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Đào tạo & Phát triển
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">
             Quản lý việc nâng cao kỹ năng, chứng chỉ và nguồn tài liệu giáo dục cho nhân viên.
           </p>
         </div>
@@ -133,15 +133,15 @@ export default function TrainingPage() {
           <Button
             variant="outline"
             onClick={() => openModal("assign")}
-            className="flex items-center gap-2 border-slate-300 text-slate-700 font-semibold text-xs px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 shadow-sm"
+            className="flex items-center gap-2 border-slate-300 dark:border-gray-700 text-slate-700 dark:text-gray-300 font-semibold text-xs px-4 py-2.5 rounded-xl bg-white dark:bg-gray-800 hover:bg-slate-50 dark:hover:bg-gray-700 shadow-sm cursor-pointer"
           >
-            <UserCheck className="w-4 h-4 text-slate-500" />
+            <UserCheck className="w-4 h-4 text-slate-500 dark:text-gray-400" />
             <span>Phân công đào tạo</span>
           </Button>
 
           <Button
             onClick={() => openModal("create")}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all cursor-pointer border-0"
           >
             <Plus className="w-4 h-4" />
             <span>Tạo khóa học mới</span>
@@ -151,7 +151,7 @@ export default function TrainingPage() {
 
       <TrainingStats />
 
-      <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6">
+      <div className="rounded-2xl border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm bg-white dark:bg-gray-900 p-6 space-y-6">
         <TrainingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {activeTab === "catalog" && <CourseCatalogView dataCourse={dataCourse} pagination={catalogPagination} pageSize={8} pageNumber={catalogPage} setPageNumber={setCatalogPage} />}

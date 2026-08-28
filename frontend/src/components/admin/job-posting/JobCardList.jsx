@@ -103,7 +103,7 @@ const JobCardList = ({ dataJobs, pagination, pageNumber, setPageNumber, onViewDe
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
               <Button
                 onClick={() => onNavigateApproval ? onNavigateApproval(job._id || job.id) : null}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold h-9 flex-1 shadow-sm hover:shadow transition-all cursor-pointer flex items-center justify-center gap-1.5 border-none"
+                className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white rounded-xl text-xs font-bold h-9 flex-1 shadow-sm hover:shadow transition-all cursor-pointer flex items-center justify-center gap-1.5 border-none"
               >
                 <span>Duyệt CV ({job.candidateCount || 0})</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -112,7 +112,7 @@ const JobCardList = ({ dataJobs, pagination, pageNumber, setPageNumber, onViewDe
               <Button
                 variant="outline"
                 onClick={() => handleOpenModalDetail("details", job)}
-                className="rounded-xl text-xs font-bold border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 h-9 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
+                className="rounded-xl text-xs font-bold border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 h-9 px-3 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 cursor-pointer"
               >
                 Chi tiết
               </Button>
@@ -133,7 +133,7 @@ const JobCardList = ({ dataJobs, pagination, pageNumber, setPageNumber, onViewDe
               size="sm"
               onClick={handlePrevPage}
               disabled={pageNumber <= 1}
-              className="rounded-xl h-9 px-3 text-xs font-bold border-slate-200 dark:border-slate-700 disabled:opacity-40 cursor-pointer flex items-center gap-1"
+              className="rounded-xl h-9 px-3 text-xs font-bold border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 cursor-pointer flex items-center gap-1"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Trang trước</span>
@@ -144,7 +144,7 @@ const JobCardList = ({ dataJobs, pagination, pageNumber, setPageNumber, onViewDe
               size="sm"
               onClick={handleNextPage}
               disabled={pageNumber >= totalPages}
-              className="rounded-xl h-9 px-3 text-xs font-bold border-slate-200 dark:border-slate-700 disabled:opacity-40 cursor-pointer flex items-center gap-1"
+              className="rounded-xl h-9 px-3 text-xs font-bold border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 cursor-pointer flex items-center gap-1"
             >
               <span>Trang sau</span>
               <ChevronRight className="w-4 h-4" />

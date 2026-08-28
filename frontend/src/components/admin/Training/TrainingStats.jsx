@@ -50,7 +50,7 @@ export default function TrainingStats() {
         return (
           <div
             key={item.id}
-            className="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col justify-between"
+            className="p-5 bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl shadow-sm flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start justify-between">
@@ -67,22 +67,22 @@ export default function TrainingStats() {
                 )}
 
                 {item.topRightText && (
-                  <span className="text-[11px] font-medium text-slate-400">
+                  <span className="text-[11px] font-medium text-slate-400 dark:text-gray-500">
                     {item.topRightText}
                   </span>
                 )}
 
                 {item.hasProgressLine && (
-                  <div className="w-12 h-1.5 bg-emerald-500 rounded-full mt-2" />
+                  <div className="w-12 h-1.5 bg-emerald-500 dark:bg-emerald-400 rounded-full mt-2" />
                 )}
               </div>
 
               <div className="mt-4">
-                <p className="text-xs font-medium text-slate-500">{item.title}</p>
+                <p className="text-xs font-medium text-slate-500 dark:text-gray-400">{item.title}</p>
                 <div className="flex items-baseline gap-1.5 mt-1">
-                  <h3 className="text-2xl font-bold text-slate-800">{item.value}</h3>
+                  <h3 className="text-2xl font-bold text-slate-800 dark:text-white">{item.value}</h3>
                   {item.subText && (
-                    <span className="text-xs font-medium text-slate-400">
+                    <span className="text-xs font-medium text-slate-400 dark:text-gray-500">
                       {item.subText}
                     </span>
                   )}
@@ -92,7 +92,7 @@ export default function TrainingStats() {
 
             {item.budgetProgress !== undefined && (
               <div className="mt-3">
-                <Progress value={item.budgetProgress} className="h-2 bg-indigo-100" />
+                <Progress value={item.budgetProgress} className="h-2 bg-indigo-100 dark:bg-indigo-950/60" />
               </div>
             )}
           </div>

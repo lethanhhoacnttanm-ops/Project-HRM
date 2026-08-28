@@ -212,7 +212,7 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
 
                   {getPageNumbers(pagination?.totalEmp, pageNumber).map((page, index) => {
                     if (page === '...') {
-                      return <span key={index} className="text-slate-400 px-1">...</span>;
+                      return <span key={index} className="text-slate-400 dark:text-gray-500 px-1">...</span>;
                     }
 
                     const isCurrent = page === pageNumber;
@@ -222,8 +222,8 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
                         key={index}
                         onClick={() => setPageNumber(page)}
                         className={`h-7 w-7 font-bold text-xs p-0 shadow-none transition-all ${isCurrent
-                          ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                          : 'bg-transparent text-slate-600 hover:bg-slate-100'
+                          ? 'bg-indigo-600 text-white hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500'
+                          : 'bg-transparent text-slate-600 dark:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-800'
                           }`}
                       >
                         {page}

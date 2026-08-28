@@ -66,16 +66,16 @@ const ContractListPage = () => {
 
   useEffect(() => {
     const fetchPendingEmployees = async () => {
-        try {
-          const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE', 'pending');
-          if (res?.success) {
-            setBeginEmployees(res.dataEmp || []);
-            setbeginPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
-          }
-        } catch (error) {
-          toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
+      try {
+        const res = await employeeService.getAllEmployees(beginPageNumber, pageSize, 'NONE', 'pending');
+        if (res?.success) {
+          setBeginEmployees(res.dataEmp || []);
+          setbeginPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
         }
+      } catch (error) {
+        toast.error('Thất bại', { description: 'Không thể lấy danh sách chờ duyệt!' });
       }
+    }
 
     fetchPendingEmployees();
   }, [beginPageNumber, pageSize]);
@@ -148,7 +148,7 @@ const ContractListPage = () => {
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => handleOpenModal('create')}
-            className="bg-blue-600 hover:bg-blue-700 h-10 px-5 rounded-xl font-bold border-none shadow-2xs cursor-pointer"
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 h-10 px-5 rounded-xl font-bold border-none shadow-2xs cursor-pointer"
           >
             Hợp đồng mới
           </Button>

@@ -33,14 +33,14 @@ const CandidateApprovalPage = () => {
       try {
         setLoading(true);
         const response = await jobService.getJobDetailsForApproval(jobId);
-        
+
         const payload = response.data || response;
 
         if (payload) {
           if (payload.jobInfo) {
             setJobInfo(payload.jobInfo);
           }
-          
+
           if (payload.candidates) {
             setCandidates(payload.candidates);
           }
@@ -69,22 +69,22 @@ const CandidateApprovalPage = () => {
             <Button
               icon={<ArrowLeftOutlined />}
               onClick={() => navigate(-1)}
-              className="rounded-xl text-xs font-bold cursor-pointer"
+              className="rounded-xl text-xs font-bold cursor-pointer border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               Quay lại
             </Button>
             {jobId && (
-              <span className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-xl text-xs font-bold border border-indigo-100">
+              <span className="bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-300 px-3 py-1 rounded-xl text-xs font-bold border border-indigo-100 dark:border-indigo-900/50">
                 Mã dự án: {jobId}
               </span>
             )}
           </div>
 
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight pt-2">
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight pt-2">
             {console.log(jobInfo)}
             {jobInfo ? `Duyệt ứng viên dự án: ${jobInfo.title}` : (jobId ? `Đang tải thông tin dự án (${jobId})...` : 'Duyệt tất cả hồ sơ ứng viên')}
           </h1>
-          <p className="text-xs text-gray-500 font-medium">
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
             {jobInfo
               ? `Khách hàng: ${jobInfo.client || 'Nội bộ'} | Ngân sách: ${jobInfo.budget}`
               : 'Quản lý tiến độ tuyển dụng, đánh giá năng lực và phê duyệt các ứng viên tiềm năng.'}

@@ -43,9 +43,9 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
   return (
     <div className="space-y-4">
       {!surveyedEmployee ? (
-          <div className="p-4 bg-indigo-50/50 dark:bg-slate-900/40 border border-indigo-100 dark:border-slate-800 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
-          <div className="flex items-start gap-3">
-            <div className="p-1.5 bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 rounded-full mt-0.5">
+        <div className="p-4 bg-indigo-50/50 dark:bg-gray-800/60 border border-indigo-100 dark:border-slate-800 rounded-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all">
+          <div className="flex items-start gap-3 ">
+            <div className="p-1.5 bg-indigo-100 dark:bg-gray-800/60 text-indigo-600 dark:text-indigo-400 rounded-full mt-0.5">
               <Info className="w-5 h-5" />
             </div>
             <div>
@@ -56,14 +56,14 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
             </div>
           </div>
           <div className="flex items-center gap-2 self-end md:self-auto">
-            <Button 
+            <Button
               variant="outline"
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm cursor-pointer"
             >
               <Filter className="w-3.5 h-3.5" />
               <span>Lọc theo phòng ban</span>
             </Button>
-            <Button 
+            <Button
               className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 rounded-lg transition-colors shadow-sm cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
@@ -72,15 +72,13 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
           </div>
         </div>
       ) : (
-        <div className={`p-4 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all animate-in fade-in-50 duration-200 ${
-          surveyResult.isPassed 
-            ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 text-blue-900 dark:text-blue-200' 
+        <div className={`p-4 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all animate-in fade-in-50 duration-200 ${surveyResult.isPassed
+            ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900 text-blue-900 dark:text-blue-200'
             : 'bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-900 text-rose-900 dark:text-rose-200'
-        }`}>
+          }`}>
           <div className="flex items-start gap-3">
-            <div className={`p-1.5 rounded-full mt-0.5 shrink-0 ${
-              surveyResult.isPassed ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300' : 'bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-300'
-            }`}>
+            <div className={`p-1.5 rounded-full mt-0.5 shrink-0 ${surveyResult.isPassed ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300' : 'bg-rose-100 text-rose-600 dark:bg-rose-900 dark:text-rose-300'
+              }`}>
               {surveyResult.isPassed ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
             </div>
             <div>
@@ -88,15 +86,14 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
                 <h4 className="text-sm font-bold">
                   Kết quả khảo sát: {surveyedEmployee.name}
                 </h4>
-                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${
-                  surveyResult.isPassed ? 'bg-blue-200 text-blue-800' : 'bg-rose-200 text-rose-800'
-                }`}>
+                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-md ${surveyResult.isPassed ? 'bg-blue-200 text-blue-800' : 'bg-rose-200 text-rose-800'
+                  }`}>
                   {surveyResult.isPassed ? "ĐẠT TIÊU CHUẨN" : "CHƯA ĐẠT"}
                 </span>
               </div>
               <p className="text-xs mt-1 opacity-90">
-                Vị trí mục tiêu: <span className="font-semibold">{surveyedEmployee.proposedLevel}</span> • 
-                Thâm niên thực tế: <span className="font-semibold">{surveyedEmployee.gradetenure} năm</span> (Cần ≥ {surveyResult.requiredTenure}) • 
+                Vị trí mục tiêu: <span className="font-semibold">{surveyedEmployee.proposedLevel}</span> •
+                Thâm niên thực tế: <span className="font-semibold">{surveyedEmployee.gradetenure} năm</span> (Cần ≥ {surveyResult.requiredTenure}) •
                 Hiệu suất: <span className="font-semibold">{surveyedEmployee.performanceRating} ⭐</span> (Cần ≥ {surveyResult.requiredScore})
               </p>
             </div>
@@ -104,7 +101,7 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
 
           <div className="flex items-center gap-2 self-end md:self-auto">
             {surveyResult.isPassed && (
-              <Button 
+              <Button
                 onClick={() => {
                   if (typeof onSubmitUpdatePromotion === 'function') {
                     onSubmitUpdatePromotion(surveyedEmployee._id || surveyedEmployee.id, { status: 'WAITING' });
@@ -117,7 +114,7 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
               </Button>
             )}
             {!surveyResult.isPassed && (
-              <Button 
+              <Button
                 onClick={() => {
                   if (typeof onSubmitUpdatePromotion === 'function') {
                     onSubmitUpdatePromotion(surveyedEmployee._id || surveyedEmployee.id, { status: 'REJECTED' });
@@ -130,7 +127,7 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
                 <span>Từ chối đề xuất</span>
               </Button>
             )}
-            <Button 
+            <Button
               variant="ghost"
               size="icon"
               onClick={() => setSurveyedEmployee(null)}
@@ -146,14 +143,14 @@ export default function EligibilityTable({ dataPromotion, pageSize, pagination, 
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
         <div className="overflow-x-auto">
           <Table className="w-full text-left text-sm">
-            <TableHeader className="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
+            <TableHeader className="bg-slate-50 dark:bg-gray-800/60 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
               <TableRow className="hover:bg-transparent">
-                <TableHead className="py-3 px-6">Nhân sự</TableHead>
-                <TableHead className="py-3 px-4">Vị trí hiện tại</TableHead>
-                <TableHead className="py-3 px-4">Số năm giữ chức</TableHead>
-                <TableHead className="py-3 px-4">Hiệu suất</TableHead>
-                <TableHead className="py-3 px-4">Trạng thái</TableHead>
-                <TableHead className="py-3 px-4 text-right">Actions</TableHead>
+                <TableHead className="py-3 px-6 dark:text-white">Nhân sự</TableHead>
+                <TableHead className="py-3 px-4 dark:text-white">Vị trí hiện tại</TableHead>
+                <TableHead className="py-3 px-4 dark:text-white">Số năm giữ chức</TableHead>
+                <TableHead className="py-3 px-4 dark:text-white">Hiệu suất</TableHead>
+                <TableHead className="py-3 px-4 dark:text-white">Trạng thái</TableHead>
+                <TableHead className="py-3 px-4 text-right dark:text-white">Actions</TableHead>
               </TableRow>
             </TableHeader>
 

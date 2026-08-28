@@ -107,11 +107,11 @@ export default function PromotionPage() {
   const getStatusByTab = (tab) => {
     switch (tab) {
       case "process":
-        return "PENDING_REVIEW"; 
+        return "PENDING_REVIEW";
       case "eligibility":
-        return "APPROVED_PENDING_EFFECTIVE"; 
+        return "APPROVED_PENDING_EFFECTIVE";
       case "history":
-        return "WAITING";   
+        return "WAITING";
       default:
         return "PENDING_REVIEW";
     }
@@ -164,8 +164,8 @@ export default function PromotionPage() {
 
       if (result.success) {
         toast.success("Cập nhật trạng thái và chuyển bước thành công!");
-        
-        fetchPromotions(); 
+
+        fetchPromotions();
       }
     } catch (error) {
       console.error("Lỗi cập nhật:", error);
@@ -198,7 +198,7 @@ export default function PromotionPage() {
             <HoverCardTrigger
               delay={10}
               closeDelay={100}
-              render={<Button variant="outline" className="font-bold">Xem Lộ Trình Thăng Tiến</Button>}
+              render={<Button variant="outline" className="font-bold border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">Xem Lộ Trình Thăng Tiến</Button>}
             />
 
             <HoverCardContent className="w-105 p-5 bg-indigo-50/95 dark:bg-indigo-950/95 backdrop-blur-md border-2 border-indigo-500/30 dark:border-indigo-900/50 shadow-xl rounded-2xl">
@@ -290,7 +290,7 @@ export default function PromotionPage() {
           </HoverCard>
           <Button
             onClick={() => handleOpenModal('create', dataEmployee)}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md transition-all self-start sm:self-auto cursor-pointer border-0"
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-md transition-all self-start sm:self-auto cursor-pointer border-0"
           >
             <PlusCircle className="w-5 h-5" />
             <span>Tạo đề xuất thăng tiến</span>
@@ -300,9 +300,9 @@ export default function PromotionPage() {
 
       <PromotionStats />
 
-      <div className="rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="rounded-xl border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm bg-white dark:bg-gray-900">
         <PromotionTabs activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setPageNumber(1); }} />
-        <PromotionTable onSubmitUpdatePromotion={handleCheckAndNextStep} activeTab={activeTab} dataPromotions={dataPromotions} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber}/>
+        <PromotionTable onSubmitUpdatePromotion={handleCheckAndNextStep} activeTab={activeTab} dataPromotions={dataPromotions} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -313,6 +313,7 @@ export default function PromotionPage() {
           <PerformanceInsightCard />
         </div>
       </div>
+
 
       <PromotionModal
         isOpen={modalState.isOpen}

@@ -23,7 +23,6 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import ThemeToggle from '../ThemeToggle.jsx';
 
 import { Search, Bell, User, LogOut, AlertTriangle } from "lucide-react";
 
@@ -63,7 +62,6 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <ThemeToggle />
           <Button
             variant="ghost"
             size="icon"

@@ -276,26 +276,24 @@ export default function TrainingProgramView({ onOpenModal }) {
 
   return (
     <div className="space-y-6 my-4">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <ClipboardList className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-slate-800">
-                Chương trình Đào tạo & Phát triển (Learning Paths)
-              </h3>
-              <p className="text-xs text-slate-500 font-medium">
-                Hệ thống lộ trình chuẩn hóa theo Phòng ban, Vị trí và Cấp bậc từ Intern đến Middle.
-              </p>
-            </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-gray-900 p-6 rounded-2xl border border-slate-100 dark:border-gray-800 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+            <ClipboardList className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 dark:text-white">
+              Chương trình Đào tạo & Phát triển (Learning Paths)
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-gray-400 font-medium">
+              Hệ thống lộ trình chuẩn hóa theo Phòng ban, Vị trí và Cấp bậc từ Intern đến Middle.
+            </p>
           </div>
         </div>
 
         <Button
           onClick={onOpenModal}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
+          className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer border-0"
         >
           <Plus className="w-4 h-4" />
           Thiết lập chương trình mới
@@ -309,8 +307,8 @@ export default function TrainingProgramView({ onOpenModal }) {
             onClick={() => handleDeptChange(dept)}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               selectedDept === dept
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-100"
-                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-100 dark:shadow-none dark:bg-indigo-600"
+                : "bg-white dark:bg-gray-800 text-slate-600 dark:text-gray-300 border border-slate-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-700"
             }`}
           >
             {dept === "All" ? "Tất cả phòng ban" : dept}
@@ -322,7 +320,7 @@ export default function TrainingProgramView({ onOpenModal }) {
         <div className="relative group">
           <button 
             onClick={() => handleNavigation("prev")}
-            className="absolute -left-4 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-700 flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all cursor-pointer shadow-lg"
+            className="absolute -left-4 sm:-left-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-200 flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:hover:bg-indigo-600 dark:hover:text-white transition-all cursor-pointer shadow-lg"
             title="Vị trí trước"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -330,32 +328,32 @@ export default function TrainingProgramView({ onOpenModal }) {
 
           <button 
             onClick={() => handleNavigation("next")}
-            className="absolute -right-4 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-slate-200 bg-white text-slate-700 flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all cursor-pointer shadow-lg"
+            className="absolute -right-4 sm:-right-5 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-200 flex items-center justify-center hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:hover:bg-indigo-600 dark:hover:text-white transition-all cursor-pointer shadow-lg"
             title="Vị trí tiếp theo"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          <div className={`bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-6 transition-all duration-300 transform ${
+          <div className={`bg-white dark:bg-gray-900 border border-slate-200/80 dark:border-gray-800 rounded-2xl p-6 shadow-sm space-y-6 transition-all duration-300 transform ${
             isAnimating ? "opacity-0 translate-y-2 scale-[0.99]" : "opacity-100 translate-y-0 scale-100"
           }`}>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-gray-800 pb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
+                <div className="w-12 h-12 rounded-xl bg-slate-900 dark:bg-gray-800 text-white flex items-center justify-center shadow-sm">
                   <IconComponent className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-md">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-0.5 rounded-md">
                     {currentProgram.department}
                   </span>
-                  <h4 className="text-lg font-black text-slate-900 mt-1">
+                  <h4 className="text-lg font-black text-slate-900 dark:text-white mt-1">
                     {currentProgram.position}
                   </h4>
                 </div>
               </div>
 
-              <div className="text-xs font-semibold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                Vị trí: <span className="text-slate-800 font-bold">{currentIndex + 1} / {filteredPrograms.length}</span>
+              <div className="text-xs font-semibold text-slate-500 dark:text-gray-400 bg-slate-50 dark:bg-gray-800 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-gray-700">
+                Vị trí: <span className="text-slate-800 dark:text-white font-bold">{currentIndex + 1} / {filteredPrograms.length}</span>
               </div>
             </div>
 
@@ -363,25 +361,25 @@ export default function TrainingProgramView({ onOpenModal }) {
               {currentProgram.levels.map((lvl, idx) => (
                 <div 
                   key={idx} 
-                  className="bg-slate-50/70 border border-slate-200/60 rounded-xl p-4 flex flex-col justify-between space-y-3 hover:border-indigo-300 transition-all"
+                  className="bg-slate-50/70 dark:bg-gray-800/40 border border-slate-200/60 dark:border-gray-700 rounded-xl p-4 flex flex-col justify-between space-y-3 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-extrabold text-xs text-slate-900 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                      <span className="font-extrabold text-xs text-slate-900 dark:text-white bg-white dark:bg-gray-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-gray-700 shadow-2xs">
                         {lvl.levelName}
                       </span>
-                      <span className="text-[10px] font-medium text-slate-400">
+                      <span className="text-[10px] font-medium text-slate-400 dark:text-gray-500">
                         ⏱ {lvl.duration}
                       </span>
                     </div>
 
                     <div className="space-y-1.5 mt-3">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      <p className="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider flex items-center gap-1">
                         <BookOpen className="w-3 h-3 text-indigo-500" /> Khóa học bắt buộc:
                       </p>
                       <ul className="space-y-1">
                         {lvl.courses.map((course, cIdx) => (
-                          <li key={cIdx} className="text-xs text-slate-700 font-medium flex items-start gap-1.5 bg-white p-2 rounded-lg border border-slate-100 shadow-3xs">
+                          <li key={cIdx} className="text-xs text-slate-700 dark:text-gray-300 font-medium flex items-start gap-1.5 bg-white dark:bg-gray-800 p-2 rounded-lg border border-slate-100 dark:border-gray-700 shadow-3xs">
                             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
                             <span className="line-clamp-2">{course}</span>
                           </li>
@@ -390,11 +388,11 @@ export default function TrainingProgramView({ onOpenModal }) {
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-200/60 mt-auto">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 mb-1">
+                  <div className="pt-2 border-t border-slate-200/60 dark:border-gray-700 mt-auto">
+                    <p className="text-[10px] font-bold text-slate-400 dark:text-gray-500 uppercase tracking-wider flex items-center gap-1 mb-1">
                       <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Chuẩn đầu ra:
                     </p>
-                    <p className="text-[11px] text-slate-600 leading-snug font-medium italic">
+                    <p className="text-[11px] text-slate-600 dark:text-gray-400 leading-snug font-medium italic">
                       "{lvl.output}"
                     </p>
                   </div>
@@ -404,8 +402,8 @@ export default function TrainingProgramView({ onOpenModal }) {
           </div>
         </div>
       ) : (
-        <div className="text-center py-12 bg-white border border-slate-100 rounded-2xl">
-          <p className="text-xs text-slate-500 font-medium">Không tìm thấy lộ trình nào cho phòng ban này.</p>
+        <div className="text-center py-12 bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-2xl">
+          <p className="text-xs text-slate-500 dark:text-gray-400 font-medium">Không tìm thấy lộ trình nào cho phòng ban này.</p>
         </div>
       )}
     </div>
