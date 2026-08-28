@@ -63,15 +63,15 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
   return (
     <div className="bg-white rounded-2xl border dark:border-gray-800 border-gray-300 shadow-xs overflow-hidden dark:bg-gray-900">
       <Table className="w-full text-left text-sm">
-        <TableHeader className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 font-medium">
+        <TableHeader className="bg-slate-50 dark:bg-gray-800/60 text-slate-500 font-medium">
           <TableRow className="border-b border-slate-200 dark:border-slate-800">
-            <TableHead className="py-3 px-6">Nhân sự</TableHead>
-            <TableHead className="py-3 px-4">Hiện tại / Vị trí</TableHead>
-            <TableHead className="py-3 px-4">Đề xuất / Vị trí</TableHead>
-            <TableHead className="py-3 px-4">Phòng ban</TableHead>
-            <TableHead className="py-3 px-4">Quản lý / Điểm số</TableHead>
-            <TableHead className="py-3 px-4">Trạng thái</TableHead>
-            <TableHead className="py-3 px-4 text-center">Thao tác</TableHead>
+            <TableHead className="py-3 px-6 dark:text-white">Nhân sự</TableHead>
+            <TableHead className="py-3 px-4 dark:text-white">Hiện tại / Vị trí</TableHead>
+            <TableHead className="py-3 px-4 dark:text-white">Đề xuất / Vị trí</TableHead>
+            <TableHead className="py-3 px-4 dark:text-white">Phòng ban</TableHead>
+            <TableHead className="py-3 px-4 dark:text-white">Quản lý / Điểm số</TableHead>
+            <TableHead className="py-3 px-4 dark:text-white">Trạng thái</TableHead>
+            <TableHead className="py-3 px-4 text-center dark:text-white">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
 
@@ -88,7 +88,7 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
                   </div>
                   <div>
                     <p className="font-semibold text-slate-800 dark:text-slate-100">{row?.nameEmployee}</p>
-                    <p className="text-xs text-slate-400">{row?.emailEmployee}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{row?.emailEmployee}</p>
                   </div>
                 </TableCell>
 
@@ -112,7 +112,7 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
                 </TableCell>
 
                 <TableCell className="py-4 px-4">
-                  <span className={`px-3 py-1 text-xs font-semibold rounded-full bg-gray-400 text-white`}>
+                  <span className="px-3 py-1 text-xs font-semibold rounded-full bg-gray-400 dark:bg-gray-700 text-white dark:text-gray-200">
                     {row.status === "PENDING_REVIEW" ? "Chờ kiểm tra" : "???"}
                   </span>
                 </TableCell>
@@ -120,27 +120,10 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
                 <TableCell className="py-4 px-4 text-center relative">
                   <Button
                     onClick={() => handleCheckAndNextStep(row)}
-                    className="p-1.5 text-white bg-blue-600 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                    className="p-1.5 text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 rounded-lg transition-colors cursor-pointer border-0"
                   >
                     Kiểm tra
                   </Button>
-
-                  {/* {activeMenuId === row.id && (
-                  <div className="absolute right-6 top-12 w-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg z-20 py-1 text-left">
-                    <button
-                      onClick={() => handleOpenDetail(row)}
-                      className="w-full px-4 py-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 text-left"
-                    >
-                      Xem chi tiết
-                    </button>
-                    <button
-                      onClick={() => setActiveMenuId(null)}
-                      className="w-full px-4 py-2 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-left"
-                    >
-                      Duyệt đề xuất
-                    </button>
-                  </div>
-                )} */}
                 </TableCell>
               </TableRow>
             ))
@@ -155,6 +138,7 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
             </TableRow>
           )}
         </TableBody>
+
         <TableFooter>
           <TableRow className="border-t border-gray-200 dark:border-gray-800 bg-transparent hover:bg-transparent">
             <TableCell colSpan={7} className="p-0">
@@ -179,7 +163,7 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
                         key={pageNum}
                         onClick={() => handleGoToPage(pageNum)}
                         className={`px-3 py-1 rounded-lg cursor-pointer transition-colors ${isActive
-                          ? 'bg-blue-600 text-white font-bold border-transparent'
+                          ? 'bg-blue-600 text-white font-bold border-transparent dark:bg-blue-600'
                           : 'border text-black dark:text-gray-200 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
                           }`}
                       >
@@ -209,29 +193,29 @@ export default function PromotionTable({ dataPromotion, pageSize, pagination, pa
       >
         {selectedUser && (
           <div className="space-y-4">
-            <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-3 pb-3 border-b border-slate-100 dark:border-gray-800">
               <img src={selectedUser.avatar} className="w-12 h-12 rounded-full" />
               <div>
-                <h4 className="font-bold text-slate-800">{selectedUser.name}</h4>
-                <p className="text-xs text-slate-500">{selectedUser.email}</p>
+                <h4 className="font-bold text-slate-800 dark:text-white">{selectedUser.name}</h4>
+                <p className="text-xs text-slate-500 dark:text-gray-400">{selectedUser.email}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div>
-                <span className="text-slate-400">Vị trí hiện tại:</span>
-                <p className="font-semibold text-slate-700">{selectedUser.currentPos}</p>
+                <span className="text-slate-400 dark:text-gray-500">Vị trí hiện tại:</span>
+                <p className="font-semibold text-slate-700 dark:text-gray-300">{selectedUser.currentPos}</p>
               </div>
               <div>
-                <span className="text-slate-400">Vị trí đề xuất:</span>
-                <p className="font-semibold text-indigo-600">{selectedUser.proposedPos}</p>
+                <span className="text-slate-400 dark:text-gray-500">Vị trí đề xuất:</span>
+                <p className="font-semibold text-indigo-600 dark:text-indigo-400">{selectedUser.proposedPos}</p>
               </div>
               <div>
-                <span className="text-slate-400">Phòng ban:</span>
-                <p className="font-semibold text-slate-700">{selectedUser.department}</p>
+                <span className="text-slate-400 dark:text-gray-500">Phòng ban:</span>
+                <p className="font-semibold text-slate-700 dark:text-gray-300">{selectedUser.department}</p>
               </div>
               <div>
-                <span className="text-slate-400">Điểm đánh giá:</span>
-                <p className="font-semibold text-emerald-600">★ {selectedUser.score}</p>
+                <span className="text-slate-400 dark:text-gray-500">Điểm đánh giá:</span>
+                <p className="font-semibold text-emerald-600 dark:text-emerald-400">★ {selectedUser.score}</p>
               </div>
             </div>
           </div>

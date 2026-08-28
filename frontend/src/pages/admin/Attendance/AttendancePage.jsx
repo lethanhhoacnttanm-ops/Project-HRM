@@ -103,17 +103,17 @@ export default function AttendancePage() {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
             Quản lý Chấm công
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">
             Theo dõi thời gian làm việc, ca trực và chuyên cần của nhân viên.
           </p>
         </div>
 
         <Button
           onClick={() => openModal("export")}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all self-start sm:self-auto"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all self-start sm:self-auto cursor-pointer border-0"
         >
           <Download className="w-4 h-4" />
           <span>Xuất báo cáo</span>
@@ -122,7 +122,7 @@ export default function AttendancePage() {
 
       <AttendanceStats />
 
-      <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6">
+      <div className="rounded-2xl border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm bg-white dark:bg-gray-900 p-6 space-y-6">
         <AttendanceTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {activeTab === "daily" && <DailyAttendanceView dataAttendance={dataAttendance} pagination={attendancePagination} pageSize={4} pageNumber={attendancePage} setPageNumber={setAttendancePage} />}

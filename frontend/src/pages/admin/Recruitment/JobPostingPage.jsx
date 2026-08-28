@@ -120,8 +120,8 @@ const JobPostingPage = () => {
     <div className="space-y-6 p-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Quản lý Dự án & Tuyển dụng nội bộ</h1>
-          <p className="text-xs text-gray-500 font-medium mt-1 max-w-2xl">
+          <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Quản lý Dự án & Tuyển dụng nội bộ</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1 max-w-2xl">
             Tiếp nhận các dự án ngoài, định biên vị trí (BA, Dev, Tester) và phân bổ nhân sự nội bộ để tối ưu hóa nguồn lực và tạo cơ sở đánh giá hiệu suất.
           </p>
         </div>
@@ -130,7 +130,7 @@ const JobPostingPage = () => {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => handleOpenModal('create')}
-          className="bg-indigo-600 hover:bg-indigo-700 h-10 px-5 rounded-xl font-bold border-none shadow-2xs cursor-pointer"
+          className="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 h-10 px-5 rounded-xl font-bold border-none shadow-2xs cursor-pointer"
         >
           Tạo dự án / bài đăng
         </Button>

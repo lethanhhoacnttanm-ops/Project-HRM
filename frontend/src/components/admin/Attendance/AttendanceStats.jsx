@@ -49,7 +49,7 @@ export default function AttendanceStats() {
         return (
           <div
             key={item.id}
-            className="p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col justify-between"
+            className="p-5 bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl shadow-sm flex flex-col justify-between"
           >
             <div>
               <div className="flex items-start justify-between">
@@ -66,14 +66,14 @@ export default function AttendanceStats() {
               </div>
 
               <div className="mt-4">
-                <p className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
+                <p className="text-[11px] font-bold tracking-wider text-slate-400 dark:text-gray-500 uppercase">
                   {item.title}
                 </p>
-                <h3 className="text-2xl font-black text-slate-800 mt-1">
+                <h3 className="text-2xl font-black text-slate-800 dark:text-white mt-1">
                   {item.value}
                 </h3>
                 {item.subText && (
-                  <p className="text-xs font-medium text-slate-400 mt-0.5">
+                  <p className="text-xs font-medium text-slate-400 dark:text-gray-500 mt-0.5">
                     {item.subText}
                   </p>
                 )}
@@ -84,7 +84,7 @@ export default function AttendanceStats() {
               <div className="mt-3">
                 <Progress
                   value={item.progressValue}
-                  className="h-1.5 bg-slate-100 [&>div]:bg-emerald-600"
+                  className="h-1.5 bg-slate-100 dark:bg-gray-800 [&>div]:bg-emerald-600 dark:[&>div]:bg-emerald-500"
                 />
               </div>
             )}

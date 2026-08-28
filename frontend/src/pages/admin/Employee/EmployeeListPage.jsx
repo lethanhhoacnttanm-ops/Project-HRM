@@ -143,14 +143,14 @@ const EmployeeListPage = () => {
           <h1 className="text-3xl font-black text-gray-900 tracking-tight dark:text-white">
             Quản lý hồ sơ nhân viên
           </h1>
-          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-amber-50/50">
+          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-gray-400">
             Quản lý nhân lực, theo dõi hiệu suất và giám sát các nhiệm vụ của từng bộ phận.
           </p>
         </div>
 
         <Button
           onClick={() => handleOpenModal('processRegistry')}
-          className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-5 rounded-xl font-semibold border-none shadow-xs cursor-pointer gap-1.5"
+          className="bg-blue-600 hover:bg-blue-700 text-white h-10 px-5 rounded-xl font-semibold border-none shadow-xs cursor-pointer gap-1.5 dark:bg-blue-600 dark:hover:bg-blue-500"
         >
           <BellCheck />
           Tạo tài khoản nhân viên

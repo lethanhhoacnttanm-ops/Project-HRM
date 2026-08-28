@@ -7,7 +7,8 @@ import SystemPreferencesCard from "../../../components/admin/System/SystemPrefer
 import SecurityNoticeCard from "../../../components/admin/System/SecurityNoticeCard.jsx";
 import SystemConfigModal from "../../../components/admin/System/SystemConfigModal.jsx";
 import { Button } from "@/components/ui/button";
-
+import ThemeToggle from "@/components/ThemeToggle.jsx";
+import { SunMoon } from "lucide-react";
 export default function SystemConfigPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,6 +36,25 @@ export default function SystemConfigPage() {
         <div className="lg:col-span-1 space-y-6">
           <SystemPreferencesCard />
           <SecurityNoticeCard />
+          <div className="dark:bg-gray-950 border bg-indigo-50/60  border-indigo-100 dark:border-gray-800/80 rounded-3xl p-6 shadow-sm space-y-5">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-gray-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-inner">
+                  <SunMoon className="w-5 h-5 transition-transform duration-500 hover:rotate-45" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900 dark:text-white tracking-tight">
+                    Giao diện hiển thị
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-gray-400 font-medium">
+                    Tùy chỉnh chế độ sáng tối cho toàn bộ hệ thống quản trị.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <ThemeToggle />
+          </div>
         </div>
       </div>
 

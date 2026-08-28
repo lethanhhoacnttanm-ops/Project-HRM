@@ -30,14 +30,14 @@ export default function HistoryTable({  dataPromotion, pageSize, pagination, pag
     <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-slate-900 shadow-sm">
       <div className="overflow-x-auto">
         <Table className="w-full text-left text-sm">
-          <TableHeader className="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
+          <TableHeader className="bg-slate-50 dark:bg-gray-800/60 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="py-3 px-6">Nhân sự</TableHead>
-              <TableHead className="py-3 px-4">Vai trò trước đó</TableHead>
-              <TableHead className="py-3 px-4">Vai trò mới</TableHead>
-              <TableHead className="py-3 px-4">Ngày có hiệu lực</TableHead>
-              <TableHead className="py-3 px-4">Được duyệt bởi</TableHead>
-              <TableHead className="py-3 px-4">Loại</TableHead>
+              <TableHead className="py-3 px-6 dark:text-white">Nhân sự</TableHead>
+              <TableHead className="py-3 px-4 dark:text-white">Vai trò trước đó</TableHead>
+              <TableHead className="py-3 px-4 dark:text-white">Vai trò mới</TableHead>
+              <TableHead className="py-3 px-4 dark:text-white">Ngày có hiệu lực</TableHead>
+              <TableHead className="py-3 px-4 dark:text-white">Được duyệt bởi</TableHead>
+              <TableHead className="py-3 px-4 dark:text-white">Loại</TableHead>
             </TableRow>
           </TableHeader>
 

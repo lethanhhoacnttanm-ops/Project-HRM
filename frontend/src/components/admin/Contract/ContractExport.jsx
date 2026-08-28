@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import jsPDF from 'jspdf';
-import dayjs from 'dayjs'; 
+import dayjs from 'dayjs';
 import autoTable from 'jspdf-autotable';
 
 const removeVietnameseTones = (str) => {
@@ -34,11 +34,11 @@ const ContractExport = ({ contracts }) => {
     doc.text(`Ngay xuat bao cao: ${dayjs().format('DD/MM/YYYY')}`, 14, 22);
 
     const tableColumn = ['ID', 'Ho va Ten', 'Loai HD', 'Ngay bat dau', 'Ngay ket thuc', 'Trang thai'];
-    
+
     const tableRows = contracts.map((item) => [
       item?.contractCode || 'N/A',
-      removeVietnameseTones(item?.employee?.fullName || 'N/A'), 
-      removeVietnameseTones(item?.type ||  'N/A'),
+      removeVietnameseTones(item?.employee?.fullName || 'N/A'),
+      removeVietnameseTones(item?.type || 'N/A'),
       item.startDate ? dayjs(item.startDate).format('DD/MM/YYYY') : 'N/A',
       item.endDate ? dayjs(item.endDate).format('DD/MM/YYYY') : 'N/A',
       item.status === 'active' ? 'Hoat dong' : 'Dang nghi',
@@ -57,10 +57,10 @@ const ContractExport = ({ contracts }) => {
   return (
     <Button
       onClick={handleExportPDF}
-      variant="outline" 
-      className="flex items-center gap-2 rounded-xl text-gray-700 font-semibold h-10 px-4"
+      variant="outline"
+      className="flex items-center gap-2 rounded-xl text-gray-700 dark:text-gray-300 font-semibold h-10 px-4 border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 bg-white dark:bg-gray-900 cursor-pointer"
     >
-      <Download className="w-4 h-4" /> 
+      <Download className="w-4 h-4 text-gray-500 dark:text-gray-400" />
       Export
     </Button>
   );
