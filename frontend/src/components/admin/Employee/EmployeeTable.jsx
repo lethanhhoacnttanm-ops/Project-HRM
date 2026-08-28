@@ -16,16 +16,35 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
   const navigate = useNavigate();
 
   const handlePrevPage = () => {
-    if (pageNumber > 1) setPageNumber(pageNumber - 1);
+    if (pageNumber > 1) {
+      setPageNumber(prev => prev - 1);
+    }
   };
 
   const handleNextPage = () => {
-    if (pageNumber < pagination.totalPages) setPageNumber(pageNumber + 1);
+    if (pagination && pageNumber < pagination.totalEmp) {
+      setPageNumber(prev => prev + 1);
+    }
   };
 
-  const handleGoToPage = (pageNumber) => {
-    setPageNumber(pageNumber);
+  const getPageNumbers = (totalEmp = 1, current = 1) => {
+    let pages = [];
+    if (totalEmp <= 5) {
+      for (let i = 1; i <= totalEmp; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (current <= 3) {
+        pages = [1, 2, 3, 4, '...', totalEmp];
+      } else if (current >= totalEmp - 2) {
+        pages = [1, '...', totalEmp - 3, totalEmp - 2, totalEmp - 1, totalEmp];
+      } else {
+        pages = [1, '...', current - 1, current, current + 1, '...', totalEmp];
+      }
+    }
+    return pages;
   };
+
 
   const levelTemplates = [
     {
@@ -180,39 +199,42 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
           <TableRow className="border-t border-gray-200 dark:border-gray-800 bg-transparent hover:bg-transparent">
             <TableCell colSpan={6} className="p-0">
               <div className="p-4 bg-slate-50/30 dark:bg-gray-900 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 w-full">
-                <span>1 - {pageSize} trên {employees.length} nhân sự</span>
+                <span>1 - {pageSize} trên {pagination?.totalEmp} nhân sự</span>
 
                 <div className="flex items-center gap-1">
                   <Button
                     onClick={handlePrevPage}
                     disabled={pageNumber === 1}
-                    className="px-2.5 py-1 rounded-lg border text-black dark:text-gray-200 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer disabled:opacity-50"
+                    className={`px-2.5 py-1 rounded-lg border text-black dark:text-gray-200 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer disabled:opacity-50  ${pageNumber <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <ArrowBigLeft className="w-4 h-4" />
                   </Button>
 
-                  {Array.from({ length: pagination.totalPage }, (_, index) => {
-                    const pageNum = index + 1;
-                    const isActive = pageNum === pageNumber;
+                  {getPageNumbers(pagination?.totalEmp, pageNumber).map((page, index) => {
+                    if (page === '...') {
+                      return <span key={index} className="text-slate-400 px-1">...</span>;
+                    }
+
+                    const isCurrent = page === pageNumber;
 
                     return (
                       <Button
-                        key={pageNum}
-                        onClick={() => handleGoToPage(pageNum)}
-                        className={`px-3 py-1 rounded-lg cursor-pointer transition-colors ${isActive
-                          ? 'bg-blue-600 text-white font-bold border-transparent'
-                          : 'border text-black dark:text-gray-200 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        key={index}
+                        onClick={() => setPageNumber(page)}
+                        className={`h-7 w-7 font-bold text-xs p-0 shadow-none transition-all ${isCurrent
+                          ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                          : 'bg-transparent text-slate-600 hover:bg-slate-100'
                           }`}
                       >
-                        {pageNum}
+                        {page}
                       </Button>
                     );
                   })}
 
                   <Button
                     onClick={handleNextPage}
-                    disabled={pageNumber === pagination.totalPage}
-                    className="px-2.5 py-1 rounded-lg border text-black dark:text-gray-200 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer disabled:opacity-50"
+                    disabled={!pagination || pageNumber >= pagination.totalEmp}
+                    className={`px-2.5 py-1 rounded-lg border text-black dark:text-gray-200 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer disabled:opacity-50 ${(!pagination || pageNumber >= pagination.totalEmp) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <ArrowBigRight className="w-4 h-4" />
                   </Button>

@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { leaveService } from '@/services/leaveService.js';
+import { leaveService } from '@/services/leave.service.js';
 
 const LEAVE_TYPES = ['Nghỉ phép năm', 'Nghỉ ốm', 'Nghỉ việc riêng'];
 

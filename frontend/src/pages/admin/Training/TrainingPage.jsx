@@ -38,7 +38,6 @@ export default function TrainingPage() {
   const fetchCourses = useCallback(async () => {
     try {
       const res = await courseService.getAllCourses(catalogPage, pageSize);
-      console.log("Dữ liệu API trả về:", res);
       if (res && res.success) {
         setDataCourse(res.dataCourse || []);
 

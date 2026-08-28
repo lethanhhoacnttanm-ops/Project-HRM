@@ -19,9 +19,9 @@ export default function DepartmentPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
 
-  const [pageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1);
 
-  const [pageSize] = useState(5);
+  const pageSize = 4
 
   const [managerOptions, setManagerOptions] = useState([]);
 
@@ -134,9 +134,13 @@ export default function DepartmentPage() {
 
   const handleCreateDepartment = async (formData) => {
     try {
-      console.log('Dữ liệu cha nhận được từ con:', formData);
 
       const res = await departmentService.createDepartment(formData);
+      
+      if(res && res.success){
+        fetchEmployee()
+        fetchDepartment()
+      }
 
       toast.success('Đăng ký thành công!', {
         description: res.message || `Tài khoản nhân viên ${res.data?.fullName} đã được khởi tạo.`,
@@ -226,7 +230,6 @@ export default function DepartmentPage() {
 
   const handleAssignEmployee = async (payload) => {
     try {
-      console.log("🚀 Đang gửi payload gán nhân sự:", payload);
 
       const response = await employeeService.assignEmployee(payload);
 
@@ -236,7 +239,7 @@ export default function DepartmentPage() {
         handleCloseModal();
       }
     } catch (error) {
-      console.error("❌ Lỗi khi gán nhân sự:", error);
+      console.error("Lỗi khi gán nhân sự:", error);
       toast.error(error?.response?.data?.error || "Gán nhân sự thất bại, vui lòng thử lại!");
     }
   };
@@ -251,7 +254,7 @@ export default function DepartmentPage() {
         handleCloseModal();
       }
     } catch (error) {
-      console.error("❌ Lỗi khi gán trưởng phòng:", error);
+      console.error("Lỗi khi gán trưởng phòng:", error);
       toast.error(error?.response?.data?.error || "Gán trưởng phòng thất bại, vui lòng thử lại!");
     }
   };

@@ -27,7 +27,7 @@ class ContractsController {
       return res.status(200).json({
         success: result.success || true,
         message: result.message || "Hoàn thành lấy toàn bộ dữ liệu!",
-        dataContract: result.data,
+        dataContract: result.dataContract,
         pagination: result.pagination || {},
       });
     } catch (error) {

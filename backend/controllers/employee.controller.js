@@ -1,6 +1,24 @@
 import employeeService from '../services/employee.service.js';
 
 class EmployeesController {
+
+  async getListAllEmployees(req, res) {
+    try {
+      const result = await employeeService.getAllListEmployees();
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn danh sách nhân viên thành công!',
+        dataListEmp: result?.data || result
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy toàn bộ danh sách nhân viên!',
+        error: error.message,
+      });
+    }
+  }
+
   async getAllEmployees(req, res) {
     try {
       const { page, limit, role, status } = req.query;

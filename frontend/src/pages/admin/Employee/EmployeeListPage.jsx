@@ -16,7 +16,7 @@ const EmployeeListPage = () => {
   const [employees, setEmployees] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const [pageSize] = useState(5);
+  const pageSize=4
 
   const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1 });
 
@@ -33,7 +33,7 @@ const EmployeeListPage = () => {
       const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE');
       if (res?.success) {
         setEmployees(res.dataEmp);
-        setPaginationInfo(res.pagination || { totalEmp: 0, totalPage: 1 });
+        setPaginationInfo(res.pagination);
       } else {
         setEmployees([]);
       }

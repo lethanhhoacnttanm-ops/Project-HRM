@@ -5,14 +5,14 @@ class EmployeeRepository {
   async FindWithPagination({ skip, limit, filter = {} }) {
     const [totalEmp, dataEmp] = await Promise.all([
       EmployeeModel.countDocuments(filter),
-      EmployeeModel.find(filter).skip(skip).limit(limit).populate({ path: 'position', select: 'name'}).populate({ path: 'department', select: 'name'}).lean()
+      EmployeeModel.find(filter).skip(skip).limit(limit).populate({ path: 'position', select: 'name' }).populate({ path: 'department', select: 'name' }).lean()
     ])
 
     return { totalEmp, dataEmp }
   }
 
-  async findAllEmpoyees() {
-    return await EmployeeModel.find();
+  async findAllEmployees() {
+    return await EmployeeModel.find({ role: { $ne: 'ADMIN' } });
   }
 
   async findByEmail(email) {

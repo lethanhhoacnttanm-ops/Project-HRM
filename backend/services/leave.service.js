@@ -38,6 +38,42 @@ class LeaveService {
 
     return leave;
   }
+
+  async getAllLeave({ page, limit }) {
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+    const pageSize = Math.max(1, parseInt(limit, 10) || 8);
+    const skip = (pageNumber - 1) * pageSize;
+
+    const { totalLeave, dataLeave } = await leaveRepository.FindWithPagination({
+      skip,
+      limit: pageSize
+    });
+
+
+    if (totalLeave === undefined || dataLeave === undefined) {
+      throw new Error("Lỗi trường hợp lệ trong phân trang");
+    }
+
+    return {
+      dataLeave,
+      pagination: {
+        totalLeave,
+        pageNumber,
+        pageSize,
+        totalPage: Math.ceil(totalLeave / pageSize)
+      }
+    };
+  }
+
+  async updateLeaveStatus(id, status, currentAdminId) {
+    const updateData = { 
+      status: status,
+      approvedBy: currentAdminId 
+    };
+
+    const updatedLeave = await leaveRepository.updateById(id, updateData);
+    return updatedLeave;
+  }
 }
 
 export default new LeaveService();

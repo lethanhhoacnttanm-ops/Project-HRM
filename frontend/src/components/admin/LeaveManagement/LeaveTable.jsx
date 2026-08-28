@@ -7,6 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,59 +17,51 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import dayjs from "dayjs";
 
-const leaveRequests = [
-  {
-    id: 1,
-    name: "Trần Minh Quân",
-    code: "ID: EMP-042",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80",
-    leaveType: "Nghỉ phép năm",
-    startDate: "15 Th05, 2024",
-    endDate: "17 Th05, 2024",
-    days: "3.0",
-    status: "Chờ duyệt",
-    statusBg: "bg-amber-100 text-amber-700",
-  },
-  {
-    id: 2,
-    name: "Lê Thị Mai",
-    code: "ID: EMP-089",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-    leaveType: "Nghỉ ốm",
-    startDate: "12 Th05, 2024",
-    endDate: "12 Th05, 2024",
-    days: "1.0",
-    status: "Đã duyệt",
-    statusBg: "bg-teal-100 text-teal-700",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn Ba",
-    code: "ID: EMP-112",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    leaveType: "Nghỉ việc riêng",
-    startDate: "10 Th05, 2024",
-    endDate: "11 Th05, 2024",
-    days: "2.0",
-    status: "Từ chối",
-    statusBg: "bg-rose-100 text-rose-600",
-  },
-  {
-    id: 4,
-    name: "Phạm Thanh Thủy",
-    code: "ID: EMP-023",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80",
-    leaveType: "Nghỉ phép năm",
-    startDate: "08 Th05, 2024",
-    endDate: "09 Th05, 2024",
-    days: "2.0",
-    status: "Đã duyệt",
-    statusBg: "bg-teal-100 text-teal-700",
-  },
-];
+export default function LeaveTable({ dataLeave, pageNumber, pageSize, pagination, setPageNumber, onOpenModal }) {
+  const handlePrevPage = () => {
+    if (pageNumber > 1) {
+      setPageNumber(prev => prev - 1);
+    }
+  };
 
-export default function LeaveTable() {
+  const handleNextPage = () => {
+    if (pagination && pageNumber < pagination.totalPage) {
+      setPageNumber(prev => prev + 1);
+    }
+  };
+
+  const getPageNumbers = (totalPages = 1, current = 1) => {
+    let pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (current <= 3) {
+        pages = [1, 2, 3, 4, '...', totalPages];
+      } else if (current >= totalPages - 2) {
+        pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      } else {
+        pages = [1, '...', current - 1, current, current + 1, '...', totalPages];
+      }
+    }
+    return pages;
+  };
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case 'Chờ duyệt':
+        return 'bg-amber-50 text-amber-600';
+      case 'Đã duyệt':
+        return 'bg-emerald-50 text-emerald-600';
+      case 'Từ chối':
+        return 'bg-rose-50 text-rose-600';
+      default:
+        return 'bg-slate-100 text-slate-600';
+    }
+  };
   return (
     <div className="bg-white rounded-b-2xl overflow-hidden">
       <Table>
@@ -99,14 +92,14 @@ export default function LeaveTable() {
         </TableHeader>
 
         <TableBody className="divide-y divide-slate-100 text-xs">
-          {leaveRequests.map((row) => (
-            <TableRow key={row.id} className="hover:bg-slate-50/80 transition-colors">
+          {dataLeave.map((row) => (
+            <TableRow key={row._id} className="hover:bg-slate-50/80 transition-colors">
               <TableCell className="py-4 px-6">
                 <div className="flex items-center gap-3">
-                  {row.avatar ? (
+                  {row.employee?.avatarUrl ? (
                     <img
-                      src={row.avatar}
-                      alt={row.name}
+                      src={row.employee?.avatarUrl}
+                      alt={row.employee?.fullName}
                       className="w-9 h-9 rounded-full object-cover border"
                     />
                   ) : (
@@ -115,8 +108,8 @@ export default function LeaveTable() {
                     </div>
                   )}
                   <div>
-                    <p className="font-bold text-slate-800">{row.name}</p>
-                    <p className="text-[11px] text-slate-400">{row.code}</p>
+                    <p className="font-bold text-slate-800">{row.employee?.fullName}</p>
+                    <p className="text-[11px] text-slate-400">{row.employee?.code}</p>
                   </div>
                 </div>
               </TableCell>
@@ -126,20 +119,20 @@ export default function LeaveTable() {
               </TableCell>
 
               <TableCell className="py-4 px-6 text-slate-600 font-medium">
-                {row.startDate}
+                {dayjs(row.startDate).format("DD/MM/YYYY")}
               </TableCell>
 
               <TableCell className="py-4 px-6 text-slate-600 font-medium">
-                {row.endDate}
+                {dayjs(row.endDate).format("DD/MM/YYYY")}
               </TableCell>
 
               <TableCell className="py-4 px-6 font-bold text-slate-800">
-                {row.days}
+                {row.numberOfDays} ngày
               </TableCell>
 
               <TableCell className="py-4 px-6">
                 <Badge
-                  className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${row.statusBg}`}
+                  className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${getStatusStyle(row.status)}`}
                 >
                   {row.status}
                 </Badge>
@@ -151,14 +144,8 @@ export default function LeaveTable() {
                     <MoreVertical className="w-4 h-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-40 rounded-xl">
-                    <DropdownMenuItem className="text-xs font-medium cursor-pointer">
+                    <DropdownMenuItem onClick={() => onOpenModal('detail', row)} className="text-xs font-medium cursor-pointer">
                       Xem chi tiết đơn
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-xs font-medium cursor-pointer">
-                      Phê duyệt đơn
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-xs font-medium text-rose-600 cursor-pointer">
-                      Từ chối đơn
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -166,28 +153,67 @@ export default function LeaveTable() {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+        <TableFooter className="bg-white border-t border-slate-100">
+          <TableRow className="hover:bg-transparent">
+            <TableCell colSpan={8} className="p-0">
+              <div className="flex items-center justify-between px-6 py-4 text-xs text-slate-500">
 
-      <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 text-xs text-slate-500">
-        <p>Hiển thị 1-10 của 45 yêu cầu</p>
-        <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon" className="h-7 w-7 text-slate-400 hover:bg-slate-50">
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <Button className="h-7 w-7 bg-indigo-600 text-white font-bold text-xs p-0">
-            1
-          </Button>
-          <Button variant="ghost" className="h-7 w-7 text-slate-600 text-xs p-0">
-            2
-          </Button>
-          <Button variant="ghost" className="h-7 w-7 text-slate-600 text-xs p-0">
-            3
-          </Button>
-          <Button variant="outline" size="icon" className="h-7 w-7 text-slate-400 hover:bg-slate-50">
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
+                <p>
+                  Trang <span className="font-bold text-indigo-600">{pageNumber}</span> / <span className="font-bold text-slate-800">{pagination?.totalPage || 1}</span>
+                  <span className="text-slate-300 mx-2">|</span>
+                  Tổng số: <span className="font-bold text-slate-800">{pagination?.totalItems || dataLeave?.length || 0}</span> đơn
+                </p>
+
+                <div className="flex items-center gap-1">
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handlePrevPage}
+                    disabled={pageNumber === 1}
+                    className={`h-7 w-7 text-slate-400 hover:bg-slate-50 ${pageNumber <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+
+                  {getPageNumbers(pagination?.totalPage, pageNumber).map((page, index) => {
+                    if (page === '...') {
+                      return <span key={index} className="text-slate-400 px-1">...</span>;
+                    }
+
+                    const isCurrent = page === pageNumber;
+
+                    return (
+                      <Button
+                        key={index}
+                        onClick={() => setPageNumber(page)}
+                        className={`h-7 w-7 font-bold text-xs p-0 shadow-none transition-all ${isCurrent
+                          ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                          : 'bg-transparent text-slate-600 hover:bg-slate-100'
+                          }`}
+                      >
+                        {page}
+                      </Button>
+                    );
+                  })}
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleNextPage}
+                    disabled={!pagination || pageNumber >= pagination.totalPage}
+                    className={`h-7 w-7 text-slate-400 hover:bg-slate-50 ${(!pagination || pageNumber >= pagination.totalPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+
+                </div>
+
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
     </div>
   );
 }

@@ -7,6 +7,10 @@ export const employeeService = {
     });
   },
 
+  getAllListEmp: async () => {
+    return await axiosClient.get('/employees/all-list-v1')
+  },
+
   register: async (registerData) => {
     return await axiosClient.post('/employees/register', registerData);
   },

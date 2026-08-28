@@ -18,7 +18,7 @@ const ContractListPage = () => {
   const [contractType, setContractType] = useState('Tất cả');
   const [status, setStatus] = useState('Tất cả');
 
-  const [pageSize] = useState(6);
+  const pageSize = 4
 
   const [beginEmployees, setBeginEmployees] = useState([]);
   const [beginPageNumber, setBeginPageNumber] = useState(1);
@@ -102,6 +102,7 @@ const ContractListPage = () => {
 
       if (res?.success) {
         toast.success(res.message);
+        fetchAllContract()
       }
 
       handleCloseModal();
@@ -165,7 +166,7 @@ const ContractListPage = () => {
         setStatus={setStatus}
       />
 
-      <ContractTable pagination={beginPaginationInfo} pageSize={pageSize} pageNumber={beginPageNumber} setPageNumber={setBeginPageNumber} contracts={filteredContracts} onOpenModal={handleOpenModal} />
+      <ContractTable pagination={beginPaginationInfo} pageSize={4} pageNumber={beginPageNumber} setPageNumber={setBeginPageNumber} contracts={contracts} onOpenModal={handleOpenModal} />
 
       <ContractBottomCards />
 
