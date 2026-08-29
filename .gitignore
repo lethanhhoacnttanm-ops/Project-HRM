@@ -4,10 +4,8 @@ sequenceDiagram.mmd
 
 backend/.env
 backend/.env.*
-backend/env.js
 
 .env
 *.env
-env.js
 
 *.agents*

@@ -19,6 +19,7 @@ app.use(morgan('dev'));
 const allowedOrigins = [
   'http://localhost:5173',
   ENV.CLIENT_URL,
+  'https://project-hrm-zeta.vercel.app'
 ].filter(Boolean).map(url => url.replace(/\/$/, ''));
 
 app.use(
