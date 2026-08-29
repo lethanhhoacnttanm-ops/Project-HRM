@@ -18,4 +18,7 @@ export const attendanceService = {
   checkOut: async (data) => {
     return await axiosClient.put('/attendances/checkout', data);
   },
+  checkInAttendance: async (data) => {
+    return await axiosClient.post('/attendances/check-in', data);
+  }
 };

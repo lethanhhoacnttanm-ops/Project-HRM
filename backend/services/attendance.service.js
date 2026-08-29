@@ -1,5 +1,20 @@
 import attendanceRepository from '../repositories/attendance.repository.js';
 import { evaluateCheckInStatus, calculateTotalHours } from '../utils/attendanceUtils.js';
+import ShiftModel from '../models/Shift.js';
+
+
+const timeToMinutes = (timeStr) => {
+  if (!timeStr || timeStr === '--:--' || timeStr.trim() === '') return null;
+  const parts = timeStr.trim().split(' ');
+  const timePart = parts[0];
+  const modifier = parts[1] ? parts[1].toUpperCase() : '';
+  let [hours, minutes] = timePart.split(':').map(Number);
+
+  if (modifier === 'AM' && hours === 12) hours = 0;
+  if (modifier === 'PM' && hours !== 12) hours += 12;
+
+  return hours * 60 + minutes;
+};
 
 class AttendanceService {
   async getMyAttendance(employeeId, query = {}) {
@@ -32,61 +47,108 @@ class AttendanceService {
     return attendanceRecord;
   }
 
-  async checkInEmployee(employeeId, payload) {
-    const { shift: shiftId, date, checkIn } = payload;
 
-    const existingAttendance = await attendanceRepository.findTodayByEmployee(employeeId, date);
-    if (existingAttendance) {
-      throw new Error("Bạn đã thực hiện chấm công trong ngày hôm nay rồi!");
+  async checkInEmployee(employeeId, bodyData) {
+    const shiftId = bodyData.shift; 
+    const { checkIn, date } = bodyData;
+
+    if (!shiftId) {
+      throw new Error("Vui lòng chọn ca làm việc!");
     }
 
-    const shiftInfo = await attendanceRepository.findShiftById(shiftId);
-    if (!shiftInfo) {
-      throw new Error("Ca làm việc không tồn tại hoặc đã bị xóa!");
+    const shift = await ShiftModel.findById(shiftId);
+    if (!shift) {
+      throw new Error("Không tìm thấy ca làm việc!");
     }
 
-    const { status, isCheckInLate } = evaluateCheckInStatus(checkIn, shiftInfo.checkInTime);
+    let status = 'Đúng giờ';
+    const standardCheckInMin = timeToMinutes(shift.checkInTime);
+    const actualCheckInMin = timeToMinutes(checkIn);
+
+    if (standardCheckInMin && actualCheckInMin !== null && actualCheckInMin > standardCheckInMin) {
+      status = 'Đi muộn';
+    }
 
     const attendanceData = {
       employee: employeeId,
       shift: shiftId,
-      date: new Date(date),
-      checkIn: checkIn,
+      date: date || new Date(),
+      checkIn: checkIn || '--:--',
       checkOut: '--:--',
       totalHours: 'Đang làm',
-      status: status,
-      isCheckInLate: isCheckInLate,
+      status,
     };
 
-    const savedAttendance = await attendanceRepository.createAttendance(attendanceData);
-    return savedAttendance;
+    const result = await attendanceRepository.createAttendanceWithCount(attendanceData, shiftId);
+    return result;
   }
 
   async getAllAttendance({ page, limit }) {
-      const pageNumber = Math.max(1, parseInt(page, 10) || 1);
-      const pageSize = Math.max(1, parseInt(limit, 10) || 8);
-      const skip = (pageNumber - 1) * pageSize;
-  
-      const { totalAttendance, dataAttendance } = await attendanceRepository.FindWithPagination({
-        skip,
-        limit: pageSize
-      });
-  
-  
-      if (totalAttendance === undefined || dataAttendance === undefined) {
-        throw new Error("Lỗi trường hợp lệ trong phân trang");
-      }
-  
-      return {
-        dataAttendance,
-        pagination: {
-          totalAttendance,
-          pageNumber,
-          pageSize,
-          totalPage: Math.ceil(totalAttendance / pageSize)
-        }
-      };
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+    const pageSize = Math.max(1, parseInt(limit, 10) || 8);
+    const skip = (pageNumber - 1) * pageSize;
+
+    const { totalAttendance, dataAttendance } = await attendanceRepository.FindWithPagination({
+      skip,
+      limit: pageSize
+    });
+
+
+    if (totalAttendance === undefined || dataAttendance === undefined) {
+      throw new Error("Lỗi trường hợp lệ trong phân trang");
     }
+
+    return {
+      dataAttendance,
+      pagination: {
+        totalAttendance,
+        pageNumber,
+        pageSize,
+        totalPage: Math.ceil(totalAttendance / pageSize)
+      }
+    };
+  }
+
+  timeToMinutes(timeStr) {
+    if (!timeStr || timeStr === '--:--' || timeStr.trim() === '') return null;
+    const parts = timeStr.trim().split(' ');
+    const timePart = parts[0];
+    const modifier = parts[1] ? parts[1].toUpperCase() : '';
+    let [hours, minutes] = timePart.split(':').map(Number);
+
+    if (modifier === 'AM' && hours === 12) hours = 0;
+    if (modifier === 'PM' && hours !== 12) hours += 12;
+
+    return hours * 60 + minutes;
+  };
+
+  async processCheckInService (payload) {
+    const { employeeId, shiftId, checkIn, checkOut, date } = payload;
+
+    const shift = await shiftRepository.findById(shiftId);
+    if (!shift) throw new Error('Không tìm thấy ca làm việc');
+
+    let status = 'Đúng giờ';
+    const standardCheckInMin = timeToMinutes(shift.checkInTime);
+    const actualCheckInMin = timeToMinutes(checkIn);
+
+    if (standardCheckInMin && actualCheckInMin > standardCheckInMin) {
+      status = 'Đi muộn';
+    }
+
+    const attendanceData = {
+      employee: employeeId,
+      shift: shiftId,
+      date,
+      checkIn: checkIn || '--:--',
+      checkOut: checkOut || '--:--',
+      status,
+    };
+
+    const newAttendance = await attendanceRepository.createAttendance(attendanceData, shiftId);
+    return newAttendance;
+  };
+
 }
 
 export default new AttendanceService();

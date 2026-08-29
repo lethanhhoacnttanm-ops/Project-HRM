@@ -10,7 +10,7 @@ import {
   BadgeCheck,
 } from 'lucide-react';
 
-import { payrollService } from '@/services/payrollService';
+import { payrollService } from '@/services/payroll.service';
 
 const formatCurrency = (value) => {
   if (value == null) return '—';

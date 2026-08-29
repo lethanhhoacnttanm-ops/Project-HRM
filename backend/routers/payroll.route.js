@@ -18,4 +18,9 @@ router.get(
   payrollController.getMyPayrollDetail
 );
 
+router.get('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'),payrollController.getPayrolls);
+router.post('/', verifyToken, checkRole('ADMIN'),payrollController.createPayroll);
+router.put('/:id', verifyToken, checkRole('ADMIN'),payrollController.updatePayroll);
+router.put('/:id/lock', verifyToken, checkRole('ADMIN'), payrollController.toggleLock);
+router.put('/lock-month', verifyToken, checkRole('ADMIN'), payrollController.lockMonth);
 export default router;

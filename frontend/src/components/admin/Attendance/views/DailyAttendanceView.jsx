@@ -39,6 +39,46 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
     }
   };
 
+  const timeToMinutes = (timeStr) => {
+    if (!timeStr || timeStr === '--:--' || timeStr === '') return null;
+
+    const cleanTime = timeStr.trim().split(' ')[0];
+    const parts = cleanTime.split(':').map(Number);
+    let hours = parts[0] || 0;
+    let minutes = parts[1] || 0;
+
+    if (timeStr.toUpperCase().includes('PM') && hours < 12) hours += 12;
+    if (timeStr.toUpperCase().includes('AM') && hours === 12) hours = 0;
+
+    return hours * 60 + minutes;
+  };
+
+  const getDynamicStatus = (row) => {
+    if (!row.checkIn || row.checkIn === '--:--' || row.checkIn.trim() === '') {
+      return { text: 'Vắng mặt', bg: 'bg-rose-100 text-rose-700' };
+    }
+
+    if (!row.shift) {
+      return { text: 'Đúng giờ', bg: 'bg-emerald-100 text-emerald-700' };
+    }
+
+    const standardCheckIn = timeToMinutes(row.shift.checkInTime);
+    const actualCheckIn = timeToMinutes(row.checkIn);
+
+    const standardCheckOut = timeToMinutes(row.shift.checkOutTime);
+    const actualCheckOut = timeToMinutes(row.checkOut);
+
+    if (standardCheckIn && actualCheckIn !== null && actualCheckIn > standardCheckIn) {
+      return { text: 'Đi muộn', bg: 'bg-amber-100 text-amber-700' };
+    }
+
+    if (standardCheckOut && actualCheckOut !== null && actualCheckOut < standardCheckOut) {
+      return { text: 'Về sớm', bg: 'bg-orange-100 text-orange-700' };
+    }
+
+    return { text: 'Đúng giờ', bg: 'bg-emerald-100 text-emerald-700' };
+  };
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-b-2xl border border-slate-200 dark:border-gray-800 shadow-sm overflow-hidden">
       <AttendanceFilter
@@ -84,76 +124,85 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
 
         <TableBody className="divide-y divide-slate-100 dark:divide-gray-800 text-xs">
           {filteredRecords.length > 0 ? (
-            filteredRecords.map((row) => (
-              <TableRow key={row._id} className="hover:bg-slate-50/80 dark:hover:bg-gray-800/40 transition-colors">
-                <TableCell className="py-4 px-6">
-                  <div className="flex items-center gap-3">
-                    {row.employee?.avatarUrl ? (
-                      <img
-                        src={row.employee.avatarUrlr}
-                        alt={row.employee?.fullName}
-                        className="w-9 h-9 rounded-full object-cover border dark:border-gray-700"
-                      />
-                    ) : (
-                      <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 dark:text-gray-500">
-                        <User className="w-4 h-4" />
+            filteredRecords.map((row) => {
+              const statusInfo = getDynamicStatus(row);
+
+              return (
+
+                <TableRow key={row._id} className="hover:bg-slate-50/80 dark:hover:bg-gray-800/40 transition-colors">
+                  <TableCell className="py-4 px-6">
+                    {console.log(statusInfo)}
+                    <div className="flex items-center gap-3">
+                      {row.employee?.avatarUrl ? (
+                        <img
+                          src={row.employee.avatarUrlr}
+                          alt={row.employee?.fullName}
+                          className="w-9 h-9 rounded-full object-cover border dark:border-gray-700"
+                        />
+                      ) : (
+                        <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 dark:text-gray-500">
+                          <User className="w-4 h-4" />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-bold text-slate-800 dark:text-gray-100">{row.employee?.fullName}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-gray-500">{row.employee?.code}</p>
                       </div>
-                    )}
-                    <div>
-                      <p className="font-bold text-slate-800 dark:text-gray-100">{row.employee?.fullName}</p>
-                      <p className="text-[11px] text-slate-400 dark:text-gray-500">{row.employee?.code}</p>
                     </div>
-                  </div>
-                </TableCell>
+                  </TableCell>
 
-                <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
-                  {dayjs(row.date).format("DD/MM/YYYY")}
-                </TableCell>
+                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
+                    {dayjs(row.date).format("DD/MM/YYYY")}
+                  </TableCell>
 
-                <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
-                  {row.shift?.name}
-                </TableCell>
+                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
+                    {row.shift?.name}
+                  </TableCell>
 
-                <TableCell
-                  className={`py-4 px-6 font-bold ${row.isCheckInLate ? "text-rose-600 dark:text-rose-400" : "text-slate-800 dark:text-gray-200"
-                    }`}
-                >
-                  {row.checkIn}
-                </TableCell>
-
-                <TableCell className="py-4 px-6 font-bold text-slate-800 dark:text-gray-200">
-                  {row.checkOut}
-                </TableCell>
-
-                <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
-                  {row.totalHours}
-                </TableCell>
-
-                <TableCell className="py-4 px-6">
-                  <Badge
-                    className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${row.statusBg}`}
+                  <TableCell
+                    className={`py-4 px-6 font-bold ${row.isCheckInLate ? "text-rose-600 dark:text-rose-400" : "text-slate-800 dark:text-gray-200"
+                      }`}
                   >
-                    {row.status}
-                  </Badge>
-                </TableCell>
+                    {row.checkIn}
+                  </TableCell>
 
-                <TableCell className="py-4 px-6 text-center">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="p-1.5 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-lg outline-none cursor-pointer">
-                      <MoreVertical className="w-4 h-4" />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-44 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 shadow-lg p-1">
-                      <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
-                        Xem lịch sử chấm công
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
-                        Chỉnh sửa giờ Check-in/out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))
+                  <TableCell className="py-4 px-6 font-bold text-slate-800 dark:text-gray-200">
+                    {row.checkOut}
+                  </TableCell>
+
+                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
+                    {row.totalHours}
+                  </TableCell>
+
+                  <TableCell className="py-4 px-6">
+                    <Badge
+                      className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${statusInfo.bg}`}
+                    >
+                      {statusInfo.text}
+                    </Badge>
+                  </TableCell>
+
+                  <TableCell className="py-4 px-6 text-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="p-1.5 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-lg outline-none cursor-pointer">
+                        <MoreVertical className="w-4 h-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-44 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 shadow-lg p-1">
+                        <DropdownMenuItem className="text-xs font-medium cursor-pointer text-red-500 dark:text-red-500 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
+                          Duyệt chấm công
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
+                          Xem lịch sử chấm công
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
+                          Chỉnh sửa giờ Check-in/out
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              )
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={8} className="text-center py-8 text-slate-400 dark:text-gray-500">

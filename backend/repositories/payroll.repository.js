@@ -20,6 +20,46 @@ class PayrollRepository {
       employee: employeeId,
     }).lean();
   }
+
+  async findByMonthYear(monthYear) {
+    return await PayrollModel.find({ monthYear })
+      .populate('employee', 'fullName code avatarUrl')
+      .populate('contract', 'contractCode type salary')
+      .sort({ createdAt: -1 })
+      .lean();
+  }
+
+  async updateManyByMonthYear(monthYear, updateData) {
+    return await PayrollModel.updateMany(
+      { monthYear },
+      { $set: updateData }
+    );
+  }
+
+  async findById(id) {
+    return await PayrollModel.findById(id);
+  }
+
+  async create(data) {
+    const payroll = await PayrollModel.create(data);
+    return await PayrollModel.findById(payroll._id)
+      .populate('employee', 'fullName code avatarUrl')
+      .populate('contract', 'contractCode type salary');
+  }
+
+  async update(id, data) {
+    return await PayrollModel.findByIdAndUpdate(id, data, { new: true })
+      .populate('employee', 'fullName code avatarUrl')
+      .populate('contract', 'contractCode type salary');
+  }
+
+  async updateClock(id, updateData) {
+    return await PayrollModel.findByIdAndUpdate(
+      id, 
+      { $set: updateData }, 
+      { new: true }
+    );
+  }
 }
 
 export default new PayrollRepository();

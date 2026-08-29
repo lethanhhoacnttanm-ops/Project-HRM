@@ -64,6 +64,11 @@ class ContractsService {
     };
   }
 
+  async getListContracts() {
+    const contracts = await contractRepository.getListContract();
+    return contracts;
+  }
+
   async getMyContracts(employeeId) {
     const contracts = await contractRepository.findByEmployeeId(employeeId);
     return contracts;

@@ -38,6 +38,21 @@ class ContractsController {
       });
     }
   }
+  async getListContracts(req, res) {
+    try {
+      const contracts = await contractService.getListContracts();
+      return res.status(200).json({
+        success: true,
+        message: "Lấy hợp đồng của bạn thành công!",
+        data: contracts,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Lỗi khi lấy hợp đồng!",
+      });
+    }
+  }
   async getMyContracts(req, res) {
     try {
       const contracts = await contractService.getMyContracts(req.user.id);
