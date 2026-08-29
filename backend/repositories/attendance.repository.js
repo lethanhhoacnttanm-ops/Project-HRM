@@ -24,11 +24,31 @@ class AttendanceRepository {
         select: 'fullName code avatarUrl' 
       }).populate({
         path: 'shift',
-        select: 'name' 
+        select: 'name checkInTime checkOutTime' 
       }).skip(skip).limit(limit).sort({ createdAt: -1 }).lean()
     ])
 
     return { totalAttendance, dataAttendance }
+  }
+
+  async createAttendance(data, shiftId) {
+    const attendance = await AttendanceModel.create(data);
+
+    await ShiftModel.findByIdAndUpdate(shiftId, {
+      $inc: { appliedEmployeesCount: 1 },
+    });
+
+    return attendance;
+  }
+
+  async createAttendanceWithCount(data, shiftId) {
+    const attendance = await AttendanceModel.create(data);
+
+    await ShiftModel.findByIdAndUpdate(shiftId, {
+      $inc: { appliedEmployeesCount: 1 }
+    });
+
+    return attendance;
   }
 
   async createAttendance(data) {

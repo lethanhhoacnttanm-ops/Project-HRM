@@ -29,6 +29,10 @@ class ContractRepository {
     return { totalContract, dataContract }
   };
 
+  async getListContract() {
+    return await ContractModel.find()
+  };
+
   async create(data) {
     return await ContractModel.create(data);
   }

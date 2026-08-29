@@ -10,6 +10,7 @@ router.get(
   checkRole('EMPLOYEE', 'ADMIN'),
   attendanceController.getMyAttendance
 );
+router.post('/check-in', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), attendanceController.checkIn);
 router.get('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), attendanceController.getAllAttendance);
 router.get('/today-status', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), attendanceController.getStatus);
 router.post('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), attendanceController.checkIn);

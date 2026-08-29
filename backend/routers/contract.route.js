@@ -30,4 +30,11 @@ router.get(
   contractsController.getAllContractForTable
 );
 
+router.get(
+  '/listContract',
+  verifyToken,
+  checkRole('ADMIN'),
+  contractsController.getListContracts
+);
+
 export default router;

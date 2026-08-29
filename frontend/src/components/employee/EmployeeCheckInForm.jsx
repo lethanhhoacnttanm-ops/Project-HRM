@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Form, TimePicker, message } from 'antd';
 import { Button } from "@/components/ui/button";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Clock, Calendar } from "lucide-react";
 import shiftService from '@/services/shift.service';
@@ -43,27 +43,27 @@ export default function EmployeeCheckInForm({ onSuccess }) {
     try {
       setLoading(true);
 
-      const checkInTimeStr = values.checkInTime 
-        ? values.checkInTime.format('h:mm A') 
+      const checkInTimeStr = values.checkInTime
+        ? values.checkInTime.format('h:mm A')
         : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 
       const payload = {
-        shift: values.shiftId,   
-        date: currentDate,       
-        checkIn: checkInTimeStr, 
-        checkOut: '--:--',       
-        totalHours: 'Đang làm',  
-        status: 'Đúng giờ',      
+        shift: values.shiftId,
+        date: currentDate,
+        checkIn: checkInTimeStr,
+        checkOut: '--:--',
+        totalHours: 'Đang làm',
+        status: 'Đúng giờ',
         isCheckInLate: false,
       };
 
-      const response = await attendanceService.checkIn(payload);
+      const response = await attendanceService.checkInAttendance(payload);
 
       if (response && response.success) {
         message.success("Chấm công vào ca thành công!");
         form.resetFields();
         setSelectedShiftValue("");
-        if (onSuccess) onSuccess(); 
+        if (onSuccess) onSuccess();
       }
     } catch (error) {
       console.error("Lỗi chấm công:", error);
@@ -86,7 +86,7 @@ export default function EmployeeCheckInForm({ onSuccess }) {
       </div>
 
       <Form form={form} layout="vertical" onFinish={handleFinish} className="space-y-4">
-        
+
         <div className="flex items-center justify-between bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
           <span className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
             <Calendar className="w-4 h-4 text-indigo-500" /> Ngày chấm công:
@@ -96,20 +96,38 @@ export default function EmployeeCheckInForm({ onSuccess }) {
           </span>
         </div>
 
-        <Form.Item 
-          name="shiftId" 
+        <Form.Item
+          name="shiftId"
           label={<span className="font-semibold text-slate-700 text-xs">Chọn ca làm việc (Bắt buộc)</span>}
           rules={[{ required: true, message: 'Vui lòng chọn ca làm việc trước khi chấm công!' }]}
         >
-          <Select 
-            value={selectedShiftValue} 
+          <Select
+            value={selectedShiftValue}
             onValueChange={(value) => {
               setSelectedShiftValue(value);
               form.setFieldValue('shiftId', value);
             }}
           >
             <SelectTrigger className="w-full rounded-xl h-10 text-xs font-medium border-slate-200">
-              <SelectValue placeholder="-- Chọn ca làm việc của bạn --" />
+              {(() => {
+                const selectedId = form.getFieldValue('shiftId');
+
+                const selectedShift = shifts.find(s => s._id === selectedId);
+
+                if (selectedShift) {
+                  return (
+                    <span className="block truncate text-slate-900">
+                      {selectedShift.name} ({selectedShift.checkInTime} - {selectedShift.checkOutTime})
+                    </span>
+                  );
+                } else {
+                  return (
+                    <span className="text-slate-500">
+                      -- Chọn ca làm việc của bạn --
+                    </span>
+                  );
+                }
+              })()}
             </SelectTrigger>
             <SelectContent className="rounded-xl">
               {shifts.map((shift) => (
@@ -121,15 +139,15 @@ export default function EmployeeCheckInForm({ onSuccess }) {
           </Select>
         </Form.Item>
 
-        <Form.Item 
-          name="checkInTime" 
+        <Form.Item
+          name="checkInTime"
           label={<span className="font-semibold text-slate-700 text-xs">Thời gian Check-in (Tùy chọn)</span>}
         >
           <TimePicker use12Hours format="h:mm A" className="w-full rounded-xl h-10" />
         </Form.Item>
 
-        <Button 
-          type="submit" 
+        <Button
+          type="submit"
           disabled={loading}
           className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold h-10 text-xs shadow-sm transition-all"
         >

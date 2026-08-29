@@ -15,6 +15,10 @@ export const contractService = {
     });
   },
 
+  getListContract: async () => {
+    return await axiosClient.get('/contracts/listContract')
+  },
+
   getMyContracts: async () => {
     return await axiosClient.get('/contracts/me');
   },
