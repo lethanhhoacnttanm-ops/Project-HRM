@@ -5,20 +5,26 @@ class PerformanceRepository {
   async FindWithPagination({ skip, limit }) {
     const [totalPerformance, dataPerformance] = await Promise.all([
       PerformanceModel.countDocuments(),
-      PerformanceModel.find().populate({
-        path: 'employee',
-        select: 'fullName code avatarUrl department',
-        populate: {
-          path: 'department',   
-          select: 'name'   
-        }
-      }).populate({
-        path: 'evaluator',
-        select: 'fullName code role'
-      }).skip(skip).limit(limit).sort({ createdAt: -1 }).lean()
-    ])
+      PerformanceModel.find()
+        .populate({
+          path: 'employee',
+          select: 'fullName code avatarUrl department',
+          populate: {
+            path: 'department',   
+            select: 'name'   
+          }
+        })
+        .populate({
+          path: 'evaluator',
+          select: 'fullName code role'
+        })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean()
+    ]);
 
-    return { totalPerformance, dataPerformance }
+    return { totalPerformance, dataPerformance };
   }
 
   async findAllWithRelations() {
@@ -51,6 +57,26 @@ class PerformanceRepository {
     })
       .populate('evaluator', 'fullName email code')
       .lean();
+  }
+
+  async findByQuarter(quarter) {
+    return await PerformanceModel.find({ quarter });
+  }
+
+  async findOneByEmployeeAndQuarter(employeeId, quarter) {
+    return await PerformanceModel.findOne({ employee: employeeId, quarter });
+  }
+
+  async updateSelfAssessment(employeeId, quarter, updateData) {
+    return await PerformanceModel.findOneAndUpdate(
+      { employee: employeeId, quarter },
+      { $set: updateData },
+      { new: true }
+    );
+  }
+
+  async insertMany(records) {
+    return await PerformanceModel.insertMany(records);
   }
 
   async create(data) {

@@ -21,5 +21,17 @@ export const performanceService = {
 
   getTeamPerformanceSummary: async () => {
     return await axiosClient.get('/performances/team-summary');
+  },
+
+  createCycleApi: async (quarter) => {
+    return await axiosClient.post('/performances/cycle', { quarter });
+  },
+
+  getMyReviewApi: async (quarter) => {
+    return await axiosClient.get(`/performances/my-review?quarter=${quarter}`);
+  },
+
+  submitSelfApi: async (payload) => {
+    return await axiosClient.put(`/performances/submit-self`, payload);
   }
 };

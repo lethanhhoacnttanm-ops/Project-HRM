@@ -51,6 +51,29 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
   const handleFinish = (values) => {
     onSubmit(values);
   };
+
+  const generateRealtimeQuarters = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [currentYear - 1, currentYear, currentYear + 1];
+    let quarters = [];
+
+    years.forEach((year) => {
+      quarters.push(`Q1-${year}`);
+      quarters.push(`Q2-${year}`);
+      quarters.push(`Q3-${year}`);
+      quarters.push(`Q4-${year}`);
+    });
+
+    return quarters;
+  };
+
+  const getCurrentQuarter = () => {
+    const now = new Date();
+    const month = now.getMonth() + 1;
+    const year = now.getFullYear();
+    const currentQ = Math.ceil(month / 3);
+    return `Q${currentQ}-${year}`;
+  };
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md rounded-2xl p-6">
@@ -60,13 +83,13 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
           </DialogTitle>
         </DialogHeader>
 
-        {isCreate && dataListEmp && (
+        {isCreate && (
           <div className="p-6 overflow-y-auto flex-1">
             <Form
               form={form}
               layout="vertical"
               onFinish={handleFinish}
-              initialValues={{ quarter: 'Q3-2026', outsourcingScore: 5, trainingScore: 5 }}
+              initialValues={{ quarter: getCurrentQuarter() }} 
               className="space-y-4"
             >
 
@@ -74,7 +97,7 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
                 name="quarter"
                 label={
                   <Label className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                    <Calendar className="w-4 h-4 text-indigo-500" /> Chu kỳ đánh giá (Quarter)
+                    <Calendar className="w-4 h-4 text-indigo-500" /> Chọn chu kỳ đánh giá mới (Quarter)
                   </Label>
                 }
                 rules={[{ required: true, message: 'Vui lòng chọn chu kỳ đánh giá!' }]}
@@ -86,110 +109,18 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
                     <SelectValue placeholder="Chọn chu kỳ..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Q1-2026">Q1 - 2026</SelectItem>
-                    <SelectItem value="Q2-2026">Q2 - 2026</SelectItem>
-                    <SelectItem value="Q3-2026">Q3 - 2026</SelectItem>
-                    <SelectItem value="Q4-2026">Q4 - 2026</SelectItem>
-                  </SelectContent>
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name="employee"
-                label={
-                  <Label className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                    <User className="w-4 h-4 text-indigo-500" /> Nhân viên được đánh giá
-                  </Label>
-                }
-                rules={[{ required: true, message: 'Vui lòng chọn nhân viên!' }]}
-              >
-                <Select
-                  onValueChange={(value) => form.setFieldValue('employee', value)}
-                >
-                  <SelectTrigger className="w-full h-10 border-slate-200 focus:ring-indigo-500/20">
-                    <SelectValue placeholder="-- Chọn nhân viên cần đánh giá --" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {dataListEmp.map((emp) => (
-                      <SelectItem key={emp._id} value={emp._id}>
-                        {emp.fullName} ({emp.code})
+                    {generateRealtimeQuarters().map((q) => (
+                      <SelectItem key={q} value={q}>
+                        {q} (Năm thực tế)
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </Form.Item>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                <Form.Item
-                  name="outsourcingScore"
-                  label={
-                    <Label className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                      <Briefcase className="w-4 h-4 text-indigo-500" /> Điểm Outsource (0 - 5)
-                    </Label>
-                  }
-                  rules={[
-                    { required: true, message: 'Nhập điểm outsource!' },
-                    { type: 'number', min: 0, max: 5, message: 'Điểm từ 0 đến 5!' }
-                  ]}
-                >
-                  <Input
-                    type="number"
-                    min="0"
-                    max="5"
-                    step="0.1"
-                    placeholder="VD: 4.5"
-                    className="h-10 border-slate-200 focus-visible:ring-indigo-500/20"
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      form.setFieldValue('outsourcingScore', val === '' ? undefined : parseFloat(val));
-                    }}
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="trainingScore"
-                  label={
-                    <Label className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                      <BookOpen className="w-4 h-4 text-indigo-500" /> Điểm Đào tạo (0 - 5)
-                    </Label>
-                  }
-                  rules={[
-                    { required: true, message: 'Nhập điểm đào tạo!' },
-                    { type: 'number', min: 0, max: 5, message: 'Điểm từ 0 đến 5!' }
-                  ]}
-                >
-                  <Input
-                    type="number"
-                    min="0"
-                    max="5"
-                    step="0.1"
-                    placeholder="VD: 4.0"
-                    className="h-10 border-slate-200 focus-visible:ring-indigo-500/20"
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      form.setFieldValue('trainingScore', val === '' ? undefined : parseFloat(val));
-                    }}
-                  />
-                </Form.Item>
-
+              <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-xs text-indigo-700 leading-relaxed font-medium">
+                💡 <b>Lưu ý:</b> Khi bấm xác nhận, hệ thống sẽ tự động khởi tạo bảng đánh giá cho <b>tất cả nhân viên</b> trong toàn công ty và gửi thông báo mở kỳ đánh giá mới đến họ.
               </div>
-
-              <Form.Item
-                name="feedback"
-                label={
-                  <Label className="flex items-center gap-1.5 text-sm font-medium text-slate-700">
-                    <FileText className="w-4 h-4 text-indigo-500" /> Nhận xét & Đánh giá (Feedback)
-                  </Label>
-                }
-              >
-                <Textarea
-                  rows={3}
-                  placeholder="Nhập nhận xét chi tiết về hiệu suất làm việc của nhân sự trong quý..."
-                  className="border-slate-200 resize-none focus-visible:ring-indigo-500/20"
-                  onChange={(e) => form.setFieldValue('feedback', e.target.value)}
-                />
-              </Form.Item>
 
               <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                 <Button
@@ -205,7 +136,7 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
                   onClick={() => form.submit()}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200"
                 >
-                  Lưu đánh giá
+                  Mở chu kỳ toàn công ty
                 </Button>
               </div>
 

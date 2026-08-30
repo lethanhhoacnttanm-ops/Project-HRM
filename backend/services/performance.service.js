@@ -1,4 +1,5 @@
 import performanceRepository from '../repositories/performance.repository.js';
+import EmployeeModel from '../models/Employee.js';
 
 class PerformanceService {
   async getMyEvaluations(employeeId) {
@@ -14,6 +15,32 @@ class PerformanceService {
       throw new Error('Không tìm thấy đánh giá hiệu suất!');
     }
     return evaluation;
+  }
+
+  async createCycleForEmployees(quarter, adminId) {
+    const employees = await EmployeeModel.find({ status: 'active' });
+
+    if (!employees || employees.length === 0) {
+      throw new Error("Không tìm thấy nhân viên nào trong hệ thống để tạo chu kỳ!");
+    }
+
+    const existing = await performanceRepository.findByQuarter(quarter);
+    if (existing && existing.length > 0) {
+      throw new Error(`Chu kỳ ${quarter} đã được khởi tạo trước đó rồi!`);
+    }
+
+    const performanceRecords = employees.map((emp) => ({
+      employee: emp._id,
+      evaluator: adminId,
+      quarter: quarter,
+      selfAssessment: { outsourcingScore: 0, trainingScore: 0, feedback: '' },
+      outsourcingScore: 0,
+      trainingScore: 0,
+      feedback: '',
+      status: 'Draft',
+    }));
+
+    return await performanceRepository.insertMany(performanceRecords);
   }
 
   async createPerformance(data, evaluatorId) {
@@ -34,6 +61,36 @@ class PerformanceService {
     const savedPerformance = await performanceRepository.create(performanceData);
     return savedPerformance;
   };
+
+  async getMyReview(employeeId, quarter) {
+    const review = await performanceRepository.findOneByEmployeeAndQuarter(employeeId, quarter);
+    if (!review) {
+      throw new Error(`Không tìm thấy bản ghi đánh giá cho chu kỳ ${quarter}!`);
+    }
+    return review;
+  }
+
+  async submitSelfAssessment(employeeId, quarter, selfData) {
+    const review = await performanceRepository.findOneByEmployeeAndQuarter(employeeId, quarter);
+    if (!review) {
+      throw new Error("Không tìm thấy thông tin đánh giá kỳ này!");
+    }
+
+    if (review.status === 'Approved') {
+      throw new Error("Bảng đánh giá này đã được Admin chốt, không thể thay đổi thêm!");
+    }
+
+    const updated = await performanceRepository.updateSelfAssessment(employeeId, quarter, {
+      selfAssessment: {
+        outsourcingScore: selfData.outsourcingScore,
+        trainingScore: selfData.trainingScore,
+        feedback: selfData.feedback,
+      },
+      status: 'Submitted' 
+    });
+
+    return updated;
+  }
 
   async getAllPerformance({ page, limit }) {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);

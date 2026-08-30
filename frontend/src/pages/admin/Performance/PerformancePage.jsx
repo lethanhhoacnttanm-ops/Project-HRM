@@ -59,7 +59,7 @@ export default function PerformancePage() {
       const res = await performanceService.getTeamPerformanceSummary();
 
       if (res.success) {
-        setTeamData(res.data); 
+        setTeamData(res.data);
       }
     } catch (error) {
       toast.error(error.message || 'Không thể tải dữ liệu hiệu suất nhóm!');
@@ -99,19 +99,34 @@ export default function PerformancePage() {
     fetchPerformancesList(performanceNumber);
   }, [performanceNumber]);
 
-  const handleFormSubmit = async (values) => {
+  // const handleFormSubmit = async (values) => {
+  //   try {
+  //     const res = await performanceService.createPerformanceApi(values);
+
+
+  //     if (res && res.success) {
+
+  //       toast.success('Đã tạo đánh giá thành công!');
+  //       setModalState({ isOpen: false })
+  //       fetchPerformancesList();
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message || 'Có lỗi xảy ra!');
+  //   }
+  // };
+
+  const handleFinish = async (values) => {
     try {
-      const res = await performanceService.createPerformanceApi(values);
+      setLoading(true);
+      await performanceService.createCycleApi(values.quarter);
 
-
-      if (res && res.success) {
-
-        toast.success('Đã tạo đánh giá thành công!');
-        setModalState({ isOpen: false })
-        fetchPerformancesList();
-      }
+      toast.success(`Đã mở thành công chu kỳ ${values.quarter} cho toàn công ty!`);
+      closeModal()
+      fetchPerformancesList();
     } catch (error) {
-      toast.error(error.message || 'Có lỗi xảy ra!');
+      toast.error(error.response?.data?.message || "Lỗi khi tạo chu kỳ mới!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,24 +157,32 @@ export default function PerformancePage() {
 
       <PerformanceStats />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6">
-            <PerformanceTabs
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
+      <div className="space-y-6">
+        <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6 w-full">
+          <PerformanceTabs
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+
+          {activeTab === "cycle" && (
+            <PerformanceTable
+              dataPerformance={dataPerformance}
+              pageNumber={performanceNumber}
+              pageSize={4}
+              setPageNumber={setPerformanceNumber}
+              pagination={performancePagination}
             />
-
-            {activeTab === "cycle" && <PerformanceTable dataPerformance={dataPerformance} pageNumber={performanceNumber} pageSize={4} setPageNumber={setDataPerformance} pagination={performancePagination} />}
-            {activeTab === "team" && <TeamPerformanceTable data={teamData} onViewDetail={handleViewDetail} />}
-            {activeTab === "kpi" && <PersonalKPIGuidelineTab />}
-          </div>
-
-          <RecentActivityWidget />
+          )}
+          {activeTab === "team" && <TeamPerformanceTable data={teamData} onViewDetail={handleViewDetail} />}
+          {activeTab === "kpi" && <PersonalKPIGuidelineTab />}
         </div>
 
-        <div className="lg:col-span-1 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RecentActivityWidget />
           <DistributionWidget />
+        </div>
+
+        <div>
           <TopEmployeesWidget />
         </div>
       </div>
@@ -170,7 +193,7 @@ export default function PerformancePage() {
           onClose={closeModal}
           mode={modalState.mode}
           dataListEmp={dataAllListEmp}
-          onSubmit={handleFormSubmit}
+          onSubmit={handleFinish}
         />
       )}
     </div>
