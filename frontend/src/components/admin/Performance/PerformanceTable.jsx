@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { MoreVertical, ChevronLeft, ChevronRight, User, Star } from "lucide-react";
 import {
   Table,
@@ -21,10 +21,10 @@ import PerformanceFilter from "../../../components/admin/Performance/Performance
 
 
 export default function PerformanceTable({ dataPerformance, pageNumber, setPageNumber, pagination, pageSize }) {
-  
-    const [searchTerm, setSearchTerm] = useState("");
-    const [selectedDepartment, setSelectedDepartment] = useState("all");
-    const [selectedQuarter, setSelectedQuarter] = useState("q3_2024");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
+  const [selectedQuarter, setSelectedQuarter] = useState("q3_2024");
 
   const handlePrevPage = () => {
     if (pageNumber > 1) {
@@ -79,74 +79,121 @@ export default function PerformanceTable({ dataPerformance, pageNumber, setPageN
               NGƯỜI ĐÁNH GIÁ
             </TableHead>
             <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
-              ĐIỂM GẦN NHẤT
+              TỰ ĐÁNH GIÁ
+            </TableHead>
+            <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
+              ĐIỂM CHỐT
+            </TableHead>
+            <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
+              TRẠNG THÁI
             </TableHead>
             <TableHead className="py-4 px-6 text-center text-slate-500 font-bold text-xs uppercase">
               THAO TÁC
             </TableHead>
           </TableRow>
+          {console.log(dataPerformance)}
         </TableHeader>
 
         <TableBody className="divide-y divide-slate-100 text-xs">
-          {dataPerformance.map((row) => (
-            <TableRow key={row._id} className="hover:bg-slate-50/80 transition-colors">
-              <TableCell className="py-4 px-6">
-                <div className="flex items-center gap-3">
-                  {row.employee?.avatarUrl ? (
-                    <img
-                      src={row.employee?.avatarUrl}
-                      alt={row.employee?.fullName}
-                      className="w-9 h-9 rounded-full object-cover border"
-                    />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                      <User className="w-4 h-4" />
+          {Array.isArray(dataPerformance) && dataPerformance.length > 0 ? (
+            dataPerformance.map((row) => (
+              <TableRow key={row._id} className="hover:bg-slate-50/80 transition-colors">
+
+                <TableCell className="py-4 px-6">
+                  <div className="flex items-center gap-3">
+                    {row.employee?.avatarUrl ? (
+                      <img
+                        src={row.employee?.avatarUrl}
+                        alt={row.employee?.fullName}
+                        className="w-9 h-9 rounded-full object-cover border"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <User className="w-4 h-4" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-slate-800">{row.employee?.fullName}</p>
+                      <p className="text-[11px] text-slate-400">{row.employee?.code}</p>
                     </div>
-                  )}
-                  <div>
-                    <p className="font-bold text-slate-800">{row.employee?.fullName}</p>
-                    <p className="text-[11px] text-slate-400">{row.employee?.code}</p>
                   </div>
-                </div>
-              </TableCell>
+                </TableCell>
 
-              <TableCell className="py-4 px-6 font-medium text-slate-600">
-                {row.employee?.department?.name}
-              </TableCell>
+                <TableCell className="py-4 px-6 font-medium text-slate-600">
+                  {row.employee?.department?.name || "Chưa cập nhật"}
+                </TableCell>
 
-              <TableCell className="py-4 px-6 font-medium text-slate-600">
-                {row.evaluator?.fullName}
-              </TableCell>
+                <TableCell className="py-4 px-6 font-medium text-red-600">
+                  {row.evaluator?.fullName || "Chưa cập nhật"}
+                </TableCell>
 
-              <TableCell className="py-4 px-6 flex items-center gap-1.5">
-                {(() => {
-                  const avgScore = ((row.outsourcingScore + row.trainingScore) / 2).toFixed(1);
-                  return (
-                    <span className="font-bold text-indigo-600">
-                      {avgScore} / 5.0
+                <TableCell className="py-4 px-6 font-medium text-slate-600">
+                  {row.selfAssessment ? (
+                    <div className="text-[11px] space-y-0.5">
+                      <div>Out: <span className="font-bold text-slate-800">{row.selfAssessment.outsourcingScore}</span></div>
+                      <div>Train: <span className="font-bold text-slate-800">{row.selfAssessment.trainingScore}</span></div>
+                    </div>
+                  ) : (
+                    <span className="text-slate-400 italic">Chưa đánh giá</span>
+                  )}
+                </TableCell>
+
+                <TableCell className="py-4 px-6">
+                  <div className="flex items-center gap-1.5">
+                    {(() => {
+                      const avgScore = ((row.outsourcingScore + row.trainingScore) / 2).toFixed(1);
+                      return (
+                        <span className="font-bold text-indigo-600 text-sm">
+                          {avgScore} / 5.0
+                        </span>
+                      );
+                    })()}
+                    <Star className="w-4 h-4 text-amber-400 fill-amber-400 drop-shadow-sm" />
+                  </div>
+                </TableCell>
+
+                <TableCell className="py-4 px-6">
+                  {row?.status === 'Draft' && (
+                    <span className="px-2.5 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg font-bold text-[10px] inline-block">
+                      Chưa nộp
                     </span>
-                  );
-                })()}
-                <Star className="w-4 h-4 text-green-400 fill-green-400 drop-shadow-sm" />
-              </TableCell>
+                  )}
+                  {row.status === 'Submitted' && (
+                    <span className="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg font-bold text-[10px] inline-block">
+                      Đã nộp (Chờ duyệt)
+                    </span>
+                  )}
+                  {row.status === 'Approved' && (
+                    <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-bold text-[10px] inline-block">
+                      Đã duyệt
+                    </span>
+                  )}
+                </TableCell>
 
-              <TableCell className="py-4 px-6 text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg outline-none">
-                    <MoreVertical className="w-4 h-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-40 rounded-xl">
-                    <DropdownMenuItem className="text-xs font-medium cursor-pointer">
-                      Xem phiếu đánh giá
-                    </DropdownMenuItem>
-                    <DropdownMenuItem className="text-xs font-medium cursor-pointer">
-                      Chỉnh sửa điểm
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <TableCell className="py-4 px-6 text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg outline-none">
+                      <MoreVertical className="w-4 h-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44 rounded-xl">
+                      <DropdownMenuItem className="text-xs font-medium cursor-pointer">
+                        Xem phiếu chi tiết
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-xs  cursor-pointer text-indigo-600 font-semibold">
+                        Chỉnh sửa & Duyệt điểm
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+
+              </TableRow>
+            ))) : (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-6 text-slate-400">
+                Không có dữ liệu ở trang này.
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
         <TableFooter className="bg-white border-t border-slate-100">
           <TableRow className="hover:bg-transparent">
@@ -156,7 +203,7 @@ export default function PerformanceTable({ dataPerformance, pageNumber, setPageN
                 <p>
                   Trang <span className="font-bold text-indigo-600">{pageNumber}</span> / <span className="font-bold text-slate-800">{pagination?.totalPage || 1}</span>
                   <span className="text-slate-300 mx-2">|</span>
-                  Tổng số: <span className="font-bold text-slate-800">{pagination?.totalItems || dataPerformance?.length || 0}</span> đơn
+                  Tổng số: <span className="font-bold text-slate-800">{pagination?.totalPerformance || dataPerformance?.length || 0}</span> đơn
                 </p>
 
                 <div className="flex items-center gap-1">

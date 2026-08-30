@@ -7,6 +7,9 @@ const router = express.Router();
 router.post('/', verifyToken, checkRole("ADMIN"), performanceController.createPerformance);
 router.get('/', verifyToken, checkRole("ADMIN"), performanceController.getAllPerformance);
 router.get('/team-summary', verifyToken, checkRole("ADMIN"), performanceController.getTeamPerformance);
+router.post('/cycle', verifyToken, checkRole("ADMIN"), performanceController.createCycle);
+router.get('/my-review', verifyToken, checkRole("EMPLOYEE","ADMIN"), performanceController.getMyReview);
+router.put('/submit-self', verifyToken, checkRole("EMPLOYEE","ADMIN"), performanceController.submitSelfAssessment);
 router.get(
   '/me',
   verifyToken,
