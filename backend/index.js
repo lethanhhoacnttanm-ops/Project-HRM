@@ -14,12 +14,14 @@ import { seedAdminAccount } from './seeds/admin.seed.js';
 
 const app = express();
 
+app.use(helmet());
 app.use(morgan('dev'));
 
 const allowedOrigins = [
-  'http://localhost:5173',
-  ENV.CLIENT_URL,
-  'https://project-hrm-zeta.vercel.app'
+  'http://localhost:5173', 
+  'http://localhost:3000', 
+  ENV.CLIENT_URL,          
+  'https://project-hrm-zeta.vercel.app' 
 ].filter(Boolean).map(url => url.replace(/\/$/, ''));
 
 app.use(
@@ -40,7 +42,7 @@ app.use(
 app.use(globalLimiter)
 
 
-app.use(helmet());
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
