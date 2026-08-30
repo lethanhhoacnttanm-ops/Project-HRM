@@ -15,6 +15,7 @@ import { seedAdminAccount } from './seeds/admin.seed.js';
 const app = express();
 
 app.use(helmet());
+app.use(cookieParser());
 app.use(morgan('dev'));
 
 const allowedOrigins = [
@@ -40,10 +41,6 @@ app.use(
 );
 
 app.use(globalLimiter)
-
-
-
-app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
