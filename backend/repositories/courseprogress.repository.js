@@ -26,6 +26,18 @@ class CourseProgressRepository {
     }
   }
 
+  async updateProgressById(id, updateData) {
+    try {
+      return await CourseProgressModel.findByIdAndUpdate(
+        id,
+        updateData,
+        { new: true, runValidators: true }
+      ).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (Update): ${error.message}`);
+    }
+  }
+
   async findWithPagination(skip, limit) {
     try {
       const [totalCourseProgress, dataCourseProgress] = await Promise.all([
@@ -33,7 +45,11 @@ class CourseProgressRepository {
         CourseProgressModel.find()
           .populate({
             path: 'employeeId',
-            select: 'fullName email avatarUrl position department level'
+            select: 'fullName email avatarUrl position department level',
+            populate: {
+              path: 'position',
+              select: 'name'
+            }
           })
           .populate({
             path: 'courseId',

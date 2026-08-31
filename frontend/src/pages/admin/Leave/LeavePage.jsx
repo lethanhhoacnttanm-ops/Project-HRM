@@ -49,8 +49,8 @@ export default function LeavePage() {
   }, [pageNumber, pageSize]);
 
   useEffect(() => {
-    fetchLeaves(pageNumber);
-  }, [pageNumber]);
+    fetchLeaves();
+  }, [pageNumber, fetchLeaves]);
 
   const handleUpdateLeaveStatus = async ({ id, status }) => {
     try {
@@ -58,13 +58,16 @@ export default function LeavePage() {
 
       if (res && res.success) {
         setDataLeave(prevData =>
-          prevData.map(item => (item._id === id ? res.data : item))
+          prevData.map(item => (item._id === id ? (res.data || { ...item, status }) : item))
         );
 
-        fetchLeaves()
+        toast.success('Thành công', { description: 'Đã cập nhật trạng thái đơn!' });
+      } else {
+        toast.error('Thất bại', { description: res?.message || 'Không thể cập nhật trạng thái!' });
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái đơn:", error);
+      toast.error('Thất bại', { description: error.customMessage || 'Có lỗi xảy ra!' });
     }
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   Dialog,
   DialogContent,
@@ -26,8 +26,10 @@ import {
   CheckCircle2,
   Hourglass
 } from "lucide-react";
+import { InputNumber, Slider } from "antd";
 import { Form } from "antd";
 import { toast } from "sonner";
+import { courseprogressService } from "@/services/courseprogress.service";
 
 const DEPARTMENTS = [
   { label: "Software Development", value: "Software Development" },
@@ -66,17 +68,20 @@ const LEVELS = [
   { label: "Middle", value: "Middle" }
 ];
 
-export default function TrainingModal({ isOpen, onClose, mode, onSubmit, detailsProcessCourse, dataCourse, dataManager, loading }) {
+export default function TrainingModal({ isOpen, onClose, mode, onSubmit, detailsProcessCourse, dataCourse, dataManager, loading, fetchCourseProgress }) {
   if (!detailsProcessCourse) return null;
   const isAssign = mode === "assign";
   const isCreate = mode === "create";
   const isDetail = mode === "detail"
+  const isAdjust = mode === "adjust"
 
   const [form] = Form.useForm();
 
   const employee = detailsProcessCourse.employeeId || {};
   const course = detailsProcessCourse.courseId || {};
   const isCompleted = detailsProcessCourse.status === "Completed";
+
+  const [percent, setPercent] = useState(detailsProcessCourse?.progressPercent || 0);
 
   const selectedManagerId = Form.useWatch("managerId", form);
   const selectedCourseId = Form.useWatch("courseId", form);
@@ -100,7 +105,8 @@ export default function TrainingModal({ isOpen, onClose, mode, onSubmit, details
   const getModalTitle = () => {
     if (isAssign) return 'Phân công đào tạo';
     if (isCreate) return 'Tạo khóa học mới';
-    if (isDetail) return 'Thông tin chi tiết'
+    if (isDetail) return 'Thông tin chi tiết';
+    if (isAdjust) return 'Cập nhật tiến độ'
     return 'Thông tin';
   };
 
@@ -115,6 +121,20 @@ export default function TrainingModal({ isOpen, onClose, mode, onSubmit, details
     onClose();
   };
 
+  const handleSubmit = async () => {
+    try {
+      const res = await courseprogressService.updateProgress(detailsProcessCourse._id, percent);
+
+      if (res && res.success) {
+        toast.success("Cập nhật tiến độ thành công!");
+        onClose();
+        fetchCourseProgress()
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi cập nhật!");
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg rounded-2xl p-6">
@@ -126,6 +146,58 @@ export default function TrainingModal({ isOpen, onClose, mode, onSubmit, details
             Chọn thông tin quản lý và khóa học cần phân công.
           </DialogDescription>
         </DialogHeader>
+
+        {isAdjust ? (
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-gray-600">
+              Nhân viên: <span className="font-bold">{detailsProcessCourse?.employeeId?.fullName}</span>
+            </p>
+            <p className="text-sm text-gray-600">
+              Khóa học: <span className="font-bold">{detailsProcessCourse?.courseId?.title}</span>
+            </p>
+
+            <div className="flex items-center gap-4">
+              <Slider
+                className="flex-1"
+                min={0}
+                max={100}
+                onChange={(value) => setPercent(value)}
+                value={typeof percent === 'number' ? percent : 0}
+              />
+              <InputNumber
+                min={0}
+                max={100}
+                value={percent}
+                onChange={(value) => setPercent(value)}
+                formatter={(value) => `${value}%`}
+                parser={(value) => value.replace('%', '')}
+              />
+            </div>
+
+            {percent === 100 && (
+              <p className="text-xs text-emerald-600 font-semibold">
+                 Tiến độ đạt 100% - Trạng thái sẽ tự động chuyển thành "Completed"!
+              </p>
+            )}
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <Button variant="outline" onClick={onClose} className="rounded-xl">
+                Hủy bỏ
+              </Button>
+              <Button
+                type="primary"
+                loading={loading ? true : undefined}
+                onClick={handleSubmit}
+                className="rounded-xl bg-indigo-600 hover:bg-indigo-700"
+              >
+                Lưu thay đổi
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div>
+          </div>
+        )}
 
         {isCreate && (
           <Form
@@ -291,7 +363,9 @@ export default function TrainingModal({ isOpen, onClose, mode, onSubmit, details
                 <div className="space-y-0.5">
                   <p className="font-bold text-slate-900 text-sm">{employee.fullName || "N/A"}</p>
                   <p className="text-slate-500">{employee.email || "N/A"}</p>
-                  <p className="text-indigo-600 font-medium">Vị trí: {employee.position || "Nhân viên"}</p>
+                  <p className="text-indigo-600 font-medium">
+                    Vị trí: {typeof employee.position === 'object' ? employee.position?.name || employee.position?.title : employee.position || "Nhân viên"}
+                  </p>
                 </div>
               </div>
             </div>

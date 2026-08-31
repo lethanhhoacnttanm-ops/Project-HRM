@@ -11,6 +11,19 @@ export const employeeService = {
     return await axiosClient.get('/employees/all-list-v1')
   },
 
+  getAllDataEmp: async (role) => {
+    return await axiosClient.get('/employees/allListData', {
+      params: { role },
+    })
+  },
+
+  getAllDataEmpForBenefit: async (role) => {
+    return await axiosClient.get('/employees/allListDataForBenefit', {
+      params: { role },
+    })
+  },
+
+
   register: async (registerData) => {
     return await axiosClient.post('/employees/register', registerData);
   },

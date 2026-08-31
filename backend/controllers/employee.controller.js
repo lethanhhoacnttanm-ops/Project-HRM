@@ -26,7 +26,7 @@ class EmployeesController {
       return res.status(200).json({
         success: true,
         message: 'Lấy danh sách nhân viên thành công!',
-        dataEmp: result.dataEmp || result, 
+        dataEmp: result.dataEmp || result,
         pagination: result.pagination || {}
       });
     } catch (error) {
@@ -38,10 +38,50 @@ class EmployeesController {
     }
   };
 
+  async getAllDataEmp(req, res) {
+    try {
+      const { role } = req.query;
+
+      const result = await employeeService.getEmployeesWithoutDepartmentAndStatus({ role });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy danh sách nhân viên thành công!',
+        dataEmp: result.data || result
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy danh sách nhân viên!',
+        error: error.message,
+      });
+    }
+  }
+
+  async getAllDataEmpForBenefit(req, res) {
+    try {
+      const { role } = req.query;
+
+      const result = await employeeService.getEmployeesForBenefit({ role });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy danh sách nhân viên thành công!',
+        dataEmp: result.data || result
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy danh sách nhân viên!',
+        error: error.message,
+      });
+    }
+  }
+
   async updateEmployee(req, res) {
     try {
-      const { id } = req.params; 
-      const payload = req.body;  
+      const { id } = req.params;
+      const payload = req.body;
 
       const updatedEmployee = await employeeService.updateEmployeeInfo(id, payload);
 
@@ -59,7 +99,7 @@ class EmployeesController {
     }
   }
 
-   async assignEmployeeToDepartment (req, res) {
+  async assignEmployeeToDepartment(req, res) {
     try {
       const { employeeId, departmentId, positionId, level } = req.body;
 
@@ -83,29 +123,29 @@ class EmployeesController {
   };
 
   async register(req, res) {
-      try {
-        const { employee } = await employeeService.registerEmployee(req.body);
-       
-        return res.status(201).json({
-          success: true,
-          message: 'Đăng ký tài khoản nhân viên thành công! Chờ quản trị viên duyệt',
-          data: {
-            id: employee._id,
-            employeeCode: employee.code,
-            fullName: employee.fullName,
-            email: employee.email,
-            role: employee.role,
-          },
-        });
-      } catch (error) {
-        return res.status(400).json({
-          success: false,
-          message: error.message,
-        });
-      }
+    try {
+      const { employee } = await employeeService.registerEmployee(req.body);
+
+      return res.status(201).json({
+        success: true,
+        message: 'Đăng ký tài khoản nhân viên thành công! Chờ quản trị viên duyệt',
+        data: {
+          id: employee._id,
+          employeeCode: employee.code,
+          fullName: employee.fullName,
+          email: employee.email,
+          role: employee.role,
+        },
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
   }
 
-  
+
 
   // ===== EMP-Profile =====
   async getMyProfile(req, res) {

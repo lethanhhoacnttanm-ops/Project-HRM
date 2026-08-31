@@ -81,7 +81,7 @@ export default function EmployeeProgressView({
                       </div>
                       <div>
                         <p className="font-bold text-slate-800 dark:text-gray-100">{fullName}</p>
-                        <p className="text-[11px] text-slate-400 dark:text-gray-500">{row.employeeId?.position || "Nhân viên"}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-gray-500">{row.employeeId?.position?.name || "Nhân viên"}</p>
                       </div>
                     </div>
                   </TableCell>
@@ -133,7 +133,7 @@ export default function EmployeeProgressView({
                         <DropdownMenuItem onClick={() => onSelectCourseProgress('detail', row)} className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800">
                           Xem chi tiết
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800">
+                        <DropdownMenuItem onClick={() => onSelectCourseProgress('adjust', row)} className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800">
                           Cập nhật tiến độ
                         </DropdownMenuItem>
                       </DropdownMenuContent>

@@ -171,6 +171,7 @@ export default function TrainingPage() {
           dataCourse={dataCourse}
           dataManager={managerOptions}
           onSubmit={handleCreateCourse}
+          fetchCourseProgress={fetchCourseProgress}
         />
       )}
     </div>
