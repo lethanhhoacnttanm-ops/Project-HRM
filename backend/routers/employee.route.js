@@ -8,6 +8,10 @@ import { validateRegisterRules, handleValidationRegister } from '../middleware/v
 const router = express.Router();
 
 router.get('/all-list-v1', verifyToken, checkRole('ADMIN'), employeeController.getListAllEmployees)
+router.get('/allListData', verifyToken, checkRole('ADMIN'), employeeController.getAllDataEmp)
+
+router.get('/allListDataForBenefit', verifyToken, checkRole('ADMIN'), employeeController.getAllDataEmpForBenefit)
+
 
 router.get('/', verifyToken, checkRole('ADMIN'), employeesController.getAllEmployees);
 

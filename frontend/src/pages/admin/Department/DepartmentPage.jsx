@@ -30,6 +30,7 @@ export default function DepartmentPage() {
   const [dataPosition, setDataPosition] = useState([])
 
   const [dataEmployee, setDataEmployee] = useState([])
+  const [dataAllEmp, setDataAllEmp] = useState([])
   const [filteredPositions, setFilteredPositions] = useState([]);
   const [levelOptions, setLevelOptions] = useState([]);
 
@@ -78,6 +79,29 @@ export default function DepartmentPage() {
       };
 
       fetchEmployee();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "table") {
+      const fetchDataEmp = async () => {
+        try {
+
+          const res = await employeeService.getAllDataEmp('EMPLOYEE');
+          if (res?.success) {
+            setDataAllEmp(res.dataEmp);
+          } else {
+            setDataAllEmp([]);
+          }
+        } catch (error) {
+          setDataAllEmp([]);
+          toast.error('Thất bại', {
+            description: error.message || 'Không thể lấy danh sách nhân viên!',
+          });
+        }
+      };
+
+      fetchDataEmp();
     }
   }, []);
 
@@ -331,7 +355,7 @@ export default function DepartmentPage() {
 
         departments={modalState.data}
         departmentOptions={dataDepartment}
-        employeeOptions={dataEmployee}
+        employeeOptions={dataAllEmp}
         positionOptions={filteredPositions.length ? filteredPositions : dataPosition}
         levelOptions={levelOptions}
 

@@ -15,6 +15,22 @@ class EmployeeRepository {
     return await EmployeeModel.find({ role: { $ne: 'ADMIN' } });
   }
 
+  async findAllDataEmp(filter = {}) {
+    try {
+      return await EmployeeModel.find(filter).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository: ${error.message}`);
+    }
+  }
+
+  async findAllDataEmpForBenefit(filter = {}) {
+    try {
+      return await EmployeeModel.find(filter).populate({ path: 'department', select: 'name'}).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository: ${error.message}`);
+    }
+  }
+
   async findByEmail(email) {
     return await EmployeeModel.findOne({ email });
   }

@@ -6,7 +6,7 @@ import { generateUniqueEmployeeCode } from '../utils/generateEmployeeCode.js';
 
 class EmployeeService {
 
-    async getAllListEmployees(){
+    async getAllListEmployees() {
         const listEmployee = await employeeRepository.findAllEmployees();
 
         return {
@@ -14,6 +14,38 @@ class EmployeeService {
         }
     }
 
+    async getEmployeesWithoutDepartmentAndStatus({ role }) {
+        const filter = {
+            $or: [
+                { department: null },
+                { department: { $exists: false } }
+            ]
+        };
+
+        if (role && role !== 'undefined' && role !== 'all') {
+            filter.role = role;
+        }
+
+        const listEmployee = await employeeRepository.findAllDataEmp(filter);
+
+        return {
+            data: listEmployee
+        };
+    }
+
+    async getEmployeesForBenefit({ role }) {
+        const filter = {};
+
+        if (role && role !== 'undefined' && role !== 'all') {
+            filter.role = role;
+        }
+
+        const listEmployee = await employeeRepository.findAllDataEmpForBenefit(filter);
+
+        return {
+            data: listEmployee
+        };
+    }
     async getAllEmployee({ page, limit, role, status }) {
         const pageNumber = Math.max(1, parseInt(page, 10));
         const pageSize = Math.max(1, parseInt(limit, 10));

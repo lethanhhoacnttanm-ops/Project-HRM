@@ -12,7 +12,7 @@ export default function TrainingRegisterPage() {
   const [dataCourse, setDataCourse] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const [pageSize] = useState(5);
+  const pageSize = 6
 
   const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1 });
 
@@ -44,7 +44,7 @@ export default function TrainingRegisterPage() {
 
       const response = await courseprogressService.enrollCourseAPI(courseId)
 
-      if (response.data.success) {
+      if (response?.success) {
         toast.success("Đăng ký tham gia khóa học thành công!");
       }
     } catch (error) {
@@ -57,11 +57,33 @@ export default function TrainingRegisterPage() {
   };
 
   const handlePrevPage = () => {
-    if (pageNumber > 1) setPageNumber(pageNumber - 1);
+    if (pageNumber > 1) {
+      setPageNumber(prev => prev - 1);
+    }
   };
 
   const handleNextPage = () => {
-    if (pageNumber < pagination.totalPages) setPageNumber(pageNumber + 1);
+    if (paginationInfo && pageNumber < paginationInfo.totalCourse) {
+      setPageNumber(prev => prev + 1);
+    }
+  };
+
+  const getPageNumbers = (totalCourse = 1, current = 1) => {
+    let pages = [];
+    if (totalCourse <= 5) {
+      for (let i = 1; i <= totalCourse; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (current <= 3) {
+        pages = [1, 2, 3, 4, '...', totalCourse];
+      } else if (current >= totalCourse - 2) {
+        pages = [1, '...', totalCourse - 3, totalCourse - 2, totalCourse - 1, totalCourse];
+      } else {
+        pages = [1, '...', current - 1, current, current + 1, '...', totalCourse];
+      }
+    }
+    return pages;
   };
 
   return (
@@ -107,7 +129,6 @@ export default function TrainingRegisterPage() {
                     </div>
                   </div>
 
-                  {/* Thông tin khóa học */}
                   <div className="p-5 space-y-3">
                     <div className="flex items-center justify-between text-[11px] font-bold text-indigo-600 uppercase tracking-wide">
                       <span className="truncate max-w-40">{course.department}</span>
@@ -131,7 +152,6 @@ export default function TrainingRegisterPage() {
                   </div>
                 </div>
 
-                {/* Nút bấm tham gia */}
                 <div className="p-5 pt-0">
                   <Button
                     onClick={() => handleEnroll(course._id || course.id)}
@@ -158,7 +178,7 @@ export default function TrainingRegisterPage() {
           <div className="flex items-center justify-between bg-white px-6 py-4 rounded-2xl border border-slate-200/80 shadow-xs mt-6">
             <Button
               onClick={handlePrevPage}
-              disabled={pageNumber <= 1}
+              disabled={pageNumber === 1}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed shadow-xs"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -166,12 +186,31 @@ export default function TrainingRegisterPage() {
             </Button>
 
             <div className="text-xs font-medium text-slate-500">
-              Trang <span className="text-indigo-600 font-bold text-sm px-1">{pageNumber}</span> / <span className="font-bold text-slate-800">{paginationInfo.totalPage || 1}</span>
+              {getPageNumbers(paginationInfo?.totalPage, pageNumber).map((page, index) => {
+                if (page === '...') {
+                  return <span key={index} className="text-slate-400 px-1">...</span>;
+                }
+
+                const isCurrent = page === pageNumber;
+
+                return (
+                  <Button
+                    key={index}
+                    onClick={() => setPageNumber(page)}
+                    className={`h-7 w-7 font-bold text-xs p-0 shadow-none transition-all ${isCurrent
+                      ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                      : 'bg-transparent text-slate-600 hover:bg-slate-100'
+                      }`}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
             </div>
 
             <Button
               onClick={handleNextPage}
-              disabled={pageNumber >= paginationInfo.totalPage}
+              disabled={!paginationInfo || pageNumber >= paginationInfo.totalPage}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed shadow-xs"
             >
               <span>Trang sau</span>
