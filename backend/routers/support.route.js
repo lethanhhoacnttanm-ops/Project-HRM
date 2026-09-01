@@ -4,18 +4,10 @@ import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.get(
-  '/me',
-  verifyToken,
-  checkRole('EMPLOYEE', 'ADMIN'),
-  supportController.getMyTickets
-);
+router.post('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), supportController.createTicket);
+router.get('/my-tickets', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), supportController.getMyTickets);
 
-router.post(
-  '/me',
-  verifyToken,
-  checkRole('EMPLOYEE', 'ADMIN'),
-  supportController.createTicket
-);
+router.get('/admin/all', verifyToken, checkRole('ADMIN'), supportController.getAllTickets);
+router.put('/admin/:id', verifyToken, checkRole('ADMIN'), supportController.updateTicket);
 
 export default router;

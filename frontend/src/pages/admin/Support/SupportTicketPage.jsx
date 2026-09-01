@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SlidersHorizontal, Plus } from "lucide-react";
 
 import TicketStats from "../../../components/admin/Tickets/TicketStats.jsx";
@@ -10,13 +10,59 @@ import AiOptimizationWidget from "../../../components/admin/Tickets/AiOptimizati
 import TicketModal from "../../../components/admin/Tickets/TicketModal.jsx";
 import { Button } from "@/components/ui/button";
 
-export default function SupportTicketPage() {
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedPriority, setSelectedPriority] = useState("all");
-  const [modalState, setModalState] = useState({ isOpen: false, mode: "create" });
+import {toast} from 'sonner'
+import { supportService } from '@/services/support.service';
 
-  const openModal = (mode) => setModalState({ isOpen: true, mode });
-  const closeModal = () => setModalState({ isOpen: false, mode: "create" });
+export default function SupportTicketPage() {
+  const [searchText, setSearchText] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('Tất cả');
+  const [selectedPriority, setSelectedPriority] = useState('Tất cả');
+  const [modalState, setModalState] = useState({ isOpen: false, mode: "create", data: null });
+
+  const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
+  const closeModal = () => setModalState({ isOpen: false, mode: "create", data: null });
+
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAllTickets = async () => {
+    try {
+      setLoading(true);
+      const res = await supportService.getAllTicketsForAdmin();
+      setTickets(res.data || []);
+    } catch (error) {
+      toast.error('Không thể tải danh sách phiếu hỗ trợ');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllTickets();
+  }, []);
+
+  const handleUpdateTicket = async (id, values) => {
+    try {
+      await supportService.updateTicketByAdmin(id, values);
+      toast.success('Cập nhật phiếu hỗ trợ thành công!');
+      closeModal();
+      fetchAllTickets();
+    } catch (error) {
+      toast.error('Cập nhật thất bại', { description: error.message });
+    }
+  };
+
+  const filteredTickets = tickets.filter((item) => {
+    const matchText =
+      item.ticketCode?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.title?.toLowerCase().includes(searchText.toLowerCase()) ||
+      item.employee?.fullName?.toLowerCase().includes(searchText.toLowerCase());
+
+    const matchStatus = selectedStatus === 'Tất cả' || item.status === selectedStatus;
+    const matchPriority = selectedPriority === 'Tất cả' || item.priority === selectedPriority;
+
+    return matchText && matchStatus && matchPriority;
+  });
 
   return (
     <div className="space-y-6 p-2">
@@ -52,18 +98,24 @@ export default function SupportTicketPage() {
 
       <TicketStats />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-0 rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white self-start">
+      <div className="w-full space-y-6">
+        <div className="w-full rounded-2xl border border-slate-200 overflow-hidden shadow-sm  space-y-6 bg-white">
           <TicketFilter
+            searchText={searchText}
+            setSearchText={setSearchText}
             selectedStatus={selectedStatus}
             setSelectedStatus={setSelectedStatus}
             selectedPriority={selectedPriority}
             setSelectedPriority={setSelectedPriority}
           />
-          <TicketTable />
+          <TicketTable
+            tickets={filteredTickets}
+            loading={loading}
+            onOpenModal={openModal}
+          />
         </div>
 
-        <div className="lg:col-span-1 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <ResolutionTimeWidget />
           <TicketCategoryChart />
           <AiOptimizationWidget />
@@ -74,6 +126,8 @@ export default function SupportTicketPage() {
         isOpen={modalState.isOpen}
         onClose={closeModal}
         mode={modalState.mode}
+        ticket={modalState.data}
+        onSubmit={handleUpdateTicket}
       />
     </div>
   );

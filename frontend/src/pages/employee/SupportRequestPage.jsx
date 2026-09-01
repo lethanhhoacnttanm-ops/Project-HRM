@@ -1,295 +1,201 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import {
-  Loader2,
-  Headphones,
-  Plus,
-  Clock,
-  Loader,
-  CheckCircle2,
-} from 'lucide-react';
+import { Form, Input, Select, Button as AntButton } from 'antd';
+import { Loader2, PlusCircle, LifeBuoy, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { supportService } from '@/services/support.service';
+import {supportService} from '@/services/support.service';
 
-const CATEGORIES = [
-  'Công nghệ thông tin',
-  'Hành chính & Nhân sự',
-  'Lương & Phúc lợi',
-];
-const PRIORITIES = ['Cao', 'Trung bình', 'Thấp'];
-
-const statusStyle = {
-  Mở: {
-    className: 'bg-blue-50 text-blue-700 border-blue-200',
-    icon: Clock,
-  },
-  'Đang xử lý': {
-    className: 'bg-amber-50 text-amber-700 border-amber-200',
-    icon: Loader,
-  },
-  'Đã giải quyết': {
-    className: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-    icon: CheckCircle2,
-  },
+const statusConfig = {
+  'Mở': { className: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
+  'Đang xử lý': { className: 'bg-blue-50 text-blue-700 border-blue-200', icon: Loader2 },
+  'Đã giải quyết': { className: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle2 },
+  'Đóng': { className: 'bg-slate-100 text-slate-700 border-slate-200', icon: AlertCircle },
 };
 
 const formatDate = (date) => {
   if (!date) return '—';
   return new Date(date).toLocaleString('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
   });
 };
 
-const SupportRequestPage = () => {
+const SupportPage = () => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [form] = Form.useForm();
 
-  const [form, setForm] = useState({
-    issue: '',
-    category: 'Công nghệ thông tin',
-    priority: 'Trung bình',
-  });
-
-  // Load danh sách ticket (không setLoading(true) sync trong effect)
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await supportService.getMyTickets();
-        if (!cancelled) {
-          setTickets(res.data || []);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          toast.error('Không thể tải yêu cầu hỗ trợ', {
-            description: error.customMessage || error.message,
-          });
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Refresh list sau khi tạo ticket (không bật full-page loading)
-  const refreshTickets = async () => {
+  const fetchMyTickets = async () => {
     try {
+      setLoading(true);
       const res = await supportService.getMyTickets();
       setTickets(res.data || []);
     } catch (error) {
-      toast.error('Không thể tải lại danh sách', {
-        description: error.customMessage || error.message,
-      });
+      toast.error('Không thể tải lịch sử hỗ trợ');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    fetchMyTickets();
+  }, []);
 
-    if (!form.issue.trim()) {
-      toast.error('Vui lòng nhập nội dung vấn đề!');
-      return;
-    }
-
+  const onFinish = async (values) => {
     try {
       setSubmitting(true);
-      await supportService.createTicket(form);
-
-      toast.success('Gửi yêu cầu hỗ trợ thành công!');
-
-      setForm({
-        issue: '',
-        category: 'Công nghệ thông tin',
-        priority: 'Trung bình',
-      });
-      setShowForm(false);
-      await refreshTickets();
+      await supportService.create(values);
+      toast.success('Đã gửi yêu cầu hỗ trợ thành công!');
+      form.resetFields();
+      fetchMyTickets();
     } catch (error) {
-      toast.error('Gửi yêu cầu thất bại', {
-        description: error.customMessage || error.message,
-      });
+      toast.error('Gửi yêu cầu thất bại', { description: error.message });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Yêu cầu hỗ trợ</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Gửi yêu cầu hỗ trợ kỹ thuật hoặc thắc mắc
-          </p>
-        </div>
-        <Button onClick={() => setShowForm((v) => !v)}>
-          <Plus className="size-4" />
-          {showForm ? 'Đóng form' : 'Tạo yêu cầu mới'}
-        </Button>
+    <div className="mx-auto max-w-6xl space-y-6 p-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Yêu cầu hỗ trợ kỹ thuật</h1>
+        <p className="text-sm text-slate-500 mt-1">Gửi thắc mắc hoặc sự cố gặp phải để được bộ phận IT và Nhân sự hỗ trợ.</p>
       </div>
 
-      {/* Form tạo ticket */}
-      {showForm && (
-        <form
-          onSubmit={onSubmit}
-          className="rounded-xl border bg-white p-6 shadow-sm space-y-4"
-        >
-          <h2 className="font-semibold text-lg">Tạo yêu cầu hỗ trợ</h2>
-
-          <div className="space-y-1.5">
-            <Label>Danh mục</Label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setForm((p) => ({ ...p, category: c }))}
-                  className={`h-10 rounded-lg border text-sm font-medium px-2 ${
-                    form.category === c
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-input text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label>Mức ưu tiên</Label>
-            <div className="grid grid-cols-3 gap-2 max-w-md">
-              {PRIORITIES.map((p) => (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setForm((prev) => ({ ...prev, priority: p }))}
-                  className={`h-9 rounded-lg border text-sm font-medium ${
-                    form.priority === p
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-input text-muted-foreground hover:bg-muted'
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="issue">Mô tả vấn đề</Label>
-            <textarea
-              id="issue"
-              name="issue"
-              value={form.issue}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, issue: e.target.value }))
-              }
-              rows={4}
-              placeholder="Mô tả chi tiết vấn đề bạn đang gặp phải..."
-              className="w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowForm(false)}
-            >
-              Hủy
-            </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Đang gửi...
-                </>
-              ) : (
-                'Gửi yêu cầu'
-              )}
-            </Button>
-          </div>
-        </form>
-      )}
-
-      {/* Danh sách ticket */}
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
-        <div className="px-4 py-3 border-b bg-muted/30">
-          <h2 className="font-semibold text-sm">
-            Yêu cầu của tôi ({tickets.length})
+      <div className="grid gap-6 lg:grid-cols-3 items-start">
+        <div className="lg:col-span-1 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 mb-4">
+            <PlusCircle className="size-4 text-indigo-600" /> Tạo phiếu hỗ trợ mới
           </h2>
+
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            initialValues={{
+              category: 'Công nghệ thông tin',
+              priority: 'Trung bình',
+            }}
+            className="space-y-3"
+          >
+            <Form.Item
+              name="title"
+              label={<span className="text-xs font-semibold text-slate-700">Tiêu đề vấn đề</span>}
+              rules={[{ required: true, message: 'Vui lòng nhập tiêu đề!' }]}
+              className="mb-3"
+            >
+              <Input placeholder="VD: Lỗi không chấm công được..." className="rounded-xl text-xs py-2" />
+            </Form.Item>
+
+            <Form.Item
+              name="category"
+              label={<span className="text-xs font-semibold text-slate-700">Danh mục</span>}
+              rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
+              className="mb-3"
+            >
+              <Select
+                className="w-full"
+                options={[
+                  { value: 'Công nghệ thông tin', label: 'Công nghệ thông tin' },
+                  { value: 'Hành chính & Nhân sự', label: 'Hành chính & Nhân sự' },
+                  { value: 'Lương & Phúc lợi', label: 'Lương & Phúc lợi' },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="priority"
+              label={<span className="text-xs font-semibold text-slate-700">Mức độ ưu tiên</span>}
+              rules={[{ required: true, message: 'Vui lòng chọn mức độ!' }]}
+              className="mb-3"
+            >
+              <Select
+                className="w-full"
+                options={[
+                  { value: 'Thấp', label: 'Thấp' },
+                  { value: 'Trung bình', label: 'Trung bình' },
+                  { value: 'Cao', label: 'Cao' },
+                ]}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="description"
+              label={<span className="text-xs font-semibold text-slate-700">Nội dung chi tiết</span>}
+              rules={[{ required: true, message: 'Vui lòng mô tả chi tiết vấn đề!' }]}
+              className="mb-4"
+            >
+              <Input.TextArea rows={4} placeholder="Mô tả cụ thể lỗi hoặc thắc mắc của bạn..." className="rounded-xl text-xs" />
+            </Form.Item>
+
+            <AntButton
+              type="primary"
+              htmlType="submit"
+              loading={submitting}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 h-9 rounded-xl text-xs font-bold shadow-none"
+            >
+              Gửi yêu cầu
+            </AntButton>
+          </Form>
         </div>
 
-        {loading ? (
-          <div className="flex h-40 items-center justify-center">
-            <Loader2 className="size-8 animate-spin text-primary" />
-          </div>
-        ) : tickets.length === 0 ? (
-          <div className="p-12 text-center">
-            <Headphones className="mx-auto size-12 text-muted-foreground/40" />
-            <p className="mt-4 text-muted-foreground">
-              Bạn chưa có yêu cầu hỗ trợ nào.
-            </p>
-          </div>
-        ) : (
-          <div className="divide-y">
-            {tickets.map((ticket) => {
-              const style = statusStyle[ticket.status] || statusStyle['Mở'];
-              const Icon = style.icon;
+        <div className="lg:col-span-2 space-y-4">
+          <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <LifeBuoy className="size-4 text-indigo-600" /> Lịch sử yêu cầu hỗ trợ của bạn
+          </h2>
 
-              return (
-                <div
-                  key={ticket._id}
-                  className="p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3 hover:bg-muted/20"
-                >
-                  <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-sm">
-                        {ticket.ticketCode}
-                      </p>
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${style.className}`}
-                      >
-                        <Icon className="size-3" />
-                        {ticket.status}
+          {loading ? (
+            <div className="flex h-48 items-center justify-center">
+              <Loader2 className="size-6 animate-spin text-indigo-600" />
+            </div>
+          ) : tickets.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-xs text-slate-500">
+              Bạn chưa gửi yêu cầu hỗ trợ nào.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {tickets.map((ticket) => {
+                const cfg = statusConfig[ticket.status] || statusConfig['Mở'];
+                const StatusIcon = cfg.icon;
+
+                return (
+                  <div key={ticket._id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold text-indigo-600">{ticket.ticketCode}</span>
+                          <span className="text-xs text-slate-300">·</span>
+                          <span className="text-xs font-bold text-slate-900">{ticket.title}</span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-0.5">
+                          Danh mục: <strong className="text-slate-600">{ticket.category}</strong> | Gửi lúc: {formatDate(ticket.createdAt)}
+                        </p>
+                      </div>
+
+                      <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${cfg.className}`}>
+                        <StatusIcon className="size-3" /> {ticket.status}
                       </span>
                     </div>
-                    <p className="text-sm text-foreground/90">{ticket.issue}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {ticket.category}
-                      <span className="mx-1.5">·</span>
-                      Ưu tiên: {ticket.priority}
-                    </p>
+
+                    <div className="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 whitespace-pre-wrap">
+                      {ticket.description}
+                    </div>
+
+                    {ticket.adminResponse && (
+                      <div className="text-xs bg-indigo-50/50 p-3 rounded-xl border border-indigo-100 space-y-1">
+                        <p className="font-bold text-indigo-900">Phản hồi từ Admin ({ticket.resolvedBy?.fullName || 'Hỗ trợ'}):</p>
+                        <p className="text-indigo-800">{ticket.adminResponse}</p>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground shrink-0">
-                    {formatDate(ticket.createdAt)}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default SupportRequestPage;
+export default SupportPage;
