@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Download, Plus } from "lucide-react";
 
 import NotificationStats from "../../../components/admin/Notifications/NotificationStats.jsx";
@@ -10,13 +10,77 @@ import SupportCardWidget from "../../../components/admin/Notifications/SupportCa
 import NotificationModal from "../../../components/admin/Notifications/NotificationModal.jsx";
 import { Button } from "@/components/ui/button";
 
-export default function NotificationPage() {
-  const [selectedType, setSelectedType] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [modalState, setModalState] = useState({ isOpen: false, mode: "create" });
+import { toast } from "sonner";
+import { notificationService } from "@/services/notification.service.js";
 
-  const openModal = (mode) => setModalState({ isOpen: true, mode });
-  const closeModal = () => setModalState({ isOpen: false, mode: "create" });
+export default function NotificationPage() {
+  const [selectedType, setSelectedType] = useState('ALL');
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
+  const [modalState, setModalState] = useState({ isOpen: false, mode: "create", data: null });
+
+  const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
+  const closeModal = () => setModalState({ isOpen: false, mode: "create", data: null });
+
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const res = await notificationService.getAll();
+      if (res && res.success) {
+        setNotifications(res.data);
+      }
+    } catch (error) {
+      toast.error('Không thể tải danh sách thông báo!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const handleFormSubmit = async (values, mode) => {
+    try {
+      if (mode === 'create') {
+        const res = await notificationService.create(values);
+        if (res && res.success) {
+          toast.success('Tạo thông báo thành công!');
+          fetchNotifications();
+          closeModal();
+        }
+      } else if (mode === 'edit') {
+      const res = await notificationService.update(modalState.currentRecord._id, values);
+      if (res && res.success) {
+        toast.success('Cập nhật thông báo thành công!');
+        fetchNotifications();
+        closeModal();
+      }
+    } else if (mode === 'delete') {
+      const res = await notificationService.delete(values);
+      if (res && res.success) {
+        toast.success('Xóa thông báo thành công!');
+        fetchNotifications();
+        closeModal();
+      }
+    }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Có lỗi xảy ra!');
+    }
+  };
+
+  const filteredNotifications = notifications.filter((item) => {
+    const matchType = selectedType === 'ALL' || item.type === selectedType;
+    const matchStatus = selectedStatus === 'ALL' || item.status === selectedStatus;
+    return matchType && matchStatus;
+  });
+
+  const handleResetFilter = () => {
+    setSelectedType('ALL');
+    setSelectedStatus('ALL');
+  };
 
   return (
     <div className="space-y-6 p-2">
@@ -52,18 +116,24 @@ export default function NotificationPage() {
 
       <NotificationStats />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-0 rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white self-start">
+      <div className="w-full space-y-6">
+        <div className="w-full rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6 space-y-6 bg-white">
           <NotificationFilter
             selectedType={selectedType}
             setSelectedType={setSelectedType}
             selectedStatus={selectedStatus}
             setSelectedStatus={setSelectedStatus}
+            onReset={handleResetFilter}
           />
-          <NotificationTable />
+          <NotificationTable
+            data={filteredNotifications}
+            loading={loading}
+            onEdit={(record) => openModal('edit', record)}
+            onDelete={(record) => openModal('delete', record)}
+          />
         </div>
 
-        <div className="lg:col-span-1 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <RecentActivityWidget />
           <FeaturedPreviewWidget />
           <SupportCardWidget />
@@ -74,6 +144,8 @@ export default function NotificationPage() {
         isOpen={modalState.isOpen}
         onClose={closeModal}
         mode={modalState.mode}
+        record={modalState.data}
+        onSubmit={handleFormSubmit}
       />
     </div>
   );

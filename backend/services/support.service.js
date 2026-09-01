@@ -1,33 +1,35 @@
 import supportRepository from '../repositories/support.repository.js';
 
-const generateTicketCode = async () => {
-  const count = await supportRepository.countAll();
-  const num = String(count + 1).padStart(5, '0');
-  return `TK-${num}`;
-};
-
 class SupportService {
   async getMyTickets(employeeId) {
-    return await supportRepository.findByEmployeeId(employeeId);
+    return await supportRepository.getByEmployeeId(employeeId);
   }
 
-  async createTicket(employeeId, payload) {
-    const { issue, category, priority } = payload;
+  async getAllTicketsForAdmin() {
+    return await supportRepository.getAll();
+  }
 
-    if (!issue?.trim()) {
-      throw new Error('Vui lòng nhập nội dung vấn đề!');
-    }
+  async updateTicketByAdmin(ticketId, adminId, updateData) {
+    const dataToUpdate = {
+      ...updateData,
+      resolvedBy: adminId,
+    };
+    const updated = await supportRepository.updateById(ticketId, dataToUpdate);
+    if (!updated) throw new Error('Không tìm thấy yêu cầu hỗ trợ!');
+    return updated;
+  }
 
-    const ticketCode = await generateTicketCode();
+  async createTicket(employeeId, ticketData) {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    const ticketCode = `TK-${randomNum}`;
 
-    return await supportRepository.create({
+    const newTicket = {
+      ...ticketData,
       ticketCode,
       employee: employeeId,
-      issue: issue.trim(),
-      category: category || 'Công nghệ thông tin',
-      priority: priority || 'Trung bình',
-      status: 'Mở',
-    });
+    };
+
+    return await supportRepository.create(newTicket);
   }
 }
 
