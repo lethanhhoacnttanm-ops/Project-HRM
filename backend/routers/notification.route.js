@@ -12,6 +12,7 @@ router.get(
 );
 
 router.get('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), notificationController.getAll);
+router.get('/all-no-pagination', verifyToken, checkRole('ADMIN'), notificationController.getAllNotificationsNoPagination);
 router.post('/', verifyToken, checkRole('ADMIN'), notificationController.create);
 router.put('/:id', verifyToken, checkRole('ADMIN'), notificationController.update);   
 router.post('/:id/read', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), notificationController.markAsRead);    

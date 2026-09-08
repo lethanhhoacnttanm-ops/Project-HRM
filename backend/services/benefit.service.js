@@ -2,6 +2,10 @@ import benefitRepository from '../repositories/benefit.repository.js';
 
 class BenefitService {
 
+  async getAllBenefitsWithoutPagination() {
+    return await benefitRepository.findAllWithoutPagination();
+  }
+
   async getBenefitsForEmployee(employeeId) {
     const benefits = await benefitRepository.findBenefitsByEmployeeId(employeeId);
     return benefits.map((item) => ({

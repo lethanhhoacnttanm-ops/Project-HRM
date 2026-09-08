@@ -1,6 +1,23 @@
 import performanceService from '../services/performance.service.js';
 
 class PerformanceController {
+  async getAllPerformancesNoPagination(req, res) {
+    try {
+      const performances = await performanceService.getAllPerformancesWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách đánh giá thành công!',
+        dataPerformances: performances,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy dữ liệu đánh giá!',
+        error: error.message,
+      });
+    }
+  }
   async createCycle(req, res) {
     try {
       const { quarter } = req.body;
@@ -65,7 +82,7 @@ class PerformanceController {
       return res.status(400).json({ success: false, message: error.message });
     }
   }
-  
+
   async getMyEvaluations(req, res) {
     try {
       const data = await performanceService.getMyEvaluations(req.user.id);

@@ -1,4 +1,4 @@
-  import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Search, Table, LayoutGrid } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+
+import { leaveService } from "@/services/leave.service.js";
 
 const EmployeeFilter = ({
   newEmployee,
@@ -26,6 +28,34 @@ const EmployeeFilter = ({
   setViewMode,
   onOpenModal,
 }) => {
+  const [dataLeave, setDataLeave] = useState([])
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchLeaves = async () => {
+      try {
+        const response = await leaveService.getMyLeaves();
+        setDataLeave(response.data || []);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách nghỉ phép:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLeaves();
+  }, []);
+
+  const activeLeavesCount = dataLeave.filter(leave => {
+    const today = new Date();
+    const start = new Date(leave.startDate);
+    const end = new Date(leave.endDate);
+
+    today.setHours(0, 0, 0, 0);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+
+    return leave.status === 'Đã duyệt' && today >= start && today <= end;
+  }).length;
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -40,9 +70,11 @@ const EmployeeFilter = ({
           <p className="text-[11px] text-gray-400 font-medium mt-2">{onsite}% trên công ty</p>
         </div>
         <div className="bg-white p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-xs dark:bg-gray-900">
-          <p className="text-xs text-gray-500 font-semibold">Đang nghỉ phép</p>
-          <h3 className="text-2xl font-extrabold text-gray-900 mt-1 dark:text-amber-50/50">50</h3>
-          <p className="text-[11px] text-red-500 font-medium mt-2">Tuần nghỉ cao điểm</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold">Đang nghỉ phép</p>
+          <h3 className="text-2xl font-extrabold text-gray-900 mt-1 dark:text-amber-50/50">
+            {loading ? "..." : activeLeavesCount}
+          </h3>
+          <p className="text-[11px] text-red-500 dark:text-red-400 font-medium mt-2">Tuần nghỉ cao điểm</p>
         </div>
       </div>
 
@@ -123,8 +155,8 @@ const EmployeeFilter = ({
           size="sm"
           onClick={() => setViewMode('table')}
           className={`h-auto p-0 flex items-center gap-1.5 text-xs cursor-pointer hover:no-underline ${viewMode === 'table'
-              ? 'text-blue-600 font-bold underline underline-offset-4'
-              : 'text-gray-400 hover:text-gray-600'
+            ? 'text-blue-600 font-bold underline underline-offset-4'
+            : 'text-gray-400 hover:text-gray-600'
             }`}
         >
           <Table className="h-4 w-4" /> Xem dạng bảng
@@ -138,8 +170,8 @@ const EmployeeFilter = ({
           size="sm"
           onClick={() => setViewMode('card')}
           className={`h-auto p-0 flex items-center gap-1.5 text-xs cursor-pointer hover:no-underline ${viewMode === 'card'
-              ? 'text-blue-600 font-bold underline underline-offset-4'
-              : 'text-gray-400 hover:text-gray-600'
+            ? 'text-blue-600 font-bold underline underline-offset-4'
+            : 'text-gray-400 hover:text-gray-600'
             }`}
         >
           <LayoutGrid className="h-4 w-4" /> Xem dạng thẻ

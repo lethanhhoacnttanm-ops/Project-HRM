@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SlidersHorizontal, Plus } from "lucide-react";
+import { SlidersHorizontal, Plus, Headphones } from "lucide-react";
 
 import TicketStats from "../../../components/admin/Tickets/TicketStats.jsx";
 import TicketFilter from "../../../components/admin/Tickets/TicketFilter.jsx";
@@ -10,7 +10,7 @@ import AiOptimizationWidget from "../../../components/admin/Tickets/AiOptimizati
 import TicketModal from "../../../components/admin/Tickets/TicketModal.jsx";
 import { Button } from "@/components/ui/button";
 
-import {toast} from 'sonner'
+import { toast } from 'sonner'
 import { supportService } from '@/services/support.service';
 
 export default function SupportTicketPage() {
@@ -24,6 +24,50 @@ export default function SupportTicketPage() {
 
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [ticketStats, setTicketStats] = useState({
+    totalTickets: 0,
+    inProgressCount: 0,
+    pendingResponseCount: 0,
+    resolvedCount: 0,
+    resolvedRate: 0,
+  });
+
+  useEffect(() => {
+    const fetchTicketStats = async () => {
+      try {
+        const res = await supportService.getTicketsNoPaging();
+        if (res && res.success) {
+          const list = res.dataTickets || [];
+
+          const totalTickets = list.length;
+
+          const inProgressList = list.filter(item => item.status === 'Đang xử lý');
+          const inProgressCount = inProgressList.length;
+
+          const pendingResponseList = list.filter(item => item.status === 'Mở');
+          const pendingResponseCount = pendingResponseList.length;
+
+          const resolvedList = list.filter(item => item.status === 'Đã giải quyết' || item.status === 'Đóng');
+          const resolvedCount = resolvedList.length;
+
+          const resolvedRate = totalTickets > 0 ? Math.round((resolvedCount / totalTickets) * 100) : 0;
+
+          setTicketStats({
+            totalTickets: totalTickets,
+            inProgressCount: inProgressCount,
+            pendingResponseCount: pendingResponseCount,
+            resolvedCount: resolvedCount,
+            resolvedRate: resolvedRate,
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi lấy thống kê yêu cầu hỗ trợ:", error);
+      }
+    };
+
+    fetchTicketStats();
+  }, []);
 
   const fetchAllTickets = async () => {
     try {
@@ -65,13 +109,14 @@ export default function SupportTicketPage() {
   });
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Headphones className="size-6 text-indigo-600" />
             Yêu cầu hỗ trợ
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Quản lý và phản hồi các yêu cầu từ nhân viên trong hệ thống.
           </p>
         </div>
@@ -96,7 +141,7 @@ export default function SupportTicketPage() {
         </div>
       </div>
 
-      <TicketStats />
+      <TicketStats statsData={ticketStats} />
 
       <div className="w-full space-y-6">
         <div className="w-full rounded-2xl border border-slate-200 overflow-hidden shadow-sm  space-y-6 bg-white">

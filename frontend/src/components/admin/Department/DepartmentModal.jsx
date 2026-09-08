@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form, Input, Select } from 'antd';
 import { Building2, Hash, AlignLeft, Users, User2, Briefcase } from 'lucide-react';
 
-const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSubmitEmployee, onSubmitManager, onSubmitPosition, departments, departmentOptions, employeeOptions, positionOptions, levelOptions, onSubmitLevel, onSubmitDepartmentChange }) => {
+const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, dataEmployee, onSubmit, onSubmitEmployee, onSubmitManager, onSubmitPosition, departments, departmentOptions, employeeOptions, positionOptions, levelOptions, onSubmitLevel, onSubmitDepartmentChange }) => {
   const isCreate = mode === "create";
   const isDetails = mode === "detail";
   const isEdit = mode === "edit"
@@ -45,7 +45,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
         manager: departments.manager?._id || departments.manager
       });
     } else {
-      form.resetFields(); 
+      form.resetFields();
     }
   }, [departments, form]);
 
@@ -117,9 +117,10 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
       (pos) => pos.departmentId === deptId || pos.departmentId?._id === deptId
     ) || [];
 
-    const employees = employeeOptions?.filter(
-      (emp) => emp.department === deptId || emp.department?._id === deptId
-    ) || [];
+    const employees = employeeOptions?.filter((emp) => {
+      const empDeptId = emp.department || emp.departmentId || emp.dept;
+      return empDeptId === deptId || empDeptId?._id === deptId;
+    }) || [];
 
     const levels = [...new Set(employees.map((emp) => emp.level))].filter(Boolean);
 
@@ -219,6 +220,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
 
         {isDetails && departmentWithDetails && (
           <div className="space-y-6">
+            {console.log("departmentWithDetails", departmentWithDetails)}
             <div className="flex items-center gap-4 p-5 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-2xl">
               <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
                 <Building2 className="w-8 h-8" />
@@ -411,7 +413,7 @@ const DepartmentModal = ({ isOpen, onClose, mode, managerOptions, onSubmit, onSu
                 className="w-full [&>.ant-select-selector]:rounded-xl!"
                 showSearch
                 optionFilterProp="label"
-                options={employeeOptions?.map((emp) => ({
+                options={dataEmployee?.map((emp) => ({
                   value: emp._id,
                   label: emp.fullName
                 }))}

@@ -1,6 +1,9 @@
 import courseprogressRepository from '../repositories/courseprogress.repository.js';
 import EmployeeModel from '../models/Employee.js';
 class CourseProgressService {
+  async getAllCourseProgressWithoutPagination() {
+    return await courseprogressRepository.findAllWithoutPagination();
+  }
   async createEnrollment({ employeeId, courseId }) {
     const course = await courseprogressRepository.findByIdCourse(courseId);
     if (!course) {

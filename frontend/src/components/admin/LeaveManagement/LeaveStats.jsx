@@ -2,46 +2,45 @@ import React from "react";
 import { UserX, Clock, CalendarDays, Umbrella } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-const stats = [
-  {
-    id: 1,
-    title: "Đang nghỉ hôm nay",
-    value: "12",
-    badge: "↗ +2%",
-    badgeBg: "bg-emerald-50 text-emerald-600",
-    icon: UserX,
-    iconBg: "bg-indigo-100 text-indigo-600",
-  },
-  {
-    id: 2,
-    title: "Yêu cầu chờ duyệt",
-    value: "08",
-    badge: "3 Khẩn cấp",
-    badgeBg: "bg-rose-50 text-rose-600 font-bold",
-    icon: Clock,
-    iconBg: "bg-amber-100 text-amber-600",
-  },
-  {
-    id: 3,
-    title: "Thời gian nghỉ TB",
-    value: "2.4",
-    subText: "ngày",
-    topRightText: "Tháng này",
-    icon: CalendarDays,
-    iconBg: "bg-emerald-100 text-emerald-600",
-  },
-  {
-    id: 4,
-    title: "Quỹ nghỉ phép năm",
-    value: "84%",
-    icon: Umbrella,
-    iconBg: "bg-teal-100 text-teal-600",
-    hasProgress: true,
-    progressValue: 84,
-  },
-];
-
-export default function LeaveStats() {
+export default function LeaveStats({ statsData }) {
+  const stats = [
+    {
+      id: 1,
+      title: "Đang nghỉ hôm nay",
+      value: statsData?.todayOnLeave ?? 0,
+      badge: "Cập nhật",
+      badgeBg: "bg-emerald-50 text-emerald-600",
+      icon: UserX,
+      iconBg: "bg-indigo-100 text-indigo-600",
+    },
+    {
+      id: 2,
+      title: "Yêu cầu chờ duyệt",
+      value: statsData?.pendingApproval ?? 0,
+      badge: `${statsData?.urgentPending ?? 0} Khẩn cấp`,
+      badgeBg: "bg-rose-50 text-rose-600 font-bold",
+      icon: Clock,
+      iconBg: "bg-amber-100 text-amber-600",
+    },
+    {
+      id: 3,
+      title: "Thời gian nghỉ TB",
+      value: statsData?.avgLeaveDays ?? 0,
+      subText: "ngày",
+      topRightText: "Tháng này",
+      icon: CalendarDays,
+      iconBg: "bg-emerald-100 text-emerald-600",
+    },
+    {
+      id: 4,
+      title: "Quỹ nghỉ phép năm",
+      value: `${statsData?.leavePoolPercent ?? 0}%`,
+      icon: Umbrella,
+      iconBg: "bg-teal-100 text-teal-600",
+      hasProgress: true,
+      progressValue: statsData?.leavePoolPercent ?? 0,
+    },
+  ];
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item) => {

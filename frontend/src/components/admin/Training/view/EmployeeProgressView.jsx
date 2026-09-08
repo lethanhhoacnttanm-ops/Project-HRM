@@ -45,22 +45,22 @@ export default function EmployeeProgressView({
         <TableHeader className="bg-slate-50/80 dark:bg-gray-900">
           <TableRow className="border-b border-slate-200 dark:border-gray-800">
             <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs">
-              Employee Name
+              Tên nhân viên
             </TableHead>
             <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs">
-              Assigned Course
+              Khóa học được giao
             </TableHead>
             <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs">
-              Status
+              Trạng thái
             </TableHead>
             <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs w-48">
-              Progress
+              Tiến độ
             </TableHead>
             <TableHead className="py-4 px-6 text-center text-slate-500 dark:text-gray-400 font-bold text-xs">
-              Certificate
+              Chứng chỉ
             </TableHead>
             <TableHead className="py-4 px-6 text-center text-slate-500 dark:text-gray-400 font-bold text-xs">
-              Actions
+              Thao tác
             </TableHead>
           </TableRow>
         </TableHeader>

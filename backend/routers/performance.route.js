@@ -5,6 +5,7 @@ import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 router.post('/', verifyToken, checkRole("ADMIN"), performanceController.createPerformance);
+router.get('/all-no-pagination', verifyToken, checkRole("ADMIN"), performanceController.getAllPerformancesNoPagination);
 router.get('/', verifyToken, checkRole("ADMIN"), performanceController.getAllPerformance);
 router.get('/team-summary', verifyToken, checkRole("ADMIN"), performanceController.getTeamPerformance);
 router.post('/cycle', verifyToken, checkRole("ADMIN"), performanceController.createCycle);

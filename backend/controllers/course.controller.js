@@ -1,6 +1,24 @@
 import courseService from "../services/course.service.js";
 
 class CourseController {
+  async getAllCoursesNoPagination(req, res) {
+    try {
+      const courses = await courseService.getAllCoursesWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách khóa học thành công!',
+        dataCourse: courses, 
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy toàn bộ khóa học!',
+        error: error.message,
+      });
+    }
+  }
+
   async createCourse(req, res) {
     try {
       const newCourse = await courseService.createNewCourse(req.body);

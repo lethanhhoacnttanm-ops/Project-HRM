@@ -1,48 +1,33 @@
 import candidateRepository from '../repositories/candidate.repository.js';
-import JobModel from '../models/Job.js'; 
+import JobModel from '../models/Job.js';
 
 class CandidateService {
-  async createCandidateApplication(data) {
-    const { jobId, fullName, email, phone, appliedPosition, cvFileUrl } = data;
-
-    const job = await JobModel.findById(jobId);
-    if (!job) {
-      const error = new Error('Không tìm thấy bài đăng công việc này.');
-      error.statusCode = 404;
-      throw error;
+  async createApplication({ employeeInfo, jobId, appliedPosition }) {
+    const existing = await candidateRepository.findByJobAndEmail(jobId, employeeInfo.email);
+    if (existing) {
+      throw new Error('Bạn đã ứng tuyển vào vị trí này rồi!');
     }
 
-    const positionIsValid = job.positions?.some(
-      pos => pos.role === appliedPosition.role && pos.level === appliedPosition.level
-    );
-
-    if (!positionIsValid) {
-      const error = new Error('Vị trí tuyển dụng không hợp lệ hoặc đã thay đổi.');
-      error.statusCode = 400;
-      throw error;
-    }
-
-    const candidatePayload = {
-      fullName,
-      email,
-      phone,
+    const candidateData = {
+      fullName: employeeInfo.fullName,
+      email: employeeInfo.email,
+      phone: employeeInfo.phone || 'Chưa cập nhật',
       job: jobId,
-      appliedPosition,
-      cvFileUrl: cvFileUrl || 'default_cv.pdf',
-      stage: 'new'
+      appliedPosition: appliedPosition, 
+      cvFileUrl: 'default-cv.pdf', 
+      stage: 'new', 
     };
 
-    const savedCandidate = await candidateRepository.create(candidatePayload);
-    return savedCandidate;
+    return await candidateRepository.create(candidateData);
   }
 
-  async getCandidatesByJobId(jobId) {
-    if (!jobId || !jobId.match(/^[0-9a-fA-F]{24}$/)) {
-      const error = new Error('Mã dự án (jobId) không hợp lệ');
-      error.statusCode = 400;
-      throw error;
+  async fetchCandidates({ jobId }) {
+    const filter = {};
+    if (jobId) {
+      filter.job = jobId; 
     }
-    const candidates = await candidateRepository.findByJobId(jobId);
+
+    const candidates = await candidateRepository.findAll(filter);
     return candidates;
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, TrendingUp } from "lucide-react";
 import PromotionStats from "../../../components/admin/Promotion/PromotionStats.jsx";
 import PromotionTabs from "../../../components/admin/Promotion/PromotionTabs.jsx";
 import PromotionTable from "../../../components/admin/Promotion/PromotionTable.jsx";
@@ -26,9 +26,12 @@ export default function PromotionPage() {
 
   const [viewMode, setViewMode] = useState("table");
 
+  const [loading, setLoading] = useState(true);
+
   const [dataEmployee, setDataEmployee] = useState([])
   const [dataDepartment, setDataDepartment] = useState([])
   const [dataPosition, setDataPosition] = useState([])
+  const [promotions, setPromotions] = useState([]);
   const [dataPromotions, setDataPromotions] = useState([])
 
   const [pageNumber, setPageNumber] = useState(1);
@@ -139,6 +142,22 @@ export default function PromotionPage() {
     fetchPromotions();
   }, [fetchPromotions]);
 
+  useEffect(() => {
+    const fetchPromotions = async () => {
+      try {
+        const response = await promotionService.getPromotion();
+        const dataList = response.dataPromotions || response.data || [];
+        setPromotions(dataList);
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu thăng tiến:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromotions();
+  }, []);
+
   const handleCreatePromotion = async (formValues) => {
     try {
       const payload = {
@@ -182,13 +201,14 @@ export default function PromotionPage() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <TrendingUp className="size-6 text-indigo-600" />
             Tiến độ thăng tiến
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Tổ chức và quản lý các phòng ban và cơ cấu đội nhóm trong công ty của bạn.
           </p>
         </div>
@@ -298,7 +318,7 @@ export default function PromotionPage() {
         </div>
       </div>
 
-      <PromotionStats />
+      <PromotionStats dataPromotion={promotions} loading={loading} />
 
       <div className="rounded-xl border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm bg-white dark:bg-gray-900">
         <PromotionTabs activeTab={activeTab} setActiveTab={(tab) => { setActiveTab(tab); setPageNumber(1); }} />

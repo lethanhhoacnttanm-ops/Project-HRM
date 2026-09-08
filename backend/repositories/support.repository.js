@@ -1,6 +1,15 @@
 import SupportTicketModel from '../models/SupportTicket.js';
 
 class SupportRepository {
+
+  async findAllWithoutPagination() {
+    try {
+      return await SupportTicketModel.find({}).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+    }
+  }
+  
   async getByEmployeeId(employeeId) {
     return await SupportTicketModel.find({ employee: employeeId })
       .populate('employee', 'fullName email')

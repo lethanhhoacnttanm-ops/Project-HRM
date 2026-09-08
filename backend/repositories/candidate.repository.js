@@ -1,9 +1,12 @@
 import CandidateModel from "../models/Candidate.js";
 
 class CandidateRepository {
-  async create(candidateData) {
-    const candidate = await CandidateModel.create(candidateData);
-    return candidate;
+  async create(data) {
+    try {
+      return await CandidateModel.create(data);
+    } catch (error) {
+      throw new Error(`Lỗi Repository (create): ${error.message}`);
+    }
   }
 
   async findByJobId(jobId) {
@@ -11,7 +14,21 @@ class CandidateRepository {
   }
 
   async findByJobAndEmail(jobId, email) {
-    return await CandidateModel.findOne({ job: jobId, email }).lean();
+    try {
+      return await CandidateModel.findOne({ job: jobId, email }).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findByJobAndEmail): ${error.message}`);
+    }
+  }
+
+  async findAll(filter = {}) {
+    try {
+      return await CandidateModel.find(filter)
+        .populate('job', 'title jobCode client') 
+        .lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAll): ${error.message}`);
+    }
   }
 
   async findByEmail(email) {

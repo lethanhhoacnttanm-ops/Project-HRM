@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, Heart } from "lucide-react";
 
 import BenefitStats from "../../../components/admin/Benefit/BenefitStats.jsx";
 import BenefitTabs from "../../../components/admin/Benefit/BenefitTabs.jsx";
@@ -23,10 +23,58 @@ export default function BenefitsPage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
 
+  const [benefitStats, setBenefitStats] = useState({
+    totalBudget: "0 VNĐ",
+    participationRate: "0%",
+    activeCount: 0,
+    pendingCount: 0,
+  });
+
   const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
   const closeModal = () => setModalState({ isOpen: false, mode: "create", data: null });
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchBenefitStats = async () => {
+      try {
+        const res = await benefitService.getBenefitsNoPaging();
+        if (res && res.success) {
+          const list = res.dataBenefits || [];
+
+          const totalAmount = list.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+          const formattedBudget = totalAmount >= 1e9
+            ? `${(totalAmount / 1e9).toFixed(1)} tỷ VNĐ`
+            : `${(totalAmount / 1e6).toFixed(1)} tr VNĐ`;
+
+          const activeList = list.filter(item => item.status === 'Đang mở');
+          const activeCount = activeList.length;
+
+          const allAssignedIds = new Set();
+          list.forEach(item => {
+            if (item.assignedEmployees && Array.isArray(item.assignedEmployees)) {
+              item.assignedEmployees.forEach(empId => allAssignedIds.add(empId.toString()));
+            }
+          });
+          const totalCompanyEmployees = 1248;
+          const rate = totalCompanyEmployees > 0
+            ? Math.round((allAssignedIds.size / totalCompanyEmployees) * 100)
+            : 0;
+
+          setBenefitStats({
+            totalBudget: totalAmount > 0 ? formattedBudget : "0 VNĐ",
+            participationRate: `${rate}%`,
+            activeCount: activeCount,
+            pendingCount: 0,
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi lấy thống kê phúc lợi:", error);
+      }
+    };
+
+    fetchBenefitStats();
+  }, []);
 
   const fetchBenefits = async () => {
     try {
@@ -114,13 +162,14 @@ export default function BenefitsPage() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="space-y-6 p-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Heart className="size-6 text-indigo-600" />
             Chính sách phúc lợi
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Quản lý các chương trình bảo hiểm, phụ cấp và đãi ngộ nhân viên.
           </p>
         </div>
@@ -145,7 +194,7 @@ export default function BenefitsPage() {
         </div>
       </div>
 
-      <BenefitStats />
+      <BenefitStats statsData={benefitStats}/>
 
       <div className="w-full space-y-6">
         <div className="w-full rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6 space-y-6 bg-white">

@@ -2,6 +2,16 @@ import PerformanceModel from '../models/Performance.js';
 
 class PerformanceRepository {
 
+  async findAllWithoutPagination() {
+    try {
+      return await PerformanceModel.find({})
+        .populate('employee', 'fullName department')
+        .lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+    }
+  }
+
   async FindWithPagination({ skip, limit }) {
     const [totalPerformance, dataPerformance] = await Promise.all([
       PerformanceModel.countDocuments(),
@@ -10,8 +20,8 @@ class PerformanceRepository {
           path: 'employee',
           select: 'fullName code avatarUrl department',
           populate: {
-            path: 'department',   
-            select: 'name'   
+            path: 'department',
+            select: 'name'
           }
         })
         .populate({

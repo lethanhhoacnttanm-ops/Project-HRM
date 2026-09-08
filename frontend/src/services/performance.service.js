@@ -5,6 +5,10 @@ export const performanceService = {
     return await axiosClient.get('/performances/me');
   },
 
+  getPerformancesNoPaging: async () => {
+    return await axiosClient.get('/performances/all-no-pagination');
+  },
+
   getMyEvaluationDetail: async (id) => {
     return await axiosClient.get(`/performances/me/${id}`);
   },

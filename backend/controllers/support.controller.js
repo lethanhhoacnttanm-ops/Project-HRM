@@ -1,6 +1,23 @@
 import supportService from '../services/support.service.js';
 
 class SupportController {
+  getAllTicketsNoPagination = async (req, res) => {
+    try {
+      const tickets = await supportService.getAllTicketsWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách yêu cầu hỗ trợ thành công!',
+        dataTickets: tickets,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy dữ liệu yêu cầu hỗ trợ!',
+        error: error.message,
+      });
+    }
+  }
   createTicket = async (req, res) => {
     try {
       const employeeId = req.user?.id || req.user?._id;

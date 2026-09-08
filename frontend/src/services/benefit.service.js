@@ -5,6 +5,10 @@ export const benefitService = {
   getMyBenefitsNew: async () => {
     return await axiosClient.get('/benefits/my-benefits');
   },
+
+  getBenefitsNoPaging: async () => {
+    return await axiosClient.get('/benefits/all-no-pagination');
+  },
   
   getMyBenefits: async (params = {}) => {
     return await axiosClient.get('/benefits/me', { params });

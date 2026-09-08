@@ -1,6 +1,13 @@
 import NotificationModel from '../models/Notification.js';
 
 class NotificationRepository {
+  async findAllWithoutPagination() {
+  try {
+    return await NotificationModel.find({}).lean();
+  } catch (error) {
+    throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+  }
+}
   async markAsRead(notificationId, employeeId) {
     try {
       return await NotificationModel.findByIdAndUpdate(

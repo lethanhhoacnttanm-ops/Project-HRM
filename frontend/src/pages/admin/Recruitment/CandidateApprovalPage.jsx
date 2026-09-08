@@ -81,7 +81,6 @@ const CandidateApprovalPage = () => {
           </div>
 
           <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight pt-2">
-            {console.log(jobInfo)}
             {jobInfo ? `Duyệt ứng viên dự án: ${jobInfo.title}` : (jobId ? `Đang tải thông tin dự án (${jobId})...` : 'Duyệt tất cả hồ sơ ứng viên')}
           </h1>
           <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">

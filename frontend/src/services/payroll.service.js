@@ -5,6 +5,10 @@ export const payrollService = {
     return await axiosClient.get('/payrolls/me');
   },
 
+  getPayrollsNoPaging: async () => {
+    return await axiosClient.get('/payrolls/all-no-pagination');
+  },
+
   getMyPayrollDetail: async (id) => {
     return await axiosClient.get(`/payrolls/me/${id}`);
   },

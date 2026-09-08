@@ -4,6 +4,9 @@ export const notificationService = {
   getMyNotifications: async (params = {}) => {
     return await axiosClient.get('/notifications/me', { params });
   },
+  getNotificationsNoPaging: async () => {
+    return await axiosClient.get('/notifications/all-no-pagination');
+  },
   getAll: async () => {
     return await axiosClient.get('/notifications');
   },

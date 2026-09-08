@@ -19,6 +19,7 @@ router.get(
 );
 
 router.get('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'),payrollController.getPayrolls);
+router.get('/all-no-pagination', verifyToken, checkRole('ADMIN'), payrollController.getAllPayrollsNoPagination);
 router.post('/', verifyToken, checkRole('ADMIN'),payrollController.createPayroll);
 router.put('/:id', verifyToken, checkRole('ADMIN'),payrollController.updatePayroll);
 router.put('/:id/lock', verifyToken, checkRole('ADMIN'), payrollController.toggleLock);

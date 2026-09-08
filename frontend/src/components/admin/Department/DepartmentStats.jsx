@@ -1,5 +1,5 @@
 import React from "react";
-import { Building2, Users, UserX, Award } from "lucide-react";
+import { Building2, Users, UserX, Award, UserCheck } from "lucide-react";
 
 
 export default function DepartmentStats({ totalDepartments, totalEmployees, unassignedEmployees, vacantLeadershipPositions }) {
@@ -29,15 +29,15 @@ export default function DepartmentStats({ totalDepartments, totalEmployees, unas
       title: "Nhân viên chưa được phân công",
       value: unassignedEmployees,
       badge: unassignedEmployees > 0 ? "Cần hành động" : "Tất cả đã phân công",
-      badgeBg: unassignedEmployees > 0 
-        ? "bg-rose-50 text-rose-600 dark:bg-rose-950/80 dark:text-rose-400" 
+      badgeBg: unassignedEmployees > 0
+        ? "bg-rose-50 text-rose-600 dark:bg-rose-950/80 dark:text-rose-400"
         : "bg-green-50 text-green-600 dark:bg-green-950/80 dark:text-green-400",
-      icon: UserX,
-      iconBg: unassignedEmployees > 0 
-        ? "bg-rose-100 text-rose-500 dark:bg-rose-900/50 dark:text-rose-400" 
+      icon: unassignedEmployees > 0 ? UserX : UserCheck,
+      iconBg: unassignedEmployees > 0
+        ? "bg-rose-100 text-rose-500 dark:bg-rose-900/50 dark:text-rose-400"
         : "bg-green-100 text-green-500 dark:bg-green-900/50 dark:text-green-400",
-      borderColor: unassignedEmployees > 0 
-        ? "border-rose-200 dark:border-rose-900/60" 
+      borderColor: unassignedEmployees > 0
+        ? "border-rose-200 dark:border-rose-900/60"
         : "border-green-200 dark:border-green-900/60",
     },
     {
@@ -45,15 +45,15 @@ export default function DepartmentStats({ totalDepartments, totalEmployees, unas
       title: "Các vị trí lãnh đạo còn trống",
       value: vacantLeadershipPositions,
       badge: vacantLeadershipPositions > 0 ? "Quan trọng" : "Tất cả đã phân công",
-      badgeBg: vacantLeadershipPositions > 0 
-        ? "bg-rose-50 text-rose-600 dark:bg-rose-950/80 dark:text-rose-400" 
+      badgeBg: vacantLeadershipPositions > 0
+        ? "bg-rose-50 text-rose-600 dark:bg-rose-950/80 dark:text-rose-400"
         : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300",
       icon: Award,
-      iconBg: vacantLeadershipPositions > 0 
-        ? "bg-rose-100 text-rose-500 dark:bg-rose-900/50 dark:text-rose-400" 
+      iconBg: vacantLeadershipPositions > 0
+        ? "bg-rose-100 text-rose-500 dark:bg-rose-900/50 dark:text-rose-400"
         : "bg-blue-100 text-blue-600 dark:bg-blue-950/80 dark:text-blue-400",
-      borderColor: vacantLeadershipPositions > 0 
-        ? "border-rose-200 dark:border-rose-900/60" 
+      borderColor: vacantLeadershipPositions > 0
+        ? "border-rose-200 dark:border-rose-900/60"
         : "border-slate-200 dark:border-slate-800",
     },
   ];

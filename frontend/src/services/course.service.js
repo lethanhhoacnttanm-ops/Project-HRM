@@ -13,4 +13,7 @@ export const courseService = {
       params: { page, limit },
     });
   },
+  getAllCoursesNoPaging: async () => {
+    return await axiosClient.get('/courses/all-no-pagination'); 
+  }
 };

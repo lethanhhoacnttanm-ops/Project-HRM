@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), supportController.createTicket);
 router.get('/my-tickets', verifyToken, checkRole('EMPLOYEE', 'ADMIN'), supportController.getMyTickets);
-
+router.get('/all-no-pagination', verifyToken, checkRole('ADMIN'), supportController.getAllTicketsNoPagination);
 router.get('/admin/all', verifyToken, checkRole('ADMIN'), supportController.getAllTickets);
 router.put('/admin/:id', verifyToken, checkRole('ADMIN'), supportController.updateTicket);
 
