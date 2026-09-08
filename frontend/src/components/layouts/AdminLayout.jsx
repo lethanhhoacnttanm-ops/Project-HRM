@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from '../presentational/Header';
 import Sidebar from '../presentational/Sidebar';
 import Footer from '../presentational/Footer';
+import AIChatbotDrawer from '../AISummary/AIChatbotDrawer';
 import { ConfigProvider, theme as antTheme } from 'antd';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { useTheme } from '../../hooks/usetheme.js'; 
@@ -21,6 +22,7 @@ const AdminContent = () => {
           </main>
           <Footer />
         </div>
+        <AIChatbotDrawer />
       </div>
     </ConfigProvider>
   );

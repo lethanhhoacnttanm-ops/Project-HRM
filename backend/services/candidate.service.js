@@ -13,22 +13,34 @@ class CandidateService {
       email: employeeInfo.email,
       phone: employeeInfo.phone || 'Chưa cập nhật',
       job: jobId,
-      appliedPosition: appliedPosition, 
-      cvFileUrl: 'default-cv.pdf', 
-      stage: 'new', 
+      appliedPosition: appliedPosition,
+      cvFileUrl: 'default-cv.pdf',
+      stage: 'new',
     };
 
     return await candidateRepository.create(candidateData);
   }
 
+  async updateCandidateStage(candidateId, newStage) {
+    const updatedCandidate = await candidateRepository.updateStageById(candidateId, newStage);
+    if (!updatedCandidate) {
+      throw new Error('Không tìm thấy ứng viên cần chuyển bước!');
+    }
+    return updatedCandidate;
+  }
+
   async fetchCandidates({ jobId }) {
     const filter = {};
     if (jobId) {
-      filter.job = jobId; 
+      filter.job = jobId;
     }
 
     const candidates = await candidateRepository.findAll(filter);
     return candidates;
+  }
+
+  async getAllCandidatesWithoutPagination() {
+    return await candidateRepository.findAllWithoutPagination();
   }
 }
 
