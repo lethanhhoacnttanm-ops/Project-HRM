@@ -1,13 +1,13 @@
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
 
-export const ContractTopCards = ({ mode, totalContract, isActiveContract, isExpired, waitingForRegis, isProbation }) => {
+export const ContractTopCards = ({ mode, totalContract, isActiveContract, isExpired, waitingForRegis, isProbation, dataAllcontract }) => {
   const isWaiting = mode === 'create'
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <div className="bg-white p-4 rounded-2xl border border-emerald-400 shadow-xs dark:bg-gray-900">
         <p className="text-xs font-bold text-emerald-500">Tổng số hợp đồng</p>
-        <h3 className="text-2xl font-black text-gray-900 mt-1 dark:text-amber-50/50">{totalContract}</h3>
+        <h3 className="text-2xl font-black text-gray-900 mt-1 dark:text-amber-50/50">{dataAllcontract.length}</h3>
         <p className="text-[11px] text-emerald-600 font-bold mt-2">Đang duy trì hoạt động: {isActiveContract}</p>
       </div>
 

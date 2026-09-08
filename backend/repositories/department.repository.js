@@ -7,7 +7,9 @@ class DepartmentRepository {
   }
 
   async getAlldepartment() {
-    return await DepartmentModel.find().lean()
+    return await DepartmentModel.find({})
+    .populate('manager', 'fullName email avatarUrl')
+    .lean()
   }
 
   async getInfoDepartment(id) {

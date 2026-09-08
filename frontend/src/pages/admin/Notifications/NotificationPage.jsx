@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, Bell } from "lucide-react";
 
 import NotificationStats from "../../../components/admin/Notifications/NotificationStats.jsx";
 import NotificationFilter from "../../../components/admin/Notifications/NotificationFilter.jsx";
@@ -23,6 +23,54 @@ export default function NotificationPage() {
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [notificationStats, setNotificationStats] = useState({
+    totalSent: 0,
+    activeCount: 0,
+    upcomingCount: 0,
+    readRate: "0%",
+  });
+
+  useEffect(() => {
+    const fetchNotificationStats = async () => {
+      try {
+        const res = await notificationService.getNotificationsNoPaging();
+        if (res && res.success) {
+          const list = res.dataNotifications || [];
+
+          const sentList = list.filter(item => item.status === 'Đã gửi');
+          const totalSent = sentList.length;
+
+          const activeCount = sentList.length;
+
+          const upcomingList = list.filter(item => item.status === 'Đang chờ');
+          const upcomingCount = upcomingList.length;
+
+          let totalReadPercentage = 0;
+          const totalCompanyEmployees = 1248;
+          if (sentList.length > 0) {
+            const sumRates = sentList.reduce((acc, curr) => {
+              const readCount = curr.readBy ? curr.readBy.length : 0;
+              const rate = totalCompanyEmployees > 0 ? (readCount / totalCompanyEmployees) * 100 : 0;
+              return acc + rate;
+            }, 0);
+            totalReadPercentage = Math.round(sumRates / sentList.length);
+          }
+
+          setNotificationStats({
+            totalSent: list.length,
+            activeCount: activeCount,
+            upcomingCount: upcomingCount,
+            readRate: `${totalReadPercentage}%`,
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi lấy thống kê thông báo:", error);
+      }
+    };
+
+    fetchNotificationStats();
+  }, []);
 
   const fetchNotifications = async () => {
     try {
@@ -52,20 +100,20 @@ export default function NotificationPage() {
           closeModal();
         }
       } else if (mode === 'edit') {
-      const res = await notificationService.update(modalState.currentRecord._id, values);
-      if (res && res.success) {
-        toast.success('Cập nhật thông báo thành công!');
-        fetchNotifications();
-        closeModal();
+        const res = await notificationService.update(modalState.currentRecord._id, values);
+        if (res && res.success) {
+          toast.success('Cập nhật thông báo thành công!');
+          fetchNotifications();
+          closeModal();
+        }
+      } else if (mode === 'delete') {
+        const res = await notificationService.delete(values);
+        if (res && res.success) {
+          toast.success('Xóa thông báo thành công!');
+          fetchNotifications();
+          closeModal();
+        }
       }
-    } else if (mode === 'delete') {
-      const res = await notificationService.delete(values);
-      if (res && res.success) {
-        toast.success('Xóa thông báo thành công!');
-        fetchNotifications();
-        closeModal();
-      }
-    }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Có lỗi xảy ra!');
     }
@@ -83,13 +131,14 @@ export default function NotificationPage() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+            <Bell className="size-6 text-indigo-600 dark:text-indigo-400" />
             Quản lý Thông báo
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Lập lịch và quản lý các thông báo nội bộ cho toàn bộ nhân viên trong tổ chức.
           </p>
         </div>
@@ -98,15 +147,15 @@ export default function NotificationPage() {
           <Button
             variant="outline"
             onClick={() => openModal("export")}
-            className="flex items-center gap-2 border-slate-300 text-slate-700 font-semibold text-xs px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 shadow-sm"
+            className="flex items-center gap-2 border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs px-4 py-2.5 rounded-xl bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 shadow-sm"
           >
-            <Download className="w-4 h-4 text-slate-500" />
+            <Download className="w-4 h-4 text-slate-500 dark:text-slate-400" />
             <span>Xuất báo cáo</span>
           </Button>
 
           <Button
             onClick={() => openModal("create")}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all"
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all"
           >
             <Plus className="w-4 h-4" />
             <span>Tạo thông báo mới</span>
@@ -114,10 +163,10 @@ export default function NotificationPage() {
         </div>
       </div>
 
-      <NotificationStats />
+      <NotificationStats statsData={notificationStats}/>
 
       <div className="w-full space-y-6">
-        <div className="w-full rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6 space-y-6 bg-white">
+        <div className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm p-6 space-y-6 bg-white dark:bg-slate-900">
           <NotificationFilter
             selectedType={selectedType}
             setSelectedType={setSelectedType}

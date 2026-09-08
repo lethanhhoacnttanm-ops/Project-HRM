@@ -7,6 +7,10 @@ const calculateNetSalary = (baseSalary, allowance, bonus, deductions) => {
 
 class PayrollService {
 
+  async getAllPayrollsWithoutPagination() {
+    return await payrollRepository.findAllWithoutPagination();
+  }
+
   async toggleLock(id, isLocked) {
     const existingPayroll = await payrollRepository.findById(id);
     if (!existingPayroll) {
@@ -101,7 +105,7 @@ class PayrollService {
     if (data.contract && data.contract !== existingPayroll.contract?.toString()) {
       const newContract = await ContractModel.findById(data.contract);
       if (!newContract) throw new Error("Hợp đồng mới không tồn tại!");
-      
+
       employeeId = newContract.employee;
       baseSalary = newContract.salary || 0;
     }

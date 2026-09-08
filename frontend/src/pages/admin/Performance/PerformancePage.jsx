@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Trophy } from "lucide-react";
 
 import PerformanceStats from "../../../components/admin/Performance/PerformanceStats.jsx";
 import PerformanceTabs from "../../../components/admin/Performance/PerformanceTabs.jsx";
@@ -25,6 +25,14 @@ export default function PerformancePage() {
 
   const [dataAllListEmp, setDataAllListEmp] = useState([])
 
+  const [performanceStats, setPerformanceStats] = useState({
+    evaluatedCount: 0,
+    totalTargetCount: 1200,
+    avgScore: "0.0",
+    inProgressCount: 0,
+    excellentPercent: 0,
+  });
+
   const [dataPerformance, setDataPerformance] = useState([])
   const [performanceNumber, setPerformanceNumber] = useState(1);
   const [performancePagination, setPerformancePagination] = useState({ totalPeformance: 0, totalPage: 1 });
@@ -32,6 +40,47 @@ export default function PerformancePage() {
 
   const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
   const closeModal = () => setModalState({ isOpen: false, mode: "create", data: null });
+
+  useEffect(() => {
+    const fetchPerformanceStats = async () => {
+      try {
+        const res = await performanceService.getPerformancesNoPaging();
+        if (res && res.success) {
+          const list = res.dataPerformances || [];
+
+          const evaluatedList = list.filter(item => item.status === 'Submitted' || item.status === 'Approved');
+          const evaluatedCount = evaluatedList.length;
+
+          let totalScoreSum = 0;
+          evaluatedList.forEach(item => {
+            const avgItemScore = ((item.outsourcingScore || 0) + (item.trainingScore || 0)) / 2;
+            totalScoreSum += avgItemScore;
+          });
+          const avgScore = evaluatedList.length > 0 ? (totalScoreSum / evaluatedList.length).toFixed(1) : "0.0";
+
+          const inProgressCount = list.filter(item => item.status === 'Draft').length;
+
+          const excellentList = evaluatedList.filter(item => {
+            const avgItemScore = ((item.outsourcingScore || 0) + (item.trainingScore || 0)) / 2;
+            return avgItemScore >= 4.5;
+          });
+          const excellentPercent = evaluatedList.length > 0 ? Math.round((excellentList.length / evaluatedList.length) * 100) : 0;
+
+          setPerformanceStats({
+            evaluatedCount: evaluatedCount,
+            totalTargetCount: list.length > 0 ? list.length : 1200,
+            avgScore: avgScore,
+            inProgressCount: inProgressCount,
+            excellentPercent: excellentPercent,
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu thống kê đánh giá:", error);
+      }
+    };
+
+    fetchPerformanceStats();
+  }, []);
 
   useEffect(() => {
     const fetchListEmp = async () => {
@@ -135,13 +184,14 @@ export default function PerformancePage() {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Trophy className="size-6 text-indigo-600" />
             Đánh giá hiệu suất
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Theo dõi hiệu suất nhân viên, chỉ số KPI và các chu kỳ đánh giá.
           </p>
         </div>
@@ -155,7 +205,7 @@ export default function PerformancePage() {
         </Button>
       </div>
 
-      <PerformanceStats />
+      <PerformanceStats statsData={performanceStats}/>
 
       <div className="space-y-6">
         <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6 w-full">

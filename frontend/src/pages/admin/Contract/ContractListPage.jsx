@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { FileText } from 'lucide-react';
 import { toast } from "sonner";
 
 import { ContractTopCards, ContractBottomCards } from '../../../components/admin/Contract/ContractTabs.jsx';
@@ -14,6 +15,7 @@ import dayjs from 'dayjs';
 
 const ContractListPage = () => {
   const [contracts, setContract] = useState([]);
+  const [allContracts, setAllContracts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [contractType, setContractType] = useState('Tất cả');
   const [status, setStatus] = useState('Tất cả');
@@ -44,25 +46,41 @@ const ContractListPage = () => {
     fetchPendingEmployees();
   }, [modalState.isOpen, modalState.mode, beginPageNumber, pageSize]);
 
-  useEffect(() => {
-    const fetchAllContract = async () => {
-      try {
-        const res = await contractService.getallContractEmployee(beginPageNumber, pageSize);
-        if (res?.success) {
-          setContract(res?.dataContract)
-          setbeginPaginationInfo(res?.pagination || { totalContract: 0, totalPage: 1 });
-        }
 
-      } catch (error) {
-        setContract([])
-        toast.error('Thất bại', { description: 'Không thể lấy danh sách các hợp đồng!' });
-
+  const fetchAllContract = async () => {
+    try {
+      const res = await contractService.getallContractEmployee(beginPageNumber, pageSize);
+      if (res?.success) {
+        setContract(res?.dataContract)
+        setbeginPaginationInfo(res?.pagination || { totalContract: 0, totalPage: 1 });
       }
 
+    } catch (error) {
+      setContract([])
+      toast.error('Thất bại', { description: 'Không thể lấy danh sách các hợp đồng!' });
     }
+  }
 
+  useEffect(() => {
     fetchAllContract()
   }, [beginPageNumber, pageSize])
+
+  useEffect(() => {
+    const fetchContracts = async () => {
+      try {
+        const response = await contractService.getListContract();
+
+        const contractList = response.data || [];
+        setAllContracts(contractList);
+      } catch (error) {
+        console.error("Lỗi khi tải danh sách hợp đồng:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContracts();
+  }, []);
 
   useEffect(() => {
     const fetchPendingEmployees = async () => {
@@ -132,11 +150,14 @@ const ContractListPage = () => {
   const isProbation = contracts.filter(item => item.type === 'Probation').length
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight dark:text-white">Quản lý hợp đồng lao động</h1>
-          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-amber-50/50">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <FileText className="size-6 text-indigo-600" />
+            Quản lý hợp đồng lao động
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
             Giám sát các vấn đề pháp lý liên quan đến việc làm, theo dõi thời hạn hợp đồng và đảm bảo tuân thủ pháp luật.
           </p>
         </div>
@@ -155,7 +176,7 @@ const ContractListPage = () => {
         </div>
       </div>
 
-      <ContractTopCards isProbation={isProbation} waitingForRegis={waitingForRegis} totalContract={totalContract} isActiveContract={isActiveContract} isExpired={isExpried} />
+      <ContractTopCards isProbation={isProbation} dataAllcontract={allContracts} waitingForRegis={waitingForRegis} totalContract={totalContract} isActiveContract={isActiveContract} isExpired={isExpried} />
 
       <ContractFilter
         searchTerm={searchTerm}

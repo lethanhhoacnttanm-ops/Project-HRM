@@ -7,7 +7,9 @@ export const supportService = {
   getMyTickets: async () => {
     return await axiosClient.get('/supports/my-tickets');
   },
-
+  getTicketsNoPaging: async () => {
+    return await axiosClient.get('/supports/all-no-pagination');
+  },
   getAllTicketsForAdmin: async () => {
     return await axiosClient.get('/supports/admin/all');
   },

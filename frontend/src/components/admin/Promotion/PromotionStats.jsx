@@ -1,39 +1,53 @@
 import React from "react";
 import { TrendingUp, Clock, CheckCircle2, Award } from "lucide-react";
 
-const stats = [
-  {
-    id: 1,
-    title: "Tổng số người thăng tiến",
-    value: "142",
-    badge: "Tăng 12% so với năm ngoái.",
-    icon: TrendingUp,
-    iconBg: "bg-indigo-100 text-indigo-600",
-  },
-  {
-    id: 2,
-    title: "Đang chờ phê duyệt",
-    value: "28",
-    icon: Clock,
-    iconBg: "bg-red-100 text-red-500",
-  },
-  {
-    id: 3,
-    title: "Đủ điều kiện thăng tiến",
-    value: "54",
-    icon: CheckCircle2,
-    iconBg: "bg-emerald-100 text-emerald-500",
-  },
-  {
-    id: 4,
-    title: "Thời gian trung bình thăng chức",
-    value: "2,4 năm",
-    icon: Award,
-    iconBg: "bg-blue-100 text-blue-500",
-  },
-];
+export default function PromotionStats({ dataPromotion, loading }) {
 
-export default function PromotionStats() {
+  const totalPromoted = dataPromotion.filter(p => p.status === 'COMPLETED').length;
+
+  const pendingApproval = dataPromotion.filter(p => p.status === 'PENDING_REVIEW' || p.status === 'WAITING').length;
+
+  const effectivePendingCount = dataPromotion.filter(p => p.status === 'APPROVED_PENDING_EFFECTIVE').length;
+
+  const calculateAvgTime = () => {
+    if (dataPromotion.length === 0) return "0 năm";
+    const totalTenure = dataPromotion.reduce((acc, curr) => acc + (curr.gradetenure || 0), 0);
+    const avg = totalTenure / dataPromotion.length;
+    return `${avg.toFixed(1).replace('.', ',')} năm`;
+  };
+
+  const stats = [
+    {
+      id: 1,
+      title: "Tổng số người thăng tiến",
+      value: loading ? "..." : totalPromoted.toString(),
+      badge: "Tăng 12% so với năm ngoái.",
+      icon: TrendingUp,
+      iconBg: "bg-indigo-100 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400",
+    },
+    {
+      id: 2,
+      title: "Đang chờ phê duyệt",
+      value: loading ? "..." : pendingApproval.toString(),
+      icon: Clock,
+      iconBg: "bg-red-100 text-red-500 dark:bg-red-950/60 dark:text-red-400",
+    },
+    {
+      id: 3,
+      title: "Chờ có hiệu lực",
+      value: loading ? "..." : effectivePendingCount.toString(),
+      icon: CheckCircle2,
+      iconBg: "bg-emerald-100 text-emerald-500 dark:bg-emerald-950/60 dark:text-emerald-400",
+    },
+    {
+      id: 4,
+      title: "Thời gian trung bình thăng chức",
+      value: loading ? "..." : calculateAvgTime(),
+      icon: Award,
+      iconBg: "bg-blue-100 text-blue-500 dark:bg-blue-950/60 dark:text-blue-400",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item) => {

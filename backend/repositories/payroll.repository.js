@@ -1,6 +1,14 @@
 import PayrollModel from '../models/Payroll.js';
 
 class PayrollRepository {
+  async findAllWithoutPagination() {
+    try {
+      return await PayrollModel.find({}).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+    }
+  }
+
   async findByEmployeeId(employeeId) {
     return await PayrollModel.find({ employee: employeeId })
       .sort({ monthYear: -1 })
@@ -55,8 +63,8 @@ class PayrollRepository {
 
   async updateClock(id, updateData) {
     return await PayrollModel.findByIdAndUpdate(
-      id, 
-      { $set: updateData }, 
+      id,
+      { $set: updateData },
       { new: true }
     );
   }

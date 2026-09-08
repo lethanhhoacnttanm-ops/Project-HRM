@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { SecurityConfigCard } from '@/components/admin/Security/SecurityConfigCard';
 import { SecurityLogTable } from '@/components/admin/Security/SecurityLogTable';
 
@@ -85,13 +85,13 @@ export default function SecurityManagementPage() {
   );
 
   return (
-    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="p-6 space-y-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
       <div>
-        <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-          <ShieldAlert className="size-6 text-indigo-600" />
+        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+          <ShieldCheck className="size-6 text-indigo-600 dark:text-indigo-400" />
           Quản Lý Bảo Mật Hệ Thống
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
           Giám sát nhật ký hoạt động thời gian thực và cấu hình các lớp phòng thủ toàn hệ thống.
         </p>
       </div>

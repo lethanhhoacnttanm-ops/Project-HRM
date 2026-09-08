@@ -2,6 +2,24 @@ import payrollService from '../services/payroll.service.js';
 
 class PayrollController {
 
+  async getAllPayrollsNoPagination(req, res) {
+    try {
+      const payrolls = await payrollService.getAllPayrollsWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách lương thưởng thành công!',
+        dataPayrolls: payrolls,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy dữ liệu bảng lương!',
+        error: error.message,
+      });
+    }
+  }
+
   async toggleLock(req, res) {
     try {
       const { id } = req.params;
@@ -25,7 +43,7 @@ class PayrollController {
   async lockMonth(req, res) {
     try {
       const { monthYear } = req.body;
-      const adminId = req.user?._id; 
+      const adminId = req.user?._id;
 
       if (!monthYear) {
         return res.status(400).json({ success: false, message: "Thiếu thông tin kỳ lương (monthYear)!" });

@@ -1,6 +1,6 @@
 import axiosClient from '../config/axios.js';
 
-export const internalJobService = {
+const internalJobService = {
   getOpenJobs: async () => {
     return await axiosClient.get('/internal-jobs');
   },
@@ -17,3 +17,5 @@ export const internalJobService = {
     return await axiosClient.get('/internal-jobs/my-applications');
   },
 };
+
+export default internalJobService;

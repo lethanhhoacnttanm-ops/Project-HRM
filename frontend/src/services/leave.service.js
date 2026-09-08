@@ -5,6 +5,10 @@ export const leaveService = {
     return await axiosClient.get('/leaves/me');
   },
 
+  getLeavesNoPaging: async () => {
+    return await axiosClient.get('/leaves/all-no-pagination');
+  },
+
   createLeave: async (payload) => {
     return await axiosClient.post('/leaves/me', payload);
   },

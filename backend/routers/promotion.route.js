@@ -26,6 +26,13 @@ router.get(
   promotionController.getAllPromotion
 );
 
+router.get(
+  '/getlist',
+  verifyToken,
+  checkRole('ADMIN'),
+  promotionController.getMyPromotion
+);
+
 router.post(
   '/',
   verifyToken,

@@ -1,4 +1,5 @@
 import promotionService from "../services/promotion.service.js";
+import promotionModel from "../models/Promotion.js";
 
 class PromotionsController {
   async createPromotion(req, res) {
@@ -23,6 +24,25 @@ class PromotionsController {
       });
     }
   }
+
+  async getMyPromotion(req, res) {
+  try {
+    const promotions = await promotionModel.find({});
+    
+    return res.status(200).json({
+      success: true,
+      message: "Lấy danh sách những đề xuất thăng tiến thành công!",
+      dataPromotions: promotions,
+      total: promotions.length
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Lỗi máy chủ khi lấy danh sách những đề xuất thăng tiến!",
+      error: error.message,
+    });
+  }
+}
 
   async getAllPromotion(req, res) {
     try {

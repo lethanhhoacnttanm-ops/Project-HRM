@@ -1,6 +1,9 @@
 import leaveRepository from '../repositories/leave.repository.js';
 
 class LeaveService {
+  async getAllLeavesWithoutPagination() {
+    return await leaveRepository.findAllWithoutPagination();
+  }
   async getMyLeaves(employeeId) {
     return await leaveRepository.findByEmployeeId(employeeId);
   }
@@ -66,9 +69,9 @@ class LeaveService {
   }
 
   async updateLeaveStatus(id, status, currentAdminId) {
-    const updateData = { 
+    const updateData = {
       status: status,
-      approvedBy: currentAdminId 
+      approvedBy: currentAdminId
     };
 
     const updatedLeave = await leaveRepository.updateById(id, updateData);

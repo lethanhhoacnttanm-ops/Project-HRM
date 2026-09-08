@@ -3,45 +3,49 @@ import JobModel from '../models/Job.js';
 import candidateService from '../services/candidate.service.js';
 
 class CandidateController {
-    async applyJob(req, res, next) {
-        try {
-            const candidateData = req.body;
+  async applyJob(req, res) {
+    try {
+      const { jobId, appliedPosition } = req.body;
+      const employeeInfo = req.user;
 
-            const newCandidate = await candidateService.createCandidateApplication(candidateData);
+      const result = await candidateService.createApplication({
+        employeeInfo,
+        jobId,
+        appliedPosition,
+      });
 
-            return res.status(201).json({
-                success: true,
-                message: 'Nộp hồ sơ ứng tuyển thành công!',
-                data: newCandidate
-            });
-        } catch (error) {
-            const statusCode = error.statusCode || 500;
-            return res.status(statusCode).json({
-                success: false,
-                message: error.message || 'Lỗi server nội bộ'
-            });
-        }
+      return res.status(201).json({
+        success: true,
+        message: 'Ứng tuyển vị trí thành công!',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message || 'Lỗi khi ứng tuyển công việc!',
+      });
     }
+  }
 
-    async getCandidatesByJob(req, res, next) {
-        try {
-            const { jobId } = req.params;
+  async getCandidatesByJob(req, res) {
+    try {
+      const jobId = req.params.jobId || req.query.jobId;
 
-            const candidates = await candidateService.getCandidatesByJobId(jobId);
+      const result = await candidateService.fetchCandidates({ jobId });
 
-            return res.status(200).json({
-                success: true,
-                message: 'Lấy danh sách ứng viên theo dự án thành công',
-                data: candidates
-            });
-        } catch (error) {
-            const statusCode = error.statusCode || 500;
-            return res.status(statusCode).json({
-                success: false,
-                message: error.message || 'Lỗi server nội bộ'
-            });
-        }
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy danh sách ứng viên thành công!',
+        data: result,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy danh sách ứng viên!',
+        error: error.message,
+      });
     }
+  }
 }
 
 export default new CandidateController();

@@ -1,6 +1,23 @@
 import notificationService from '../services/notification.service.js';
 
 class NotificationController {
+  async getAllNotificationsNoPagination(req, res) {
+    try {
+      const notifications = await notificationService.getAllNotificationsWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách thông báo thành công!',
+        dataNotifications: notifications,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy dữ liệu thông báo!',
+        error: error.message,
+      });
+    }
+  }
   async markAsRead(req, res) {
     try {
       const { id } = req.params;

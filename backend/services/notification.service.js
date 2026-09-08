@@ -1,6 +1,10 @@
 import notificationRepository from '../repositories/notification.repository.js';
 
 class NotificationService {
+
+  async getAllNotificationsWithoutPagination() {
+    return await notificationRepository.findAllWithoutPagination();
+  }
   async markAsRead(notificationId, employeeId) {
     const updated = await notificationRepository.markAsRead(notificationId, employeeId);
     if (!updated) throw new Error('Không tìm thấy thông báo!');

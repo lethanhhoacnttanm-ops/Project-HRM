@@ -3,6 +3,16 @@ import CourseModel from "../models/Course.js";
 import EmployeeModel from "../models/Employee.js";
 
 class CourseProgressRepository {
+  async findAllWithoutPagination() {
+    try {
+      return await CourseProgressModel.find({})
+        .populate('courseId', 'title') 
+        .populate('employeeId', 'fullName email') 
+        .lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+    }
+  }
   async findByEmployeeAndCourse(employeeId, courseId) {
     try {
       return await CourseProgressModel.findOne({ employeeId, courseId });

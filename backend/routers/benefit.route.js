@@ -19,6 +19,7 @@ router.get(
 );
 
 router.get('/', verifyToken, checkRole('ADMIN'), benefitController.getBenefits);
+router.get('/all-no-pagination', verifyToken, checkRole('ADMIN'), benefitController.getAllBenefitsNoPagination);
 router.get('/my-benefits', verifyToken, checkRole('EMPLOYEE', "ADMIN"), benefitController.getMyBenefitsNew);
 
 router.post('/create', verifyToken, checkRole('ADMIN'), benefitController.createBenefit);

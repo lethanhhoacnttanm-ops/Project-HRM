@@ -1,38 +1,37 @@
 import React from "react";
 import { Wallet, PieChart, Activity, Clock } from "lucide-react";
 
-const stats = [
-  {
-    id: 1,
-    title: "TỔNG NGÂN SÁCH",
-    value: "1.2 tỷ VNĐ",
-    icon: Wallet,
-    iconBg: "bg-indigo-100 text-indigo-600",
-  },
-  {
-    id: 2,
-    title: "TỶ LỆ THAM GIA",
-    value: "94%",
-    icon: PieChart,
-    iconBg: "bg-emerald-100 text-emerald-600",
-  },
-  {
-    id: 3,
-    title: "ĐANG HOẠT ĐỘNG",
-    value: "12",
-    icon: Activity,
-    iconBg: "bg-slate-100 text-slate-700",
-  },
-  {
-    id: 4,
-    title: "CHỜ DUYỆT",
-    value: "08",
-    icon: Clock,
-    iconBg: "bg-rose-100 text-rose-600",
-  },
-];
-
-export default function BenefitStats() {
+export default function BenefitStats({ statsData }) {
+  const stats = [
+    {
+      id: 1,
+      title: "TỔNG NGÂN SÁCH",
+      value: statsData?.totalBudget || "0 VNĐ",
+      icon: Wallet,
+      iconBg: "bg-indigo-100 text-indigo-600",
+    },
+    {
+      id: 2,
+      title: "TỶ LỆ THAM GIA",
+      value: statsData?.participationRate || "0%",
+      icon: PieChart,
+      iconBg: "bg-emerald-100 text-emerald-600",
+    },
+    {
+      id: 3,
+      title: "ĐANG HOẠT ĐỘNG",
+      value: statsData?.activeCount || 0,
+      icon: Activity,
+      iconBg: "bg-slate-100 text-slate-700",
+    },
+    {
+      id: 4,
+      title: "CHỜ DUYỆT",
+      value: statsData?.pendingCount || 0,
+      icon: Clock,
+      iconBg: "bg-rose-100 text-rose-600",
+    },
+  ];
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item) => {

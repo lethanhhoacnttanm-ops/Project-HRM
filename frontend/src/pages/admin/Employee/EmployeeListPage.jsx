@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { toast } from 'sonner';
-import { BellCheck } from "lucide-react";
+import { BellCheck, UserCheck } from "lucide-react";
 import dayjs from 'dayjs';
 
 import EmployeeFilter from '../../../components/admin/Employee/EmployeeFilter.jsx';
@@ -137,13 +137,14 @@ const EmployeeListPage = () => {
 
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight dark:text-white">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <UserCheck className="size-6 text-indigo-600" />
             Quản lý hồ sơ nhân viên
           </h1>
-          <p className="text-sm text-gray-500 font-medium mt-1 dark:text-gray-400">
+          <p className="text-xs text-slate-500 mt-1">
             Quản lý nhân lực, theo dõi hiệu suất và giám sát các nhiệm vụ của từng bộ phận.
           </p>
         </div>
