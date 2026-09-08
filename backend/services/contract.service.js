@@ -49,7 +49,7 @@ class ContractsService {
       limit: pageSize,
     });
 
-    if (totalContract=== undefined || dataContract === undefined) {
+    if (totalContract === undefined || dataContract === undefined) {
       throw new Error("Lỗi trường hợp lệ trong phân trang");
     }
 
@@ -72,6 +72,11 @@ class ContractsService {
   async getMyContracts(employeeId) {
     const contracts = await contractRepository.findByEmployeeId(employeeId);
     return contracts;
+  }
+
+  async getContractCount() {
+    const count = await contractRepository.countContracts();
+    return { total: count };
   }
 }
 

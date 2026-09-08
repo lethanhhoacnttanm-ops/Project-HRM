@@ -21,6 +21,7 @@ import internalJobRouter from './internalJob.route.js';
 import reportRouter from './report.route.js';
 import securityRouter from './security.route.js';
 import systemConfigRouter from './systemConfig.routes.js';
+import chatbotRouter from './chatbotai.routes.js';
 
 const mainRouter = express.Router();
 
@@ -46,6 +47,7 @@ mainRouter.use('/internal-jobs', internalJobRouter);
 mainRouter.use('/reports', reportRouter);
 mainRouter.use('/security', securityRouter);
 mainRouter.use('/system-config', systemConfigRouter);
+mainRouter.use('/chatbot', chatbotRouter);
 
 export default mainRouter;
 

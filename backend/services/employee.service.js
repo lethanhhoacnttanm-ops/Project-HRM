@@ -14,6 +14,11 @@ class EmployeeService {
         }
     }
 
+    async getEmployeeCount() {
+        const count = await employeeRepository.countEmployees();
+        return { total: count };
+    }
+
     async getEmployeesWithoutDepartmentAndStatus({ role }) {
         const filter = {
             $or: [
