@@ -6,6 +6,7 @@ import EmployeeHeader from './EmployeeHeader';
 import { ConfigProvider, theme as antTheme } from 'antd';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { useTheme } from '../../hooks/usetheme.js';
+import EmployeeAiChat from './EmployeeAiChat';
 
 const EmployeeContent = () => {
   const { user } = useAuth();
@@ -37,6 +38,7 @@ const EmployeeContent = () => {
             <Outlet />
           </main>
         </div>
+        <EmployeeAiChat />
       </div>
     </ConfigProvider>
   );

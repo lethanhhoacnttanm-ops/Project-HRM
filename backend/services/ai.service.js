@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import reportService from './report.service.js';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_KIET);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 class AiService {
   async callLLM(prompt) {
-    if (!process.env.GEMINI_API_KEY_KIET) {
-      throw new Error('Thiếu GEMINI_API_KEY_KIET trong .env');
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('Thiếu GEMINI_API_KEY trong .env');
     }
 
     const modelName = process.env.AI_MODEL || 'gemini-2.5-flash';
@@ -80,6 +80,61 @@ Người dùng nói: ${message || 'Xin chào, hãy xác nhận bạn đang hoạ
 
     if (mode === 'summarize') {
       return await this.summarize(userId, { month, year });
+    }
+
+    throw new Error(`Mode chưa hỗ trợ: ${mode}`);
+  }
+
+  async qa(employeeId, message, { month, year } = {}) {
+    if (!message?.trim()) {
+      throw new Error('Vui lòng nhập câu hỏi');
+    }
+
+    const context = await this.loadContext(employeeId, { month, year });
+
+    const prompt = `Bạn là trợ lý HR nội bộ của công ty, hỗ trợ nhân viên tra cứu thông tin của CHÍNH HỌ.
+
+QUY TẮC BẮT BUỘC:
+- CHỈ dùng số liệu trong CONTEXT bên dưới.
+- KHÔNG bịa số, không bịa chính sách công ty nếu không có trong CONTEXT.
+- Nếu CONTEXT thiếu dữ liệu để trả lời, nói rõ: "Hiện chưa có dữ liệu về phần này trong hệ thống."
+- Trả lời ngắn gọn, tiếng Việt, dễ hiểu (2–5 câu).
+- Không yêu cầu mật khẩu, OTP, hay thông tin nhạy cảm khác.
+- Không thực hiện duyệt phép / đổi lương — chỉ cung cấp thông tin.
+
+CONTEXT (JSON):
+${JSON.stringify(context.report, null, 2)}
+
+Câu hỏi của nhân viên:
+${message.trim()}
+
+Hãy trả lời:`;
+
+    const answer = await this.callLLM(prompt);
+
+    return {
+      mode: 'qa',
+      answer,
+      period: context.report?.period || null,
+    };
+  }
+
+  async assist(userId, payload = {}) {
+    const { mode = 'ping', message, month, year } = payload;
+
+    if (mode === 'ping') {
+      const prompt = `Bạn là trợ lý HR nội bộ. Trả lời ngắn bằng tiếng Việt.
+Người dùng nói: ${message || 'Xin chào, hãy xác nhận bạn đang hoạt động.'}`;
+      const answer = await this.callLLM(prompt);
+      return { mode: 'ping', answer, meta: { userId } };
+    }
+
+    if (mode === 'summarize') {
+      return await this.summarize(userId, { month, year });
+    }
+
+    if (mode === 'qa') {
+      return await this.qa(userId, message, { month, year });
     }
 
     throw new Error(`Mode chưa hỗ trợ: ${mode}`);
