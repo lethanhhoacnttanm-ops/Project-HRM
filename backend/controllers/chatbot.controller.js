@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import EmployeeService from "../services/employee.service.js";
 import ContractService from "../services/contract.service.js";
 
-const ai = new GoogleGenAI();
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const hrmTools = [{
     functionDeclarations: [
@@ -39,7 +39,8 @@ class ChatbotAiController {
 
             if (lowerMsg.includes('bao nhiêu nhân viên') || lowerMsg.includes('số lượng nhân viên') || lowerMsg.includes('tổng nhân viên')) {
                 const countResult = await EmployeeService.getEmployeeCount();
-                contextDescription = `Tổng số lượng nhân viên hiện tại trong hệ thống là: ${countResult.total || countResult}`;
+                const total = countResult?.total !== undefined ? countResult.total : countResult;
+                contextDescription = `Tổng số lượng nhân viên hiện tại trong hệ thống là: ${total}`;
             }
             else if (lowerMsg.includes('danh sách nhân viên') || lowerMsg.includes('xem nhân viên')) {
                 const employees = await EmployeeService.getAllListEmployees();
@@ -47,7 +48,8 @@ class ChatbotAiController {
             }
             else if (lowerMsg.includes('hợp đồng') || lowerMsg.includes('số lượng hợp đồng')) {
                 const countResult = await ContractService.getContractCount();
-                contextDescription = `Tổng số lượng hợp đồng hiện tại là: ${countResult.total || countResult}`;
+                const total = countResult?.total !== undefined ? countResult.total : countResult;
+                contextDescription = `Tổng số lượng hợp đồng hiện tại là: ${total}`;
             }
 
             if (contextDescription) {
