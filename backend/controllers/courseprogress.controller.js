@@ -1,6 +1,23 @@
 import courseprogressService from "../services/courseprogress.service.js";
 
 class CourseProgressController {
+  async getAllProgressNoPagination(req, res) {
+    try {
+      const progressList = await courseprogressService.getAllCourseProgressWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách tiến độ khóa học thành công!',
+        dataProgress: progressList, 
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy tiến độ khóa học!',
+        error: error.message,
+      });
+    }
+  }
   async enrollCourse(req, res) {
     try {
       const employeeId = req.user._id;
@@ -55,7 +72,7 @@ class CourseProgressController {
 
   async updateProgress(req, res) {
     try {
-      const { id } = req.params; 
+      const { id } = req.params;
       const { progressPercent } = req.body;
 
       if (progressPercent === undefined) {

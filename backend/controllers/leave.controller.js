@@ -1,6 +1,23 @@
 import leaveService from '../services/leave.service.js';
 
 class LeaveController {
+  async getAllLeavesNoPagination(req, res) {
+    try {
+      const leaves = await leaveService.getAllLeavesWithoutPagination();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách phiếu nghỉ thành công!',
+        dataLeaves: leaves, 
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy danh sách nghỉ phép!',
+        error: error.message,
+      });
+    }
+  }
   async getMyLeaves(req, res) {
     try {
       const data = await leaveService.getMyLeaves(req.user.id);
@@ -54,10 +71,10 @@ class LeaveController {
 
   async updateStatus(req, res) {
     try {
-      const { id } = req.params; 
-      const { status } = req.body; 
-      
-      const currentAdminId = req.user?._id || req.user?.id; 
+      const { id } = req.params;
+      const { status } = req.body;
+
+      const currentAdminId = req.user?._id || req.user?.id;
 
       if (!['Đã duyệt', 'Từ chối'].includes(status)) {
         return res.status(400).json({ success: false, message: 'Trạng thái không hợp lệ!' });

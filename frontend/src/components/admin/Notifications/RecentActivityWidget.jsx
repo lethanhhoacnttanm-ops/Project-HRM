@@ -24,10 +24,10 @@ const activities = [
 
 export default function RecentActivityWidget() {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
       <div className="flex items-center gap-2">
-        <Activity className="w-4 h-4 text-indigo-600" />
-        <h3 className="font-bold text-slate-800 text-sm">Hoạt động Gần đây</h3>
+        <Activity className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+        <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">Hoạt động Gần đây</h3>
       </div>
 
       <div className="space-y-4 relative pl-2">
@@ -35,8 +35,8 @@ export default function RecentActivityWidget() {
           <div key={act.id} className="flex items-start gap-3 relative">
             <span className={`w-2.5 h-2.5 rounded-full ${act.dotColor} mt-1 shrink-0`} />
             <div>
-              <p className="font-bold text-slate-800 text-xs">{act.title}</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{act.time}</p>
+              <p className="font-bold text-slate-800 dark:text-slate-200 text-xs">{act.title}</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{act.time}</p>
             </div>
           </div>
         ))}

@@ -73,7 +73,6 @@ const items = [
     label: 'Lương & Báo cáo',
     children: [
       { key: '/admin-page/payroll', icon: <DollarSign className="h-4 w-4" />, label: 'Lương & Thưởng' },
-      { key: '/admin-page/reports', icon: <BarChart3 className="h-4 w-4" />, label: 'Báo cáo & Thống kê' },
     ],
   },
   {

@@ -7,5 +7,6 @@ const router = express.Router();
 router.get('/', verifyToken, checkRole('ADMIN'), courseprogressController.getAllProgressForAdmin);
 router.post('/enroll', verifyToken, checkRole('EMPLOYEE'), courseprogressController.enrollCourse);
 router.put('/:id/progress', verifyToken, checkRole('ADMIN'), courseprogressController.updateProgress);
+router.get('/no-pagination', verifyToken, checkRole('ADMIN'), courseprogressController.getAllProgressNoPagination);
 
 export default router;

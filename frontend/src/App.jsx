@@ -29,7 +29,6 @@ import LeavePage from './pages/admin/Leave/LeavePage.jsx';
 import PerformancePage from './pages/admin/Performance/PerformancePage.jsx';
 import BenefitsPage from './pages/admin/Benefits/BenefitsPage.jsx';
 import PayrollPage from './pages/admin/Payroll/PayrollPage.jsx'; 
-import AnalyticsPage from './pages/admin/Analytics/AnalyticsPage.jsx';
 import NotificationPage from './pages/admin/Notifications/NotificationPage.jsx';
 import SupportTicketPage from './pages/admin/Support/SupportTicketPage.jsx';
 import SystemConfigPage from './pages/admin/System/SystemConfigPage.jsx';
@@ -83,7 +82,6 @@ function App() {
             <Route path="performance" element={<PerformancePage />} />
             <Route path="benefits" element={<BenefitsPage />} />
             <Route path="payroll" element={<PayrollPage />} />
-            <Route path="reports" element={<AnalyticsPage />} />
             <Route path="notifications" element={<NotificationPage />} />
             <Route path="support-tickets" element={<SupportTicketPage />} />
             <Route path="system-config" element={<SystemConfigPage />} />

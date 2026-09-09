@@ -1,6 +1,9 @@
 import supportRepository from '../repositories/support.repository.js';
 
 class SupportService {
+  async getAllTicketsWithoutPagination() {
+    return await supportRepository.findAllWithoutPagination();
+  }
   async getMyTickets(employeeId) {
     return await supportRepository.getByEmployeeId(employeeId);
   }

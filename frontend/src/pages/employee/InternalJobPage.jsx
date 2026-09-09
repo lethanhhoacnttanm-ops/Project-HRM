@@ -12,7 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { internalJobService } from '@/services/internalJob.service.js';
+import internalJobService from '@/services/internalJob.service.js';
+import candidateService from '@/services/candidate.service.js';
 
 const stageLabel = {
   new: 'Mới nộp',
@@ -34,7 +35,7 @@ const InternalJobPage = () => {
   const [selected, setSelected] = useState(null);
   const [showApply, setShowApply] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [tab, setTab] = useState('jobs'); // jobs | applications
+  const [tab, setTab] = useState('jobs'); 
 
   const [form, setForm] = useState({
     role: '',
@@ -49,13 +50,13 @@ const InternalJobPage = () => {
       try {
         const [jobsRes, appsRes] = await Promise.all([
           internalJobService.getOpenJobs(),
-          internalJobService.getMyApplications(),
+          internalJobService.getMyApplications(), 
         ]);
         if (!cancelled) {
-          const list = jobsRes.data || [];
+          const list = jobsRes.dataList || jobsRes.data || [];
           setJobs(list);
           setSelected(list[0] || null);
-          setApplications(appsRes.data || []);
+          setApplications(appsRes.data || appsRes.dataList || []);
         }
       } catch (error) {
         if (!cancelled) {
@@ -79,7 +80,7 @@ const InternalJobPage = () => {
     setForm({
       role: first?.role || '',
       level: first?.level || '',
-      cvFileUrl: '',
+      cvFileUrl: '', 
     });
     setShowApply(true);
   };
@@ -97,20 +98,24 @@ const InternalJobPage = () => {
 
     try {
       setSubmitting(true);
-      await internalJobService.apply({
+      await candidateService.applyJob({
         jobId: selected._id,
-        role: form.role,
-        level: form.level,
+        appliedPosition: {
+          role: form.role,
+          level: form.level
+        },
         cvFileUrl: form.cvFileUrl.trim(),
       });
+
       toast.success('Nộp đơn ứng tuyển thành công!');
       setShowApply(false);
-      const appsRes = await internalJobService.getMyApplications();
-      setApplications(appsRes.data || []);
-      setTab('applications');
+
+      const appsRes = await candidateService.getMyApplications(); 
+      setApplications(appsRes.data || appsRes.dataList || []);
+      setTab('applications'); 
     } catch (error) {
       toast.error('Nộp đơn thất bại', {
-        description: error.customMessage || error.message,
+        description: error.response?.data?.message || error.message,
       });
     } finally {
       setSubmitting(false);
@@ -126,19 +131,18 @@ const InternalJobPage = () => {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6 p-4">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Việc làm nội bộ</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Ứng tuyển vào các vị trí công việc nội bộ
+          Ứng tuyển vào các vị trí công việc nội bộ trong công ty
         </p>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-2 border-b">
         {[
           { key: 'jobs', label: `Đang tuyển (${jobs.length})` },
-          { key: 'applications', label: `Đơn của tôi (${applications.length})` },
+          { key: 'applications', label: `Lịch sử ứng tuyển (${applications.length})` },
         ].map((t) => (
           <button
             key={t.key}
@@ -154,7 +158,6 @@ const InternalJobPage = () => {
         ))}
       </div>
 
-      {/* Tab: Jobs */}
       {tab === 'jobs' && (
         <>
           {jobs.length === 0 ? (
@@ -224,7 +227,7 @@ const InternalJobPage = () => {
                     className="w-full"
                     onClick={() => openApply(job)}
                   >
-                    <Send className="size-4" />
+                    <Send className="size-4 mr-2" />
                     Ứng tuyển
                   </Button>
                 </div>
@@ -234,14 +237,13 @@ const InternalJobPage = () => {
         </>
       )}
 
-      {/* Tab: My applications */}
       {tab === 'applications' && (
         <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
           {applications.length === 0 ? (
             <div className="p-12 text-center">
               <Briefcase className="mx-auto size-12 text-muted-foreground/40" />
               <p className="mt-4 text-muted-foreground">
-                Bạn chưa ứng tuyển vị trí nào.
+                Bạn chưa ứng tuyển vị trí nội bộ nào.
               </p>
             </div>
           ) : (
@@ -253,15 +255,15 @@ const InternalJobPage = () => {
                 >
                   <div>
                     <p className="font-semibold text-sm">
-                      {app.job?.title || 'Vị trí đã ứng tuyển'}
+                      {app.job?.title || 'Vị trí nội bộ'}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {app.appliedPosition?.role} · {app.appliedPosition?.level}
+                      Vị trí: <span className="font-medium text-slate-700">{app.appliedPosition?.role}</span> ({app.appliedPosition?.level})
                       <span className="mx-1.5">·</span>
-                      Nộp: {formatDate(app.appliedDate || app.createdAt)}
+                      Ngày nộp: {formatDate(app.appliedDate || app.createdAt)}
                     </p>
                   </div>
-                  <span className="self-start rounded-full border px-2.5 py-0.5 text-[11px] font-medium bg-slate-50 text-slate-700">
+                  <span className="self-start rounded-full border px-3 py-1 text-[11px] font-semibold bg-indigo-50 text-indigo-700 border-indigo-100">
                     {stageLabel[app.stage] || app.stage}
                   </span>
                 </div>
@@ -271,7 +273,6 @@ const InternalJobPage = () => {
         </div>
       )}
 
-      {/* Modal apply đơn giản */}
       {showApply && selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <form
@@ -281,7 +282,7 @@ const InternalJobPage = () => {
             <h2 className="text-lg font-bold">Ứng tuyển: {selected.title}</h2>
 
             <div className="space-y-1.5">
-              <Label>Vị trí</Label>
+              <Label>Chọn vị trí</Label>
               <select
                 value={`${form.role}||${form.level}`}
                 onChange={(e) => {
@@ -323,7 +324,7 @@ const InternalJobPage = () => {
               <Button type="submit" disabled={submitting}>
                 {submitting ? (
                   <>
-                    <Loader2 className="size-4 animate-spin" />
+                    <Loader2 className="size-4 animate-spin mr-2" />
                     Đang gửi...
                   </>
                 ) : (

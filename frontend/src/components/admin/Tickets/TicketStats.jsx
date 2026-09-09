@@ -1,46 +1,46 @@
 import React from "react";
 import { Ticket, RefreshCw, AlertCircle, CheckCircle2 } from "lucide-react";
 
-const stats = [
-  {
-    id: 1,
-    title: "TỔNG SỐ YÊU CẦU",
-    value: "1,284",
-    badge: "+12% vs tháng trước",
-    badgeColor: "text-emerald-600 bg-emerald-50",
-    icon: Ticket,
-    iconBg: "bg-indigo-100 text-indigo-600",
-  },
-  {
-    id: 2,
-    title: "ĐANG XỬ LÝ",
-    value: "42",
-    badge: "Đang xử lý tích cực",
-    badgeColor: "text-slate-500 font-medium",
-    icon: RefreshCw,
-    iconBg: "bg-teal-100 text-teal-600",
-  },
-  {
-    id: 3,
-    title: "CẦN PHẢN HỒI",
-    value: "18",
-    badge: "Cần gấp",
-    badgeColor: "text-rose-600 font-bold bg-rose-50",
-    icon: AlertCircle,
-    iconBg: "bg-rose-100 text-rose-500",
-  },
-  {
-    id: 4,
-    title: "ĐÃ HOÀN THÀNH",
-    value: "1,224",
-    badge: "Tỷ lệ 94%",
-    badgeColor: "text-slate-500 font-medium",
-    icon: CheckCircle2,
-    iconBg: "bg-emerald-100 text-emerald-600",
-  },
-];
 
-export default function TicketStats() {
+export default function TicketStats({ statsData }) {
+  const stats = [
+    {
+      id: 1,
+      title: "TỔNG SỐ YÊU CẦU",
+      value: statsData?.totalTickets ? statsData.totalTickets.toLocaleString() : "0",
+      badge: "Cập nhật mới",
+      badgeColor: "text-emerald-600 bg-emerald-50",
+      icon: Ticket,
+      iconBg: "bg-indigo-100 text-indigo-600",
+    },
+    {
+      id: 2,
+      title: "ĐANG XỬ LÝ",
+      value: statsData?.inProgressCount ? statsData.inProgressCount.toLocaleString() : "0",
+      badge: "Đang xử lý tích cực",
+      badgeColor: "text-slate-500 font-medium",
+      icon: RefreshCw,
+      iconBg: "bg-teal-100 text-teal-600",
+    },
+    {
+      id: 3,
+      title: "CẦN PHẢN HỒI",
+      value: statsData?.pendingResponseCount ? statsData.pendingResponseCount.toLocaleString() : "0",
+      badge: "Cần gấp",
+      badgeColor: "text-rose-600 font-bold bg-rose-50",
+      icon: AlertCircle,
+      iconBg: "bg-rose-100 text-rose-500",
+    },
+    {
+      id: 4,
+      title: "ĐÃ HOÀN THÀNH",
+      value: statsData?.resolvedCount ? statsData.resolvedCount.toLocaleString() : "0",
+      badge: `Tỷ lệ ${statsData?.resolvedRate || 0}%`,
+      badgeColor: "text-slate-500 font-medium",
+      icon: CheckCircle2,
+      iconBg: "bg-emerald-100 text-emerald-600",
+    },
+  ];
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item) => {

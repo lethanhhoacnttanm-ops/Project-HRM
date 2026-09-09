@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Download } from "lucide-react";
+import { Download, Calendar } from "lucide-react";
 import AttendanceStats from "../../../components/admin/Attendance/AttendanceStats.jsx";
 import AttendanceTabs from "../../../components/admin/Attendance/AttendanceTabs.jsx";
 import DailyAttendanceView from "../../../components/admin/Attendance/views/DailyAttendanceView.jsx";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 
 import shiftService from "@/services/shift.service.js";
 import { attendanceService } from "@/services/attendance.service.js";
+import { employeeService } from "@/services/employee.service.js";
 
 import { toast } from 'sonner';
 
@@ -22,6 +23,7 @@ export default function AttendancePage() {
   const [loading, setLoading] = useState(true)
   const [dataShift, setDataShift] = useState([]);
   const [dataAttendance, setDataAttendance] = useState([]);
+  const [dataEmployee, setDataEmployee] = useState([]);
 
   const [pageNumber, setPageNumber] = useState(1);
   const [shiftPagination, setShiftPagination] = useState({ totalShift: 0, totalPage: 1 });
@@ -85,28 +87,51 @@ export default function AttendancePage() {
     fetchAttendance(attendancePage);
   }, [attendancePage]);
 
+  useEffect(() => {
+    const fetchEmps = async () => {
+      try {
+        const allListEmpRes = await employeeService.getAllDataEmpForBenefit('EMPLOYEE');
+        if (allListEmpRes?.success) {
+          setDataEmployee(allListEmpRes.dataEmp || []);
+        }
+      } catch (error) {
+        console.error("Lỗi API nhân viên:", error);
+      }
+    };
+
+    fetchEmps();
+  }, []);
+
   const handleCreateShiftSubmit = async (values) => {
     try {
       const response = await shiftService.createShift(values);
 
       if (response.success) {
         toast.success("Tạo ca làm việc thành công!");
-        fetchShifts(); 
+        fetchShifts();
       }
     } catch (error) {
       console.error("Lỗi tạo ca:", error);
       toast.error(error.message || "Có lỗi xảy ra khi tạo ca!");
     }
   };
-
+  
+  const statsMetrics = {
+    totalEmp: dataEmployee.length,
+    onTime: dataAttendance.filter((item) => item.status === "Đúng giờ").length,
+    onTimeRate: dataAttendance.length > 0 ? Math.round((dataAttendance.filter((item) => item.status === "Đúng giờ").length / dataAttendance.length) * 100) : 0,
+    lateOrEarly: dataAttendance.filter((item) => item.status === "Đi muộn" || item.status === "Về sớm").length,
+    absent: dataAttendance.filter((item) => item.status === "Vắng mặt").length,
+  };
   return (
-    <div className="space-y-6 p-2">
+    <div className="space-y-6 p-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center gap-2">
+            <Calendar className="size-6 text-indigo-600 dark:text-indigo-400" />
             Quản lý Chấm công
           </h1>
-          <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Theo dõi thời gian làm việc, ca trực và chuyên cần của nhân viên.
           </p>
         </div>
@@ -120,14 +145,14 @@ export default function AttendancePage() {
         </Button>
       </div>
 
-      <AttendanceStats />
+      <AttendanceStats statsData={statsMetrics}/>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm bg-white dark:bg-gray-900 p-6 space-y-6">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-white dark:bg-slate-900 p-6 space-y-6">
         <AttendanceTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {activeTab === "daily" && <DailyAttendanceView dataAttendance={dataAttendance} pagination={attendancePagination} pageSize={4} pageNumber={attendancePage} setPageNumber={setAttendancePage} />}
         {activeTab === "shifts" && (
-          <ShiftManagementView onOpenModal={() => openModal("create_shift")} dataShift={dataShift} pagination={shiftPagination} pageSize={4} pageNumber={pageNumber} setPageNumber={setPageNumber}/>
+          <ShiftManagementView onOpenModal={() => openModal("create_shift")} dataShift={dataShift} pagination={shiftPagination} pageSize={4} pageNumber={pageNumber} setPageNumber={setPageNumber} />
         )}
         {activeTab === "requests" && <EditRequestsView />}
       </div>

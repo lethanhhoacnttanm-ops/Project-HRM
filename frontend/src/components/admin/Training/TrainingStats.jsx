@@ -2,47 +2,46 @@ import React from "react";
 import { BookOpen, Users2, CheckCircle2, Wallet } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-const stats = [
-  {
-    id: 1,
-    title: "Tổng số khóa học",
-    value: "24",
-    subText: "Hoạt động",
-    badge: "+4 trong tháng này",
-    badgeColor: "bg-emerald-50 text-emerald-600",
-    icon: BookOpen,
-    iconBg: "bg-indigo-100 text-indigo-600",
-  },
-  {
-    id: 2,
-    title: "Đào tạo liên tục",
-    value: "156",
-    subText: "Nhân sự",
-    badge: "78% số người đăng ký",
-    badgeColor: "bg-indigo-50 text-indigo-600",
-    icon: Users2,
-    iconBg: "bg-emerald-100 text-emerald-600",
-  },
-  {
-    id: 3,
-    title: "Tỷ lệ hoàn thành",
-    value: "88%",
-    icon: CheckCircle2,
-    iconBg: "bg-slate-100 text-slate-700",
-    hasProgressLine: true,
-  },
-  {
-    id: 4,
-    title: "Ngân sách đã sử dụng",
-    value: "9 tỷ VNĐ",
-    topRightText: "Ngân sách tối đa: 12 tỷ vnd",
-    icon: Wallet,
-    iconBg: "bg-indigo-100 text-indigo-600",
-    budgetProgress: 75, 
-  },
-];
-
-export default function TrainingStats() {
+export default function TrainingStats({ statsData }) {
+  const stats = [
+    {
+      id: 1,
+      title: "Tổng số khóa học",
+      value: statsData?.totalCourses ?? 0,
+      subText: "Hoạt động",
+      badge: "+4 trong tháng này",
+      badgeColor: "bg-emerald-50 text-emerald-600",
+      icon: BookOpen,
+      iconBg: "bg-indigo-100 text-indigo-600",
+    },
+    {
+      id: 2,
+      title: "Đào tạo liên tục",
+      value: statsData?.totalTrainees ?? "0", 
+      subText: "Nhân sự",
+      badge: "78% số người đăng ký",
+      badgeColor: "bg-indigo-50 text-indigo-600",
+      icon: Users2,
+      iconBg: "bg-emerald-100 text-emerald-600",
+    },
+    {
+      id: 3,
+      title: "Tỷ lệ hoàn thành",
+      value: `${statsData?.completionRate ?? 0}%`, 
+      icon: CheckCircle2,
+      iconBg: "bg-slate-100 text-slate-700",
+      hasProgressLine: true,
+    },
+    {
+      id: 4,
+      title: "Ngân sách đã sử dụng",
+      value: statsData?.usedBudget ?? "0 VNĐ", 
+      topRightText: "Ngân sách tối đa: 12 tỷ vnd",
+      icon: Wallet,
+      iconBg: "bg-indigo-100 text-indigo-600",
+      budgetProgress: statsData?.budgetProgress ?? 0, 
+    },
+  ];
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item) => {

@@ -1,6 +1,12 @@
 import courseRepository from "../repositories/course.repository.js";
+import CourseModel from "../models/Course.js";
 
 class CourseService {
+
+  async getAllCoursesWithoutPagination() {
+    return await CourseModel.find({}).lean();
+  }
+
   async createNewCourse(data) {
     const { title, courseUrl, department, position, targetLevel, description, durationHours, imageUrl } = data;
 

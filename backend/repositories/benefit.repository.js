@@ -2,16 +2,24 @@ import BenefitModel from '../models/Benefit.js';
 
 class BenefitRepository {
 
-  async findBenefitsByEmployeeId(employeeId) {
-  try {
-    return await BenefitModel.find({ assignedEmployees: employeeId })
-      .populate('assignedEmployees', 'fullName email')
-      .sort({ createdAt: -1 })
-      .lean();
-  } catch (error) {
-    throw new Error(`Lỗi Repository: ${error.message}`);
+  async findAllWithoutPagination() {
+    try {
+      return await BenefitModel.find({}).lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+    }
   }
-}
+
+  async findBenefitsByEmployeeId(employeeId) {
+    try {
+      return await BenefitModel.find({ assignedEmployees: employeeId })
+        .populate('assignedEmployees', 'fullName email')
+        .sort({ createdAt: -1 })
+        .lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository: ${error.message}`);
+    }
+  }
 
   async findOpen({ type } = {}) {
     const filter = { status: 'Đang mở' };

@@ -2,19 +2,37 @@ import benefitService from '../services/benefit.service.js';
 
 class BenefitController {
 
-  async getMyBenefitsNew(req, res) {
-  try {
-    const employeeId = req.user?.id || req.user?._id; 
+  async getAllBenefitsNoPagination(req, res) {
+    try {
+      const benefits = await benefitService.getAllBenefitsWithoutPagination();
 
-    console.log("ID nhân viên đang xem phúc lợi:", employeeId);
-
-    const benefits = await benefitService.getBenefitsForEmployee(employeeId);
-
-    return res.status(200).json({ success: true, data: benefits });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy toàn bộ danh sách phúc lợi thành công!',
+        dataBenefits: benefits,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi máy chủ khi lấy dữ liệu phúc lợi!',
+        error: error.message,
+      });
+    }
   }
-}
+
+  async getMyBenefitsNew(req, res) {
+    try {
+      const employeeId = req.user?.id || req.user?._id;
+
+      console.log("ID nhân viên đang xem phúc lợi:", employeeId);
+
+      const benefits = await benefitService.getBenefitsForEmployee(employeeId);
+
+      return res.status(200).json({ success: true, data: benefits });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
 
   async createBenefit(req, res) {
     try {

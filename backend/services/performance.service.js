@@ -2,6 +2,9 @@ import performanceRepository from '../repositories/performance.repository.js';
 import EmployeeModel from '../models/Employee.js';
 
 class PerformanceService {
+  async getAllPerformancesWithoutPagination() {
+    return await performanceRepository.findAllWithoutPagination();
+  }
   async getMyEvaluations(employeeId) {
     return await performanceRepository.findByEmployeeId(employeeId);
   }
@@ -86,7 +89,7 @@ class PerformanceService {
         trainingScore: selfData.trainingScore,
         feedback: selfData.feedback,
       },
-      status: 'Submitted' 
+      status: 'Submitted'
     });
 
     return updated;

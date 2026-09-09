@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import { UserPlus } from 'lucide-react';
 
 import RecruitmentStats from '../../../components/admin/job-posting/RecruitmentStats';
 import JobFilter from '../../../components/admin/job-posting/JobFilter';
@@ -10,6 +11,8 @@ import JobModal from '../../../components/admin/job-posting/JobModal';
 
 import { positionService } from "../../../services/position.service.js";
 import jobService from '@/services/job.service';
+import candidateService from '@/services/candidate.service';
+import internalJobService from '@/services/internalJob.service';
 
 import { toast } from 'sonner'
 
@@ -23,6 +26,12 @@ const JobPostingPage = () => {
 
   const [dataPosition, setDataPosition] = useState([])
   const [dataJobs, setDataJobs] = useState([])
+
+  const [jobs, setJobs] = useState([]);
+
+  const [candidateCounts, setCandidateCounts] = useState({});
+
+  const [loading, setLoading] = useState(true);
 
   const [pageNumber, setPageNumber] = useState(1);
 
@@ -60,10 +69,26 @@ const JobPostingPage = () => {
 
   const fetchJobs = useCallback(async () => {
     try {
+      setLoading(true);
       const res = await jobService.getAllJobs(pageNumber, pageSize);
       if (res?.success) {
-        setDataJobs(res.dataJobs);
+        const jobsList = res.dataJobs || [];
+        setDataJobs(jobsList);
         setPaginationInfo(res.pagination || { totalJobs: 0, totalPage: 1 });
+
+        const countsMap = {};
+        for (const job of jobsList) {
+          const jobId = job._id || job.id;
+          try {
+            const candidateRes = await candidateService.getCandidates(jobId);
+            const list = candidateRes.data || candidateRes.dataList || [];
+            countsMap[jobId] = list.length;
+          } catch (err) {
+            countsMap[jobId] = 0;
+          }
+        }
+        setCandidateCounts(countsMap);
+
       } else {
         setDataJobs([]);
       }
@@ -72,6 +97,8 @@ const JobPostingPage = () => {
       toast.error('Thất bại', {
         description: error.message || 'Không thể lấy danh sách bài đăng!',
       });
+    } finally {
+      setLoading(false);
     }
   }, [pageNumber, pageSize]);
 
@@ -117,11 +144,14 @@ const JobPostingPage = () => {
   };
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">Quản lý Dự án & Tuyển dụng nội bộ</h1>
-          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1 max-w-2xl">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <UserPlus className="size-6 text-indigo-600" />
+            Quản lý Dự án & Tuyển dụng nội bộ
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
             Tiếp nhận các dự án ngoài, định biên vị trí (BA, Dev, Tester) và phân bổ nhân sự nội bộ để tối ưu hóa nguồn lực và tạo cơ sở đánh giá hiệu suất.
           </p>
         </div>
@@ -147,7 +177,7 @@ const JobPostingPage = () => {
         setContractType={setContractType}
       />
 
-      <JobCardList dataJobs={dataJobs} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} propState={setModalState} onNavigateApproval={handleNavigateApproval} />
+      <JobCardList dataJobs={filteredJobs} candidateCounts={candidateCounts} pagination={paginationInfo} pageSize={pageSize} pageNumber={pageNumber} setPageNumber={setPageNumber} propState={setModalState} onNavigateApproval={handleNavigateApproval} />
 
       <JobModal
         isOpen={modalState.isOpen}

@@ -13,6 +13,10 @@ export const promotionService = {
     });
   },
 
+  getPromotion: async () => {
+    return await axiosClient.get('/promotions/getlist');
+  },
+
   updatePromotionStatus: async (promotionId, payload) => {
     return await axiosClient.put(`/promotions/${promotionId}/status`, payload);
   },

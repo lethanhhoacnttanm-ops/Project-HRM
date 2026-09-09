@@ -1,24 +1,28 @@
 import axiosClient from "@/config/axios";
 
 const candidateService = {
-  applyJob: async (applicationData) => {
+  applyJob: async (payload) => {
+    return await axiosClient.post('/candidates/apply', payload);
+  },
+
+  getCandidates: async (jobId) => {
+    const url = jobId ? `/candidates?jobId=${jobId}` : '/candidates';
+    return await axiosClient.get(url);
+  },
+
+  updateCandidateStage: async (candidateId, newStage) => {
     try {
-      const response = await axiosClient.post('candidates/apply', applicationData);
-      return response.data; 
-    } catch (error) {
-      throw error.response?.data || error.message;
+      const response = await axiosClient.put(`/candidates/${candidateId}/stage`, { stage: newStage });
+      return response;
+    } catch (err) {
+      console.error("Axios request lỗi:", err.response || err);
+      throw err;
     }
   },
 
-  getCandidatesByJobId: async (jobId) => {
-    try {
-      const response = await axiosClient.get(`/candidates/job/${jobId}`);
-      console.log("Dữ liệu gốc từ Backend trả về:", response.data);
-      return response.data; 
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
-  }
+  getCandidatesNoPaging: async () => {
+    return await axiosClient.get('/candidates/all-no-pagination');
+  },
 };
 
 export default candidateService;

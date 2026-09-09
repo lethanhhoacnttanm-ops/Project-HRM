@@ -7,6 +7,10 @@ class ContractRepository {
     return await ContractModel.create(contractData);
   }
 
+  async countContracts() {
+    return await ContractModel.countDocuments();
+  }
+
   async updateEmployeeStatus(employeeId, status, role, code) {
     console.log("Đang update nhân viên ID:", employeeId);
     console.log("Mã nhân viên mới sinh ra:", code);

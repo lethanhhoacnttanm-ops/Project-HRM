@@ -14,4 +14,7 @@ export const courseprogressService = {
          progressPercent,
       });
    },
+   getProgressNoPaging: async () => {
+    return await axiosClient.get('/course-progress/all-no-pagination');
+  },
 };

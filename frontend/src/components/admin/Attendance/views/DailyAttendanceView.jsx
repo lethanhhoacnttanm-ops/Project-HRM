@@ -80,7 +80,7 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-b-2xl border border-slate-200 dark:border-gray-800 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-900 rounded-b-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       <AttendanceFilter
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -93,43 +93,43 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
       />
 
       <Table>
-        <TableHeader className="bg-slate-50/80 dark:bg-gray-800/60">
-          <TableRow className="border-b border-slate-200 dark:border-gray-800">
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+        <TableHeader className="bg-slate-50/80 dark:bg-slate-950/60">
+          <TableRow className="border-b border-slate-200 dark:border-slate-800">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               NHÂN VIÊN
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               NGÀY
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               CA LÀM VIỆC
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               CHECK-IN
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               CHECK-OUT
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               TỔNG GIỜ
             </TableHead>
-            <TableHead className="py-4 px-6 text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               TRẠNG THÁI
             </TableHead>
-            <TableHead className="py-4 px-6 text-center text-slate-500 dark:text-gray-400 font-bold text-xs uppercase">
+            <TableHead className="py-4 px-6 text-center text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">
               THAO TÁC
             </TableHead>
           </TableRow>
         </TableHeader>
 
-        <TableBody className="divide-y divide-slate-100 dark:divide-gray-800 text-xs">
+        <TableBody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs">
           {filteredRecords.length > 0 ? (
             filteredRecords.map((row) => {
               const statusInfo = getDynamicStatus(row);
 
               return (
 
-                <TableRow key={row._id} className="hover:bg-slate-50/80 dark:hover:bg-gray-800/40 transition-colors">
+                <TableRow key={row._id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors dark:border-slate-800">
                   <TableCell className="py-4 px-6">
                     {console.log(statusInfo)}
                     <div className="flex items-center gap-3">
@@ -137,40 +137,40 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
                         <img
                           src={row.employee.avatarUrlr}
                           alt={row.employee?.fullName}
-                          className="w-9 h-9 rounded-full object-cover border dark:border-gray-700"
+                          className="w-9 h-9 rounded-full object-cover border dark:border-slate-700"
                         />
                       ) : (
-                        <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-gray-800 flex items-center justify-center text-slate-400 dark:text-gray-500">
+                        <div className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 dark:text-slate-500">
                           <User className="w-4 h-4" />
                         </div>
                       )}
                       <div>
-                        <p className="font-bold text-slate-800 dark:text-gray-100">{row.employee?.fullName}</p>
-                        <p className="text-[11px] text-slate-400 dark:text-gray-500">{row.employee?.code}</p>
+                        <p className="font-bold text-slate-800 dark:text-slate-100">{row.employee?.fullName}</p>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500">{row.employee?.code}</p>
                       </div>
                     </div>
                   </TableCell>
 
-                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
+                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-slate-400">
                     {dayjs(row.date).format("DD/MM/YYYY")}
                   </TableCell>
 
-                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
+                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-slate-400">
                     {row.shift?.name}
                   </TableCell>
 
                   <TableCell
-                    className={`py-4 px-6 font-bold ${row.isCheckInLate ? "text-rose-600 dark:text-rose-400" : "text-slate-800 dark:text-gray-200"
+                    className={`py-4 px-6 font-bold ${row.isCheckInLate ? "text-rose-600 dark:text-rose-400" : "text-slate-800 dark:text-slate-200"
                       }`}
                   >
                     {row.checkIn}
                   </TableCell>
 
-                  <TableCell className="py-4 px-6 font-bold text-slate-800 dark:text-gray-200">
+                  <TableCell className="py-4 px-6 font-bold text-slate-800 dark:text-slate-200">
                     {row.checkOut}
                   </TableCell>
 
-                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-gray-400">
+                  <TableCell className="py-4 px-6 font-medium text-slate-600 dark:text-slate-400">
                     {row.totalHours}
                   </TableCell>
 
@@ -184,17 +184,17 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
 
                   <TableCell className="py-4 px-6 text-center">
                     <DropdownMenu>
-                      <DropdownMenuTrigger className="p-1.5 text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-lg outline-none cursor-pointer">
+                      <DropdownMenuTrigger className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg outline-none cursor-pointer">
                         <MoreVertical className="w-4 h-4" />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-44 rounded-xl bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 shadow-lg p-1">
-                        <DropdownMenuItem className="text-xs font-medium cursor-pointer text-red-500 dark:text-red-500 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
+                      <DropdownMenuContent align="end" className="w-44 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg p-1">
+                        <DropdownMenuItem className="text-xs font-medium cursor-pointer text-red-500 dark:text-red-400 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5">
                           Duyệt chấm công
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
+                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-slate-200 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5">
                           Xem lịch sử chấm công
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5">
+                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-slate-200 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5">
                           Chỉnh sửa giờ Check-in/out
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -204,21 +204,21 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
               )
             })
           ) : (
-            <TableRow>
-              <TableCell colSpan={8} className="text-center py-8 text-slate-400 dark:text-gray-500">
+            <TableRow className="dark:border-slate-800">
+              <TableCell colSpan={8} className="text-center py-8 text-slate-400 dark:text-slate-500">
                 Không có dữ liệu chấm công trong ngày này.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
-        <TableFooter className="bg-white dark:bg-gray-900 border-t border-slate-100 dark:border-gray-800">
-          <TableRow className="hover:bg-transparent">
+        <TableFooter className="bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+          <TableRow className="hover:bg-transparent dark:border-slate-800">
             <TableCell colSpan={8} className="p-0">
-              <div className="flex items-center justify-between px-6 py-4 text-xs text-slate-500 dark:text-gray-400">
+              <div className="flex items-center justify-between px-6 py-4 text-xs text-slate-500 dark:text-slate-400">
                 <p>
-                  Trang <span className="font-bold text-indigo-600 dark:text-indigo-400">{pageNumber}</span> / <span className="font-bold text-slate-800 dark:text-gray-200">{pagination?.totalPage || 1}</span>
-                  <span className="text-slate-300 dark:text-gray-700 mx-2">|</span>
-                  Tổng số: <span className="font-bold text-slate-800 dark:text-gray-200">{pagination?.totalAttendance || 0}</span> bản ghi
+                  Trang <span className="font-bold text-indigo-600 dark:text-indigo-400">{pageNumber}</span> / <span className="font-bold text-slate-800 dark:text-slate-200">{pagination?.totalPage || 1}</span>
+                  <span className="text-slate-300 dark:text-slate-700 mx-2">|</span>
+                  Tổng số: <span className="font-bold text-slate-800 dark:text-slate-200">{pagination?.totalAttendance || 0}</span> bản ghi
                 </p>
 
                 <div className="flex items-center gap-1">
@@ -227,7 +227,7 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
                     size="icon"
                     onClick={handlePrevPage}
                     disabled={pageNumber <= 1}
-                    className={`h-7 w-7 text-slate-400 dark:text-gray-500 bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-700 cursor-pointer ${pageNumber <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`h-7 w-7 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer ${pageNumber <= 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
@@ -241,7 +241,7 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
                     size="icon"
                     onClick={handleNextPage}
                     disabled={!pagination || pageNumber >= pagination.totalPage}
-                    className={`h-7 w-7 text-slate-400 dark:text-gray-500 bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-700 cursor-pointer ${(!pagination || pageNumber >= pagination.totalPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`h-7 w-7 text-slate-400 dark:text-slate-500 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer ${(!pagination || pageNumber >= pagination.totalPage) ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>

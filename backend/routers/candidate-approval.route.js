@@ -5,9 +5,12 @@ import { verifyToken, checkRole } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.get('/job/:jobId', candidateController.getCandidatesByJob);
+router.get('/', verifyToken, checkRole("EMPLOYEE", "ADMIN"), candidateController.getCandidatesByJob);
+router.get('/all-no-pagination', verifyToken, checkRole("ADMIN"), candidateController.getAllCandidatesNoPagination);
 
-router.post('/apply', candidateController.applyJob);
+router.post('/apply', verifyToken, checkRole("EMPLOYEE"), candidateController.applyJob);
+
+router.put('/:id/stage', verifyToken, checkRole("ADMIN"), candidateController.updateStage);
 
 // router.put('/:id/status', verifyToken, checkRole('ADMIN'), validationValueUpdatedPromotion,  handlelogicUpdated, promotionController.updateStatus);
 

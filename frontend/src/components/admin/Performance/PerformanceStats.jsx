@@ -2,45 +2,49 @@ import React from "react";
 import { UserCheck, TrendingUp, ClipboardEdit, Award, Star } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
-const stats = [
-  {
-    id: 1,
-    title: "TỔNG SỐ ĐÃ ĐÁNH GIÁ",
-    value: "850",
-    total: "/ 1200",
-    icon: UserCheck,
-    iconBg: "bg-indigo-100 text-indigo-600",
-    progressValue: 70,
-  },
-  {
-    id: 2,
-    title: "HIỆU SUẤT TRUNG BÌNH",
-    value: "4.2",
-    total: "/ 5.0",
-    stars: 4,
-    icon: TrendingUp,
-    iconBg: "bg-emerald-100 text-emerald-600",
-  },
-  {
-    id: 3,
-    title: "ĐANG ĐÁNH GIÁ",
-    value: "142",
-    badge: "⚡ Đang tập trung",
-    badgeBg: "text-emerald-600 font-semibold",
-    icon: ClipboardEdit,
-    iconBg: "bg-slate-100 text-slate-700",
-  },
-  {
-    id: 4,
-    title: "NHÂN VIÊN XUẤT SẮC",
-    value: "15%",
-    subText: "+2% so với kỳ trước",
-    icon: Award,
-    iconBg: "bg-indigo-100 text-indigo-600",
-  },
-];
+export default function PerformanceStats({statsData}) {
+  const evaluated = statsData?.evaluatedCount || 0;
+  const total = statsData?.totalTargetCount || 1200;
+  const progressPercent = total > 0 ? Math.round((evaluated / total) * 100) : 0;
 
-export default function PerformanceStats() {
+  const stats = [
+    {
+      id: 1,
+      title: "TỔNG SỐ ĐÃ ĐÁNH GIÁ",
+      value: evaluated.toLocaleString(),
+      total: `/ ${total.toLocaleString()}`,
+      icon: UserCheck,
+      iconBg: "bg-indigo-100 text-indigo-600",
+      progressValue: progressPercent,
+    },
+    {
+      id: 2,
+      title: "HIỆU SUẤT TRUNG BÌNH",
+      value: statsData?.avgScore || "0.0",
+      total: "/ 5.0",
+      stars: Math.round(parseFloat(statsData?.avgScore || 0)),
+      icon: TrendingUp,
+      iconBg: "bg-emerald-100 text-emerald-600",
+    },
+    {
+      id: 3,
+      title: "ĐANG ĐÁNH GIÁ",
+      value: statsData?.inProgressCount || 0,
+      badge: "⚡ Đang tập trung",
+      badgeBg: "text-emerald-600 font-semibold",
+      icon: ClipboardEdit,
+      iconBg: "bg-slate-100 text-slate-700",
+    },
+    {
+      id: 4,
+      title: "NHÂN VIÊN XUẤT SẮC",
+      value: `${statsData?.excellentPercent || 0}%`,
+      subText: "Tỷ lệ đạt loại xuất sắc",
+      icon: Award,
+      iconBg: "bg-indigo-100 text-indigo-600",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((item) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Download, Plus } from "lucide-react";
+import { Download, Plus, CalendarDays } from "lucide-react";
 import LeaveStats from "../../../components/admin/LeaveManagement/LeaveStats.jsx";
 import LeaveFilter from "../../../components/admin/LeaveManagement/LeaveFilter.jsx";
 import LeaveTable from "../../../components/admin/LeaveManagement/LeaveTable.jsx";
@@ -20,6 +20,14 @@ export default function LeavePage() {
 
   const [dataLeave, setDataLeave] = useState([])
   const [pageNumber, setPageNumber] = useState(1);
+  const [dataLeaves, setDataLeaves] = useState([]);
+  const [leaveStats, setLeaveStats] = useState({
+    todayOnLeave: 0,
+    pendingApproval: 0,
+    urgentPending: 0,
+    avgLeaveDays: 0,
+    leavePoolPercent: 84,
+  });
   const [leavePagination, setLeavePagination] = useState({ totalLeave: 0, totalPage: 1 });
   const pageSize = 4
 
@@ -52,6 +60,52 @@ export default function LeavePage() {
     fetchLeaves();
   }, [pageNumber, fetchLeaves]);
 
+  useEffect(() => {
+    const fetchLeavesForStats = async () => {
+      try {
+        const res = await leaveService.getLeavesNoPaging();
+        if (res && res.success) {
+          const list = res.dataLeaves || [];
+          setDataLeaves(list);
+
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const todayCount = list.filter(item => {
+            if (item.status !== 'Đã duyệt') return false;
+
+            const start = new Date(item.startDate);
+            const end = new Date(item.endDate);
+            start.setHours(0, 0, 0, 0);
+            end.setHours(0, 0, 0, 0);
+
+            return today >= start && today <= end;
+          }).length;
+
+          const pendingList = list.filter(item => item.status === 'Chờ duyệt');
+          const pendingCount = pendingList.length;
+
+          const urgentCount = pendingList.filter(item => item.isUrgent || item.priority === 'high').length;
+
+          const totalDays = list.reduce((acc, curr) => acc + (curr.numberOfDays || 0), 0);
+          const avgDays = list.length > 0 ? (totalDays / list.length).toFixed(1) : 0;
+
+          setLeaveStats({
+            todayOnLeave: todayCount,
+            pendingApproval: pendingCount,
+            urgentPending: urgentCount,
+            avgLeaveDays: avgDays,
+            leavePoolPercent: 84,
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi lấy dữ liệu thống kê nghỉ phép:", error);
+      }
+    };
+
+    fetchLeavesForStats();
+  }, []);
+
   const handleUpdateLeaveStatus = async ({ id, status }) => {
     try {
       const res = await leaveService.updateLeaveStatus(id, status);
@@ -73,13 +127,14 @@ export default function LeavePage() {
 
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <CalendarDays className="size-6 text-indigo-600" />
             Quản lý nghỉ phép
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Theo dõi và phê duyệt các yêu cầu nghỉ phép của nhân viên.
           </p>
         </div>
@@ -104,7 +159,7 @@ export default function LeavePage() {
         </div>
       </div>
 
-      <LeaveStats />
+      <LeaveStats statsData={leaveStats}/>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-9 space-y-6">

@@ -1,6 +1,15 @@
 import LeaveModel from '../models/Leave.js';
 
 class LeaveRepository {
+  async findAllWithoutPagination() {
+    try {
+      return await LeaveModel.find({})
+        .populate('employee', 'fullName email department')
+        .lean();
+    } catch (error) {
+      throw new Error(`Lỗi Repository (findAllWithoutPagination): ${error.message}`);
+    }
+  }
   async findByEmployeeId(employeeId) {
     return await LeaveModel.find({ employee: employeeId })
       .sort({ createdAt: -1 })

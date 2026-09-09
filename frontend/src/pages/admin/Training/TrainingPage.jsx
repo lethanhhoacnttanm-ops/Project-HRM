@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { UserCheck, Plus } from "lucide-react";
+import { UserCheck, Plus, GraduationCap } from "lucide-react";
 import TrainingStats from "../../../components/admin/Training/TrainingStats.jsx";
 import TrainingTabs from "../../../components/admin/Training/TrainingTabs.jsx";
 import CourseCatalogView from "../../../components/admin/Training/view/CourseCatalogView.jsx";
@@ -27,6 +27,10 @@ export default function TrainingPage() {
   const [catalogPagination, setCatalogPagination] = useState({ totalCourse: 0, totalPage: 1 });
   const [progressPage, setProgressPage] = useState(1);
   const [progressPagination, setProgressPagination] = useState({ totalCourseProgress: 0, totalPage: 1 });
+
+  const [totalCoursesCount, setTotalCoursesCount] = useState(0);
+  const [totalTrainees, setTotalTrainees] = useState(0);
+  const [completionRate, setCompletionRate] = useState(0);
 
   const [pageNumber, setPageNumber] = useState(1);
   const pageSize = 8
@@ -58,6 +62,22 @@ export default function TrainingPage() {
   useEffect(() => {
     fetchCourses(catalogPage);
   }, [catalogPage]);
+
+  const fetchTotalCoursesForStats = async () => {
+    try {
+      const res = await courseService.getAllCoursesNoPaging();
+      if (res && res.success) {
+        const allList = res.dataCourse || res.data || [];
+        setTotalCoursesCount(allList.length); 
+      }
+    } catch (error) {
+      console.error("Lỗi lấy tổng số khóa học cho stats:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTotalCoursesForStats();
+  }, []);
 
   const fetchCourseProgress = useCallback(async () => {
     try {
@@ -117,14 +137,44 @@ export default function TrainingPage() {
     }
   };
 
+  useEffect(() => {
+    const fetchProgressStats = async () => {
+      try {
+        const res = await courseprogressService.getProgressNoPaging();
+        if (res && res.success) {
+          const list = res.dataProgress || [];
+          
+          setTotalTrainees(list.length);
+
+          const completedCount = list.filter(item => item.status === 'completed' || item.isCompleted).length;
+          const rate = list.length > 0 ? Math.round((completedCount / list.length) * 100) : 0;
+          setCompletionRate(rate);
+        }
+      } catch (error) {
+        console.error("Lỗi lấy thống kê tiến độ:", error);
+      }
+    };
+
+    fetchProgressStats();
+  }, []);
+
+  const statsMetrics = {
+    totalCourses: totalCoursesCount, 
+    totalTrainees: totalTrainees,
+    completionRate: completionRate,
+    usedBudget: "9 tỷ VNĐ",
+    budgetProgress: 75,
+  };
+
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <GraduationCap className="size-6 text-indigo-600" />
             Đào tạo & Phát triển
           </h1>
-          <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Quản lý việc nâng cao kỹ năng, chứng chỉ và nguồn tài liệu giáo dục cho nhân viên.
           </p>
         </div>
@@ -149,7 +199,7 @@ export default function TrainingPage() {
         </div>
       </div>
 
-      <TrainingStats />
+      <TrainingStats statsData={statsMetrics} />
 
       <div className="rounded-2xl border border-slate-200 dark:border-gray-800 overflow-hidden shadow-sm bg-white dark:bg-gray-900 p-6 space-y-6">
         <TrainingTabs activeTab={activeTab} setActiveTab={setActiveTab} />

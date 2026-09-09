@@ -10,6 +10,8 @@ import { employeeService } from '../../../services/employee.service.js';
 import { departmentService } from "../../../services/department.service.js";
 import { positionService } from "../../../services/position.service.js";
 
+import { Building2 } from "lucide-react";
+
 import { toast } from "sonner";
 
 
@@ -57,94 +59,48 @@ export default function DepartmentPage() {
 
       fetchManagers();
     }
-  }, []);
+  }, [modalState.isOpen, modalState.mode, pageNumber, pageSize]);
 
   useEffect(() => {
-    if (viewMode === "table") {
-      const fetchEmployee = async () => {
-        try {
-
-          const res = await employeeService.getAllEmployees(pageNumber, pageSize, 'EMPLOYEE');
-          if (res?.success) {
-            setDataEmployee(res.dataEmp);
-          } else {
-            setDataEmployee([]);
-          }
-        } catch (error) {
-          setDataEmployee([]);
-          toast.error('Thất bại', {
-            description: error.message || 'Không thể lấy danh sách nhân viên!',
-          });
+    const fetchModalOptions = async () => {
+      try {
+        const allEmpRes = await employeeService.getAllDataEmp('EMPLOYEE');
+        if (allEmpRes?.success) {
+          setDataAllEmp(allEmpRes.dataEmp || []);
         }
-      };
+      } catch (error) {
+        console.error("Lỗi API nhân viên:", error);
+      }
 
-      fetchEmployee();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (viewMode === "table") {
-      const fetchDataEmp = async () => {
-        try {
-
-          const res = await employeeService.getAllDataEmp('EMPLOYEE');
-          if (res?.success) {
-            setDataAllEmp(res.dataEmp);
-          } else {
-            setDataAllEmp([]);
-          }
-        } catch (error) {
-          setDataAllEmp([]);
-          toast.error('Thất bại', {
-            description: error.message || 'Không thể lấy danh sách nhân viên!',
-          });
+      try {
+        const allListEmpRes = await employeeService.getAllDataEmpForBenefit('EMPLOYEE');
+        if (allListEmpRes?.success) {
+          setDataEmployee(allListEmpRes.dataEmp || []);
         }
-      };
+      } catch (error) {
+        console.error("Lỗi API nhân viên:", error);
+      }
 
-      fetchDataEmp();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (viewMode === "table") {
-      const fetchDepartment = async () => {
-        try {
-          const res = await departmentService.getAllList();
-          if (res?.success) {
-            setDataDepartment(res?.dataList);
-          } else {
-            setDataDepartment([]);
-          }
-        } catch (error) {
-          toast.error('Thất bại', {
-            description: error.message || 'Không thể lấy danh sách phòng ban!',
-          });
+      try {
+        const deptRes = await departmentService.getAllList();
+        if (deptRes?.success) {
+          setDataDepartment(deptRes?.dataList || []);
         }
-      };
+      } catch (error) {
+        console.error("Lỗi API phòng ban:", error);
+      }
 
-      fetchDepartment();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (viewMode === "table") {
-      const fetchPosition = async () => {
-        try {
-          const res = await positionService.getAllList();
-          if (res?.success) {
-            setDataPosition(res?.dataList);
-          } else {
-            setDataPosition([]);
-          }
-        } catch (error) {
-          toast.error('Thất bại', {
-            description: error.message || 'Không thể lấy danh sách vị trí cho phòng ban!',
-          });
+      try {
+        const posRes = await positionService.getAllList();
+        if (posRes?.success) {
+          setDataPosition(posRes?.dataList || []);
         }
-      };
+      } catch (error) {
+        console.error("Lỗi API vị trí:", error);
+      }
+    };
 
-      fetchPosition();
-    }
+    fetchModalOptions();
   }, []);
 
 
@@ -160,8 +116,8 @@ export default function DepartmentPage() {
     try {
 
       const res = await departmentService.createDepartment(formData);
-      
-      if(res && res.success){
+
+      if (res && res.success) {
         fetchEmployee()
         fetchDepartment()
       }
@@ -292,9 +248,14 @@ export default function DepartmentPage() {
 
   const totalEmployees = Array.isArray(dataEmployee) ? dataEmployee.length : 0;
 
-  const unassignedEmployees = Array.isArray(dataEmployee)
-    ? dataEmployee.filter((emp) => !emp.positionId && !emp.departmentId).length
-    : 0;
+  const unassignedEmployees = Array.isArray(dataAllEmp)
+  ? dataAllEmp.filter((emp) => {
+      const dept = emp.departmentId || emp.department || emp.dept;
+      const pos = emp.positionId || emp.position;
+
+      return !dept && !pos;
+    }).length
+  : 0;
 
   const vacantLeadershipPositions = Array.isArray(dataDepartment)
     ? dataDepartment.filter((dept) => dept.manager === null || dept.manager === undefined).length
@@ -302,13 +263,14 @@ export default function DepartmentPage() {
 
 
   return (
-    <div className="space-y-6 p-2">
+    <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Building2 className="size-6 text-indigo-600" />
             Quản lý phòng ban
           </h1>
-          <p className="text-sm text-slate-500 dark:text-amber-50/50 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Tổ chức và quản lý các phòng ban và cơ cấu đội nhóm trong công ty của bạn.
           </p>
         </div>
@@ -355,7 +317,8 @@ export default function DepartmentPage() {
 
         departments={modalState.data}
         departmentOptions={dataDepartment}
-        employeeOptions={dataAllEmp}
+        employeeOptions={dataEmployee}
+        dataEmployee={dataAllEmp}
         positionOptions={filteredPositions.length ? filteredPositions : dataPosition}
         levelOptions={levelOptions}
 
