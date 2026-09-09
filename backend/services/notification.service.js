@@ -3,7 +3,11 @@ import notificationRepository from '../repositories/notification.repository.js';
 class NotificationService {
 
   async getAllNotificationsWithoutPagination() {
-    return await notificationRepository.findAllWithoutPagination();
+    const notificationWithoutPagination = await notificationRepository.findAllWithoutPagination();
+    return notificationWithoutPagination.map((item) => ({
+      ...item,
+      readCount: item.readBy ? item.readBy.length : 0
+    }))
   }
   async markAsRead(notificationId, employeeId) {
     const updated = await notificationRepository.markAsRead(notificationId, employeeId);

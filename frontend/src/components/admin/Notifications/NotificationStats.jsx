@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 export default function NotificationStats({ statsData }) {
   const readRateValue = statsData?.readRate ? parseFloat(statsData.readRate) : 0;
 
+  console.log("here", statsData)
+
   const stats = [
     {
       id: 1,

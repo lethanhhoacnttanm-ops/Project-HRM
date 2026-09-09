@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import cron from 'node-cron'
 
 import { ENV } from './env.js';
 import { connectDB } from './config/db.js';
@@ -11,6 +12,8 @@ import mainRouter from './routers/index.js';
 import { globalLimiter } from './middleware/rateLimiter.js';
 
 import { seedAdminAccount } from './seeds/admin.seed.js';
+
+import { seedBudgets } from './seeds/budget.seed.js';
 
 const app = express();
 
@@ -56,6 +59,7 @@ const startServer = async () => {
     console.log('Connected to MongoDB');
 
     await seedAdminAccount();
+    await seedBudgets();
 
     app.listen(ENV.PORT, () => {
       console.log(`🚀 Server đang chạy tại: http://localhost:${ENV.PORT}`);

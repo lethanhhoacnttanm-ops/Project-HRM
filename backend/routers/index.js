@@ -22,6 +22,7 @@ import reportRouter from './report.route.js';
 import securityRouter from './security.route.js';
 import systemConfigRouter from './systemConfig.routes.js';
 import chatbotRouter from './chatbotai.routes.js';
+import budgetRouter from './budget.route.js'
 
 const mainRouter = express.Router();
 
@@ -48,6 +49,7 @@ mainRouter.use('/reports', reportRouter);
 mainRouter.use('/security', securityRouter);
 mainRouter.use('/system-config', systemConfigRouter);
 mainRouter.use('/chatbot', chatbotRouter);
+mainRouter.use('/budgets', budgetRouter)
 
 export default mainRouter;
 

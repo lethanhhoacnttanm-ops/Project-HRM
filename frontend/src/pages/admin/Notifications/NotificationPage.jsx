@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 
 import { toast } from "sonner";
 import { notificationService } from "@/services/notification.service.js";
+import { employeeService } from "@/services/employee.service.js";
 
 export default function NotificationPage() {
   const [selectedType, setSelectedType] = useState('ALL');
@@ -34,9 +35,13 @@ export default function NotificationPage() {
   useEffect(() => {
     const fetchNotificationStats = async () => {
       try {
-        const res = await notificationService.getNotificationsNoPaging();
-        if (res && res.success) {
-          const list = res.dataNotifications || [];
+        const [resNotification, resEmployee] = await Promise.all([
+          notificationService.getNotificationsNoPaging(),
+          employeeService.getAllDataEmpForBenefit("EMPLOYEE")
+        ]);
+        if (resEmployee.success && resNotification.success) {
+          const list = resNotification.dataNotifications || [];
+          const employees = resEmployee.dataEmp || [];
 
           const sentList = list.filter(item => item.status === 'Đã gửi');
           const totalSent = sentList.length;
@@ -47,13 +52,16 @@ export default function NotificationPage() {
           const upcomingCount = upcomingList.length;
 
           let totalReadPercentage = 0;
-          const totalCompanyEmployees = 1248;
+          const totalCompanyEmployees = employees.length;
           if (sentList.length > 0) {
-            const sumRates = sentList.reduce((acc, curr) => {
-              const readCount = curr.readBy ? curr.readBy.length : 0;
+            const sumRates = sentList.reduce((acc, curr, index) => {
+
+              const readCount = curr.readCount || 0;
               const rate = totalCompanyEmployees > 0 ? (readCount / totalCompanyEmployees) * 100 : 0;
+
               return acc + rate;
             }, 0);
+
             totalReadPercentage = Math.round(sumRates / sentList.length);
           }
 
@@ -163,7 +171,7 @@ export default function NotificationPage() {
         </div>
       </div>
 
-      <NotificationStats statsData={notificationStats}/>
+      <NotificationStats statsData={notificationStats} />
 
       <div className="w-full space-y-6">
         <div className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm p-6 space-y-6 bg-white dark:bg-slate-900">

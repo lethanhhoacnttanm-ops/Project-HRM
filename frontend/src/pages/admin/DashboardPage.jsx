@@ -9,11 +9,12 @@ import {
 } from 'recharts';
 
 import candidateService from '@/services/candidate.service';
-import {employeeService} from '@/services/employee.service';
-import {payrollService} from '@/services/payroll.service';
-import {leaveService} from '@/services/leave.service';
-import {supportService} from '@/services/support.service';
-import {performanceService} from '@/services/performance.service';
+import { employeeService } from '@/services/employee.service';
+import { payrollService } from '@/services/payroll.service';
+import { leaveService } from '@/services/leave.service';
+import { supportService } from '@/services/support.service';
+import { performanceService } from '@/services/performance.service';
+import { budgetServiceFE } from '@/services/budget.service';
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -49,12 +50,13 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [employeeRes, candidatesRes, payrollRes, ticketsRes, leaveRes] = await Promise.all([
+      const [employeeRes, candidatesRes, payrollRes, ticketsRes, leaveRes, budgetRes] = await Promise.all([
         employeeService.getAllDataEmpForBenefit("EMPLOYEE").catch(() => ({ dataEmployees: [] })),
         candidateService.getCandidatesNoPaging().catch(() => ({ dataCandidates: [] })),
         payrollService.getPayrollsNoPaging().catch(() => ({ dataPayrolls: [] })),
         supportService.getTicketsNoPaging().catch(() => ({ dataTickets: [] })),
         leaveService.getLeavesNoPaging().catch(() => ({ dataLeaves: [] })),
+        budgetServiceFE.getRealtimeStats().catch(() => ({ success: false, data: null })),
       ]);
 
       const employees = employeeRes?.dataEmp || [];
@@ -62,15 +64,18 @@ export default function DashboardPage() {
       const payrolls = payrollRes?.dataPayrolls || [];
       const tickets = ticketsRes?.dataTickets || [];
 
-      const totalNetSalary = payrolls.reduce((acc, curr) => acc + (curr.netSalary || 0), 0);
+      const allocatedBudget = budgetRes?.success && budgetRes?.data?.totalPayroll 
+        ? budgetRes.data.totalPayroll 
+        : payrolls.reduce((acc, curr) => acc + (curr.netSalary || 0), 0);
+
+      console.log("here", allocatedBudget)
 
       const urgentTickets = tickets.filter(t => t.status === 'Mở').length;
-
       const activeCands = candidates.filter(c => c.stage !== 'rejected' && c.stage !== 'offered').length;
 
       setStats({
         totalEmployees: employees.length,
-        totalPayroll: totalNetSalary,
+        totalPayroll: allocatedBudget,
         pendingTickets: urgentTickets,
         activeCandidates: activeCands,
       });
@@ -96,7 +101,7 @@ export default function DashboardPage() {
         { month: 'Tháng 5', salary: 2.3 },
         { month: 'Tháng 6', salary: 2.2 },
         { month: 'Tháng 7', salary: 2.4 },
-        { month: 'Tháng hiện tại', salary: totalNetSalary ? Number((totalNetSalary / 1e9).toFixed(2)) : 2.5 },
+        { month: 'Tháng hiện tại', salary: allocatedBudget ? Number((allocatedBudget / 1e9).toFixed(2)) : 2.5 },
       ]);
 
     } catch (error) {
