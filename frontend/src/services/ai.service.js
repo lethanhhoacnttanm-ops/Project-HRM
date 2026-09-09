@@ -10,4 +10,7 @@ export const aiService = {
       throw error;
     }
   },
+  async assist(payload) {
+    return await axiosClient.post('/ai/assist', payload);
+  },
 };

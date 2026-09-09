@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import reportService from './report.service.js';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY_KIET);
 
 class AiService {
   async callLLM(prompt) {
-    if (!process.env.GEMINI_API_KEY) {
-      throw new Error('Thiếu GEMINI_API_KEY trong .env');
+    if (!process.env.GEMINI_API_KEY_KIET) {
+      throw new Error('Thiếu GEMINI_API_KEY_KIET trong .env');
     }
 
     const modelName = process.env.AI_MODEL || 'gemini-2.5-flash';

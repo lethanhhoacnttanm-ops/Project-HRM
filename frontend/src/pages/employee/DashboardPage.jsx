@@ -16,8 +16,8 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
-import { reportService } from '@/services/reportService';
-import { aiService } from '@/services/aiService';
+import { reportService } from '@/services/report.service.js';
+import { aiService } from '@/services/ai.service.js';
 
 const formatCurrency = (value) => {
   if (value == null) return '—';
