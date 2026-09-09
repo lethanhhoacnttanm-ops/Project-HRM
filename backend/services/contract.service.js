@@ -78,6 +78,63 @@ class ContractsService {
     const count = await contractRepository.countContracts();
     return { total: count };
   }
+
+  async getContractTypeStatistics() {
+    const contracts = await ContractModel.find();
+
+    const stats = {
+      fulltime: 0,
+      parttime: 0,
+      probation: 0,
+      other: 0
+    };
+
+    contracts.forEach(c => {
+      if (c.type === 'Fulltime') {
+        stats.fulltime++;
+      } else if (c.type === 'Parttime') {
+        stats.parttime++;
+      } else if (c.type === 'Probation') {
+        stats.probation++;
+      } else {
+        stats.other++;
+      }
+    });
+
+    return {
+      totalContracts: contracts.length,
+      breakdown: {
+        fulltime: stats.fulltime,
+        parttime: stats.parttime,
+        probation: stats.probation,
+        other: stats.other
+      }
+    };
+  }
+
+  async getPendingContractsForNewEmployees() {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const startOfMonth = new Date(currentYear, currentMonth, 1);
+    const endOfMonth = new Date(currentYear, currentMonth + 1, 0, 23, 59, 59);
+
+    const newEmployees = await EmployeeModel.find({
+      createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+    });
+
+    const allContracts = await ContractModel.find();
+    const employeeIdsWithContract = new Set(allContracts.map(c => c.employeeId?.toString()));
+
+    const pendingList = newEmployees.filter(emp => !employeeIdsWithContract.has(emp._id.toString()));
+
+    return {
+      newEmployeesThisMonthCount: newEmployees.length,
+      pendingCount: pendingList.length,
+      pendingEmployees: pendingList
+    };
+  }
 }
 
 export default new ContractsService();
