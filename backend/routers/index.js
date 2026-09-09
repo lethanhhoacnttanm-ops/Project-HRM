@@ -20,6 +20,7 @@ import shiftsRouter from './shift.route.js'
 import internalJobRouter from './internalJob.route.js';
 import reportRouter from './report.route.js';
 import securityRouter from './security.route.js';
+import aiRouter from './ai.route.js';
 
 const mainRouter = express.Router();
 
@@ -44,6 +45,7 @@ mainRouter.use('/shifts', shiftsRouter)
 mainRouter.use('/internal-jobs', internalJobRouter);
 mainRouter.use('/reports', reportRouter);
 mainRouter.use('/security', securityRouter);
+mainRouter.use('/ai', aiRouter);
 
 export default mainRouter;
 

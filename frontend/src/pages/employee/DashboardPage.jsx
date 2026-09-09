@@ -12,10 +12,12 @@ import {
   Bell,
   Headphones,
   ArrowRight,
+  Sparkles,
 } from 'lucide-react';
 
 import { useAuth } from '@/hooks/useAuth';
-import { reportService } from '@/services/report.service.js';
+import { reportService } from '@/services/reportService';
+import { aiService } from '@/services/aiService';
 
 const formatCurrency = (value) => {
   if (value == null) return '—';
@@ -76,6 +78,9 @@ const DashboardPage = () => {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [aiSummary, setAiSummary] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
     const now = new Date();
@@ -86,10 +91,12 @@ const DashboardPage = () => {
           month: now.getMonth() + 1,
           year: now.getFullYear(),
         });
-        if (!cancelled) setReport(res.data || null);
+        if (!cancelled) {
+          // axios interceptor thường đã trả response.data
+          setReport(res.data || res || null);
+        }
       } catch (error) {
         if (!cancelled) {
-          // Dashboard vẫn hiện được dù report lỗi
           console.error(error);
         }
       } finally {
@@ -101,6 +108,34 @@ const DashboardPage = () => {
       cancelled = true;
     };
   }, []);
+
+  const handleAiSummarize = async () => {
+    try {
+      setAiLoading(true);
+      setAiSummary('');
+      const now = new Date();
+
+      const res = await aiService.assist({
+        mode: 'summarize',
+        month: now.getMonth() + 1,
+        year: now.getFullYear(),
+      });
+
+      // res = { success, data: { answer, mode, period } }
+      const answer = res?.data?.answer || res?.answer || '';
+      setAiSummary(answer);
+
+      if (!answer) {
+        toast.error('AI không trả về nội dung tóm tắt');
+      }
+    } catch (error) {
+      toast.error('Không thể tóm tắt bằng AI', {
+        description: error.customMessage || error.message,
+      });
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const att = report?.attendance;
   const leave = report?.leave;
@@ -124,6 +159,48 @@ const DashboardPage = () => {
           {(user?.code || report?.employee?.code) &&
             ` · ${user?.code || report?.employee?.code}`}
         </p>
+      </div>
+
+      {/* AI Summary */}
+      <div className="rounded-xl border bg-white p-5 shadow-sm space-y-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-2">
+            <div className="rounded-lg bg-violet-50 p-2 text-violet-600">
+              <Sparkles className="size-5" />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">Tóm tắt bằng AI</p>
+              <p className="text-xs text-muted-foreground">
+                Tổng hợp nhanh chấm công, lương, phép, đánh giá tháng này
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAiSummarize}
+            disabled={aiLoading}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
+          >
+            {aiLoading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                Đang tóm tắt...
+              </>
+            ) : (
+              <>
+                <Sparkles className="size-4" />
+                Tóm tắt bằng AI
+              </>
+            )}
+          </button>
+        </div>
+
+        {aiSummary && (
+          <div className="rounded-lg border border-violet-100 bg-violet-50/50 p-4 text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
+            {aiSummary}
+          </div>
+        )}
       </div>
 
       {/* Stats */}
