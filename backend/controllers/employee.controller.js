@@ -19,6 +19,46 @@ class EmployeesController {
     }
   }
 
+  async disableEmployee(req, res) {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body;
+
+      const result = await employeeService.disableEmployeeService(id, reason);
+
+      return res.status(200).json({
+        success: true,
+        message: "Vô hiệu hóa tài khoản thành công!",
+        data: result,
+      });
+    } catch (error) {
+      console.error("Lỗi controller disableEmployee:", error);
+      return res.status(400).json({
+        success: false,
+        message: error.message || "Không thể vô hiệu hóa tài khoản",
+      });
+    }
+  }
+
+  async enableEmployee(req, res) {
+    try {
+      const { id } = req.params;
+      const result = await employeeService.enableEmployeeService(id);
+
+      return res.status(200).json({
+        success: true,
+        message: "Đã mở khóa tài khoản thành công!",
+        data: result,
+      });
+    } catch (error) {
+      console.error("Lỗi controller enableEmployee:", error);
+      return res.status(400).json({
+        success: false,
+        message: error.message || "Không thể mở khóa tài khoản",
+      });
+    }
+  }
+
   async getAllEmployees(req, res) {
     try {
       const { page, limit, role, status } = req.query;

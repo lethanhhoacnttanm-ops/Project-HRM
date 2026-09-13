@@ -15,6 +15,8 @@ import { seedAdminAccount } from './seeds/admin.seed.js';
 
 import { seedBudgets } from './seeds/budget.seed.js';
 
+import initAttendanceCron from './utils/attendanceCron.js';
+
 const app = express();
 
 app.use(helmet());
@@ -60,6 +62,7 @@ const startServer = async () => {
 
     await seedAdminAccount();
     await seedBudgets();
+    initAttendanceCron();
 
     app.listen(ENV.PORT, () => {
       console.log(`🚀 Server đang chạy tại: http://localhost:${ENV.PORT}`);

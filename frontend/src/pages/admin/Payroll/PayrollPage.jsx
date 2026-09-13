@@ -22,6 +22,7 @@ export default function PayrollPage() {
 
   const [contracts, setContracts] = useState([]);
   const [payrollList, setPayrollList] = useState([]);
+  const [allYearPayrolls, setAllYearPayrolls] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const [payrollStats, setPayrollStats] = useState({
@@ -34,7 +35,10 @@ export default function PayrollPage() {
   const openModal = (mode, data) => setModalState({ isOpen: true, mode, data });
   const closeModal = () => setModalState({ isOpen: false, mode: "lock" });
 
-  const currentMonthYear = "08-2026";
+  const [selectedMonth, setSelectedMonth] = useState("08-2026");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const [selectedPayroll, setSelectedPayroll] = useState(null);
 
@@ -98,7 +102,7 @@ export default function PayrollPage() {
   const fetchPayrollData = async () => {
     try {
       setLoading(true);
-      const res = await payrollService.getPayrollsApi(currentMonthYear);
+      const res = await payrollService.getPayrollsApi(selectedMonth);
       setPayrollList(res.data || []);
     } catch (error) {
       console.error("Lỗi lấy danh sách lương:", error);
@@ -110,7 +114,20 @@ export default function PayrollPage() {
 
   useEffect(() => {
     fetchPayrollData();
-  }, [currentMonthYear]);
+  }, [selectedMonth]);
+
+  const fetchAllYearData = async () => {
+    try {
+      const res = await payrollService.getPayrollsNoPaging();
+      setAllYearPayrolls(res.dataPayrolls || []);
+    } catch (error) {
+      console.error("Lỗi lấy tất cả phiếu lương:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllYearData(); 
+  }, []);
 
   const handleSavePayroll = async (payload, payrollId) => {
     try {
@@ -150,18 +167,33 @@ export default function PayrollPage() {
   const handleLockMonth = async (monthYear) => {
     try {
       setLoading(true);
-      await payrollService.lockMonthApi(monthYear);
+
+      const response = await payrollService.lockMonthApi(monthYear);
 
       toast.success(`Đã khóa thành công bảng lương Tháng ${monthYear}!`);
-      closeModal()
+      closeModal();
       fetchPayrollData();
     } catch (error) {
-      console.error("Lỗi khóa bảng lương:", error);
+      console.error("[Client Error] Bắt lỗi khi chốt lương:", error);
+      console.error("[Client Error Detail] Response data:", error.response?.data);
+
       toast.error(error.response?.data?.message || "Không thể khóa bảng lương kỳ này!");
     } finally {
       setLoading(false);
     }
   };
+
+  const filteredData = payrollList.filter((item) => {
+    const fullName = item.employee?.fullName?.toLowerCase() || "";
+    const code = item.employee?.code?.toLowerCase() || "";
+    const term = searchTerm.toLowerCase();
+
+    const matchesSearch = fullName.includes(term) || code.includes(term);
+    const matchesStatus = selectedStatus === "all" || item.status === selectedStatus;
+    const matchesMonth = item.monthYear === selectedMonth;
+
+    return matchesSearch && matchesStatus && matchesMonth;
+  });
 
   return (
     <div className="p-6 space-y-6 bg-slate-50/50 dark:bg-slate-950 min-h-screen">
@@ -195,16 +227,15 @@ export default function PayrollPage() {
           </Button>
         </div>
       </div>
-
-      <PayrollStats statsData={payrollStats}/>
+      <PayrollStats statsData={payrollStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-white dark:bg-slate-900 p-6 space-y-6">
             <PayrollTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-            {activeTab === "monthly" && <MonthlyPayrollView onOpenModal={openModal} payrollData={payrollList} onToggleLock={handleToggleLock} />}
+            {activeTab === "monthly" && <MonthlyPayrollView searchTerm={searchTerm} selectedStatus={selectedStatus} setSelectedStatus={setSelectedStatus} setSearchTerm={setSearchTerm} onOpenModal={openModal} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} filteredData={filteredData} onToggleLock={handleToggleLock} />}
             {activeTab === "bonus" && <BonusCommissionView />}
-            {activeTab === "structure" && <SalaryStructureView />}
+            {activeTab === "structure" && <SalaryStructureView filteredData={filteredData} selectedMonth={selectedMonth} fullPayrollData={allYearPayrolls} />}
           </div>
 
           <CostOptimizationCard />
@@ -224,7 +255,7 @@ export default function PayrollPage() {
         onSubmit={handleSavePayroll}
         onConfirm={handleLockMonth}
         loading={loading}
-        monthYear={currentMonthYear}
+        monthYear={selectedMonth}
 
         dataAdjust={modalState.data}
       />

@@ -13,6 +13,8 @@ const LoginPage = () => {
 
   const [isFocused, setIsFocused] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const emailValue = Form.useWatch('email', form) || '';
   const passwordValue = Form.useWatch('password', form) || '';
 
@@ -39,6 +41,7 @@ const LoginPage = () => {
 
   const onFinish = async (values) => {
     try {
+      setErrorMessage("");
       const res = await handleLogin(values);
 
       const userRole = res?.data?.role;
@@ -59,11 +62,13 @@ const LoginPage = () => {
       }, 800);
 
     } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message || 'Đăng nhập thất bại!';
+      setErrorMessage(errorMsg);
       notification.error({
         title: 'Đăng nhập thất bại!',
-        description: error.message,
+        description: errorMsg,
         placement: 'topRight',
-        duration: 3,
+        duration: 4,
       });
     }
   };
@@ -87,6 +92,13 @@ const LoginPage = () => {
           className="[&_.ant-form-item]:mb-4"
           disabled={loading}
         >
+
+          {errorMessage && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 font-medium flex items-center gap-2 animate-shake">
+              <span>{errorMessage}</span>
+            </div>
+          )}
+
           <Form.Item
             name="email"
             label="Email"

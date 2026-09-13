@@ -150,7 +150,7 @@ export default function AttendancePage() {
       <div className="rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm bg-white dark:bg-slate-900 p-6 space-y-6">
         <AttendanceTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {activeTab === "daily" && <DailyAttendanceView dataAttendance={dataAttendance} pagination={attendancePagination} pageSize={4} pageNumber={attendancePage} setPageNumber={setAttendancePage} />}
+        {activeTab === "daily" && <DailyAttendanceView onOpenModal={openModal} dataAttendance={dataAttendance} pagination={attendancePagination} pageSize={4} pageNumber={attendancePage} setPageNumber={setAttendancePage} />}
         {activeTab === "shifts" && (
           <ShiftManagementView onOpenModal={() => openModal("create_shift")} dataShift={dataShift} pagination={shiftPagination} pageSize={4} pageNumber={pageNumber} setPageNumber={setPageNumber} />
         )}
@@ -161,6 +161,7 @@ export default function AttendancePage() {
         isOpen={modalState.isOpen}
         onClose={closeModal}
         mode={modalState.mode}
+        data={modalState.data}
         onSubmit={handleCreateShiftSubmit}
       />
     </div>

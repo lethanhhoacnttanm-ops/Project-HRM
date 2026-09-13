@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Download, Plus, CalendarDays } from "lucide-react";
 import LeaveStats from "../../../components/admin/LeaveManagement/LeaveStats.jsx";
 import LeaveFilter from "../../../components/admin/LeaveManagement/LeaveFilter.jsx";
@@ -14,7 +14,9 @@ import { leaveService } from "@/services/leave.service.js";
 
 export default function LeavePage() {
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
+  const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [modalState, setModalState] = useState({ isOpen: false, mode: "create" });
 
@@ -59,6 +61,36 @@ export default function LeavePage() {
   useEffect(() => {
     fetchLeaves();
   }, [pageNumber, fetchLeaves]);
+
+  const datafilterLeave = useMemo(() => {
+    if (!dataLeave) return [];
+
+    return dataLeave.filter((item) => {
+      const fullName = item.employee?.fullName?.toLowerCase() || "";
+      const email = item.employee?.email?.toLowerCase() || "";
+      const department = item.employee?.department?.name?.toLowerCase() || "";
+      const searchLower = searchTerm.toLowerCase();
+
+      const matchesSearch =
+        fullName.includes(searchLower) ||
+        email.includes(searchLower) ||
+        department.includes(searchLower);
+
+      const matchesType =
+        selectedType === "all" || item.leaveType === selectedType;
+
+      let matchesDate = true;
+      if (selectedDate && item.createdAt) {
+        const itemDate = new Date(item.createdAt);
+        matchesDate =
+          itemDate.getDate() === selectedDate.getDate() &&
+          itemDate.getMonth() === selectedDate.getMonth() &&
+          itemDate.getFullYear() === selectedDate.getFullYear();
+      }
+
+      return matchesSearch && matchesType && matchesDate;
+    });
+  }, [dataLeave, searchTerm, selectedType, selectedDate]);
 
   useEffect(() => {
     const fetchLeavesForStats = async () => {
@@ -159,18 +191,20 @@ export default function LeavePage() {
         </div>
       </div>
 
-      <LeaveStats statsData={leaveStats}/>
+      <LeaveStats statsData={leaveStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div className="lg:col-span-9 space-y-6">
           <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white">
             <LeaveFilter
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
               selectedType={selectedType}
               setSelectedType={setSelectedType}
-              selectedDepartment={selectedDepartment}
-              setSelectedDepartment={setSelectedDepartment}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
             />
-            <LeaveTable dataLeave={dataLeave} pageNumber={pageNumber} pageSize={4} pagination={leavePagination} setPageNumber={setPageNumber} onOpenModal={openModal} />
+            <LeaveTable dataLeave={datafilterLeave} pageNumber={pageNumber} pageSize={4} pagination={leavePagination} setPageNumber={setPageNumber} onOpenModal={openModal} />
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { MoreVertical, User, Edit, ExternalLink, ArrowBigRight, ArrowBigLeft } from "lucide-react";
+import { MoreVertical, User, Edit, ExternalLink, ArrowBigRight, ArrowBigLeft, CircleMinus, CheckCircle } from "lucide-react";
 
 const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagination, pageSize }) => {
 
@@ -100,14 +100,24 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
 
         <TableBody className="divide-y divide-gray-100 dark:divide-gray-800 text-xs">
           {employees.map((emp) => {
+            const isDisabled = emp.status === 'disabled';
             return (
-              <TableRow key={emp._id} className="hover:bg-gray-50/80 dark:hover:bg-gray-800/50 transition-colors border-gray-100 dark:border-gray-800">
+              <TableRow
+                key={emp._id}
+                className={`transition-colors border-gray-100 dark:border-gray-800 ${isDisabled
+                    ? 'bg-red-50/50 dark:bg-red-950/20 hover:bg-red-50/80 dark:hover:bg-red-900/30 opacity-85'
+                    : 'hover:bg-gray-50/80 dark:hover:bg-gray-800/50'
+                  }`}
+              >
                 <TableCell className="flex items-center gap-3 cursor-pointer group py-3.5 px-4">
-                  <div className="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:border-blue-500 transition-colors">
+                  <div className={`w-9 h-9 rounded-full border flex items-center justify-center transition-colors ${isDisabled
+                      ? 'bg-red-100 dark:bg-red-900/40 border-red-200 dark:border-red-800 text-red-500'
+                      : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 group-hover:border-blue-500'
+                    }`}>
                     <User className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors dark:text-white">
+                    <div className={`font-bold transition-colors ${isDisabled ? 'text-red-700 dark:text-red-400 line-through' : 'text-gray-800 group-hover:text-blue-600 dark:text-white'}`}>
                       {emp.fullName}
                     </div>
                     <div className="text-xs text-gray-400 dark:text-gray-500">{emp.email}</div>
@@ -134,7 +144,7 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
 
                   return (
                     <TableCell className="py-3.5 px-4">
-                      <span className={`inline-block text-xs font-semibold px-3 py-1  border shadow-sm ${badgeStyle}`}>
+                      <span className={`inline-block text-xs font-semibold px-3 py-1 border shadow-sm ${badgeStyle}`}>
                         {currentLevel}
                       </span>
                     </TableCell>
@@ -146,6 +156,11 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       Hoạt động
+                    </span>
+                  ) : emp.status === 'disabled' ? (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 dark:text-red-400">
+                      <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                      Vô hiệu hóa
                     </span>
                   ) : (
                     <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500">
@@ -162,31 +177,51 @@ const EmployeeTable = ({ employees, onOpenModal, pageNumber, setPageNumber, pagi
                     </DropdownMenuTrigger>
 
                     <DropdownMenuContent align="end" className="w-52 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg p-1">
-                      <DropdownMenuItem
-                        onClick={() => onOpenModal('view', emp)}
-                        className="cursor-pointer gap-2 dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
-                      >
-                        <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-                        Xem chi tiết
-                      </DropdownMenuItem>
+                      {isDisabled ? (
+                        <DropdownMenuItem
+                          onClick={() => onOpenModal('enable', emp)}
+                          className="cursor-pointer gap-2 text-emerald-600 dark:text-emerald-400 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 font-medium"
+                        >
+                          <CheckCircle className="h-4 w-4 text-emerald-500" />
+                          Mở vô hiệu hóa
+                        </DropdownMenuItem>
+                      ) : (
+                        <>
+                          <DropdownMenuItem
+                            onClick={() => onOpenModal('view', emp)}
+                            className="cursor-pointer gap-2 dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
+                          >
+                            <User className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                            Xem chi tiết
+                          </DropdownMenuItem>
 
-                      <DropdownMenuItem
-                        onClick={() => navigate(`/admin-page/employees/${emp.id}`)}
-                        className="cursor-pointer gap-2 text-slate-700 dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
-                      >
-                        <ExternalLink className="h-4 w-4 text-slate-500 dark:text-gray-400" />
-                        Đến trang hồ sơ đầy đủ
-                      </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => navigate(`/admin-page/employees/${emp.id}`)}
+                            className="cursor-pointer gap-2 text-slate-700 dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
+                          >
+                            <ExternalLink className="h-4 w-4 text-slate-500 dark:text-gray-400" />
+                            Đến trang hồ sơ đầy đủ
+                          </DropdownMenuItem>
 
-                      <DropdownMenuSeparator className="dark:bg-gray-800 my-1" />
+                          <DropdownMenuItem
+                            onClick={() => onOpenModal('edit', emp)}
+                            className="cursor-pointer gap-2 dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
+                          >
+                            <Edit className="h-4 w-4 text-slate-500 dark:text-gray-400" />
+                            Chỉnh sửa thông tin
+                          </DropdownMenuItem>
 
-                      <DropdownMenuItem
-                        onClick={() => onOpenModal('edit', emp)}
-                        className="cursor-pointer gap-2 dark:text-gray-200 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
-                      >
-                        <Edit className="h-4 w-4 text-blue-500" />
-                        Chỉnh sửa thông tin
-                      </DropdownMenuItem>
+                          <DropdownMenuSeparator className="dark:bg-gray-800 my-1" />
+
+                          <DropdownMenuItem
+                            onClick={() => onOpenModal('disable', emp)}
+                            className="cursor-pointer gap-2 text-red-500 dark:text-red-500 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5"
+                          >
+                            <CircleMinus className="h-4 w-4 text-red-500" />
+                            Vô hiệu hóa tài khoản
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

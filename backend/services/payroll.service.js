@@ -1,5 +1,7 @@
 import payrollRepository from '../repositories/payroll.repository.js';
 import ContractModel from '../models/Contract.js';
+import budgetService from './budget.service.js';
+import PayrollModel from '../models/Payroll.js';
 const calculateNetSalary = (baseSalary, allowance, bonus, deductions) => {
   const net = Number(baseSalary || 0) + Number(allowance || 0) + Number(bonus || 0) - Number(deductions || 0);
   return net > 0 ? net : 0;
@@ -36,38 +38,8 @@ class PayrollService {
     return payroll;
   }
 
-  async getOrInitPayrollsByMonth(monthYear) {
-    let payrolls = await payrollRepository.findByMonthYear(monthYear);
-
-    if (payrolls.length === 0) {
-      const activeContracts = await ContractModel.find({ status: 'active' }).populate('employee');
-
-      const initPromises = activeContracts.map(async (contract) => {
-        const baseSalary = contract.salary || 0;
-        const allowance = 0;
-        const bonus = 0;
-        const deductions = 0;
-        const netSalary = calculateNetSalary(baseSalary, allowance, bonus, deductions);
-
-        return await payrollRepository.create({
-          employee: contract.employee._id,
-          contract: contract._id,
-          monthYear,
-          baseSalary,
-          allowance,
-          bonus,
-          deductions,
-          netSalary,
-          status: 'Đang xử lý',
-          isLocked: false,
-        });
-      });
-
-      await Promise.all(initPromises);
-      payrolls = await payrollRepository.findByMonthYear(monthYear);
-    }
-
-    return payrolls;
+  async getPayrollsByMonth(monthYear) {
+    return await payrollRepository.findByMonthYear(monthYear);
   }
 
   async createPayroll(data) {
@@ -134,12 +106,22 @@ class PayrollService {
       throw new Error(`Không tìm thấy dữ liệu phiếu lương của tháng ${monthYear} để chốt!`);
     }
 
-    return await payrollRepository.updateManyByMonthYear(monthYear, {
-      isLocked: true,
-      status: "Đã chốt",
-      lockedAt: new Date(),
-      lockedBy: adminId,
-    });
+    const alreadyLocked = payrolls.every(p => p.isLocked === true && p.status === "Đã chốt");
+    if (alreadyLocked) {
+      throw new Error(`Bảng lương tháng ${monthYear} đã được chốt từ trước đó rồi!`);
+    }
+
+    return await PayrollModel.updateMany(
+      { monthYear: monthYear },
+      {
+        $set: {
+          isLocked: true,
+          status: "Đã chốt",
+          lockedAt: new Date(),
+          lockedBy: adminId
+        }
+      }
+    );
   }
 }
 

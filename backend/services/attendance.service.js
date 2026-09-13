@@ -49,7 +49,7 @@ class AttendanceService {
 
 
   async checkInEmployee(employeeId, bodyData) {
-    const shiftId = bodyData.shift; 
+    const shiftId = bodyData.shift;
     const { checkIn, date } = bodyData;
 
     if (!shiftId) {
@@ -83,16 +83,16 @@ class AttendanceService {
     return result;
   }
 
-  async getAllAttendance({ page, limit }) {
+  async getAllAttendance({ page, limit, date }) {
     const pageNumber = Math.max(1, parseInt(page, 10) || 1);
     const pageSize = Math.max(1, parseInt(limit, 10) || 8);
     const skip = (pageNumber - 1) * pageSize;
 
     const { totalAttendance, dataAttendance } = await attendanceRepository.FindWithPagination({
       skip,
-      limit: pageSize
+      limit: pageSize,
+      date
     });
-
 
     if (totalAttendance === undefined || dataAttendance === undefined) {
       throw new Error("Lỗi trường hợp lệ trong phân trang");
@@ -122,7 +122,7 @@ class AttendanceService {
     return hours * 60 + minutes;
   };
 
-  async processCheckInService (payload) {
+  async processCheckInService(payload) {
     const { employeeId, shiftId, checkIn, checkOut, date } = payload;
 
     const shift = await shiftRepository.findById(shiftId);

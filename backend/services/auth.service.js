@@ -12,6 +12,11 @@ class AuthService {
       throw new Error('Email hoặc mật khẩu không chính xác!');
     }
 
+    if (employee.status === 'disabled') {
+      const reasonText = employee.deactivationReason || 'Vi phạm quy định công ty';
+      throw new Error(`Tài khoản của bạn đã bị vô hiệu hóa. Lý do: ${reasonText}`);
+    }
+
     if (employee.status !== 'active') {
       throw new Error('Tài khoản của bạn đã bị khóa hoặc ngừng hoạt động!');
     }

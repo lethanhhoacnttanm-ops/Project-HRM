@@ -45,6 +45,9 @@ class PayrollController {
       const { monthYear } = req.body;
       const adminId = req.user?._id;
 
+      console.log("🟢 [API Call] Nhận yêu cầu chốt lương cho tháng:", monthYear);
+      console.log("👤 [API Call] Admin thực hiện ID:", adminId);
+
       if (!monthYear) {
         return res.status(400).json({ success: false, message: "Thiếu thông tin kỳ lương (monthYear)!" });
       }
@@ -57,6 +60,7 @@ class PayrollController {
         data: result,
       });
     } catch (error) {
+      console.error("🔴 [API Error] Lỗi chi tiết khi khóa bảng lương:", error);
       return res.status(400).json({
         success: false,
         message: error.message || "Lỗi khi khóa bảng lương kỳ này",
@@ -105,7 +109,7 @@ class PayrollController {
         return res.status(400).json({ success: false, message: "Thiếu thông tin kỳ lương (monthYear)!" });
       }
 
-      const result = await payrollService.getOrInitPayrollsByMonth(monthYear);
+      const result = await payrollService.getPayrollsByMonth(monthYear);
       return res.status(200).json({ success: true, data: result });
     } catch (error) {
       console.error("Lỗi lấy bảng lương:", error);

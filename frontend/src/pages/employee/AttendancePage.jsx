@@ -64,24 +64,19 @@ const AttendancePage = () => {
     return { total, onTime, late, absent, earlyLeave };
   }, [records]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const res = await attendanceService.getMyAttendance({ month, year });
-        setRecords(res.data || []);
-      } catch (error) {
-        toast.error('Không thể tải chấm công', {
-          description: error.customMessage || error.message,
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [month, year]);
-
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const res = await attendanceService.getMyAttendance({ month, year });
+      setRecords(res.data || []);
+    } catch (error) {
+      toast.error('Không thể tải chấm công', {
+        description: error.customMessage || error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const checkTodayStatus = async () => {
     try {
@@ -93,7 +88,6 @@ const AttendancePage = () => {
           setAttendanceStatus('CHECKOUT');
           setActiveRecord(res.data);
         } else {
-
           setAttendanceStatus('COMPLETED');
         }
       }
@@ -105,7 +99,8 @@ const AttendancePage = () => {
 
   useEffect(() => {
     checkTodayStatus();
-  }, []);
+    fetchData();
+  }, [month, year]);
 
   if (attendanceStatus === 'LOADING') {
     return <div className="text-center py-10 text-xs text-slate-400">Đang đồng bộ trạng thái chấm công...</div>;
@@ -237,22 +232,25 @@ const AttendancePage = () => {
       </div>
 
       <div className="max-w-md mx-auto">
-        {/* 1. Nếu chưa check-in -> Hiện form Check-in */}
         {attendanceStatus === 'CHECKIN' && (
           <EmployeeCheckInForm
-            onSuccess={() => checkTodayStatus()} // Sau khi check-in xong sẽ tự chuyển trạng thái qua Check-out
+            onSuccess={async () => {
+              await checkTodayStatus();
+              await fetchData(); 
+            }} 
           />
         )}
 
-        {/* 2. Nếu đã check-in rồi -> Form check-in biến mất, hiện form Check-out */}
         {attendanceStatus === 'CHECKOUT' && (
           <EmployeeCheckOutForm
             activeRecord={activeRecord}
-            onSuccess={() => checkTodayStatus()} // Sau khi checkout xong sẽ đổi giao diện thành hoàn tất
+            onSuccess={async () => {
+              await checkTodayStatus();
+              await fetchData();
+            }} 
           />
         )}
 
-        {/* 3. Nếu đã hoàn thành cả ngày */}
         {attendanceStatus === 'COMPLETED' && (
           <div className="bg-white rounded-2xl border border-emerald-100 shadow-sm p-6 text-center space-y-3">
             <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">

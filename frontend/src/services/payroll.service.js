@@ -31,7 +31,6 @@ export const payrollService = {
   },
 
   lockMonthApi: async (monthYear) => {
-    const response = await api.put(`/payrolls/lock-month`, { monthYear });
-    return response.data;
+    return await axiosClient.put(`/payrolls/lock-month`, { monthYear });
   }
 };

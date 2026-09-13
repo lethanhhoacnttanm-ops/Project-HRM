@@ -7,7 +7,7 @@ import PerformanceTable from "../../../components/admin/Performance/PerformanceT
 import RecentActivityWidget from "../../../components/admin/Performance/RecentActivityWidget.jsx";
 import DistributionWidget from "../../../components/admin/Performance/DistributionWidget.jsx";
 import TopEmployeesWidget from "../../../components/admin/Performance/TopEmployeesWidget.jsx";
-import PerformanceModal from "../../../components/admin/Performance/PerformanceModal.jsx";
+import PerformanceModal from "@/components/admin/Performance/PerformanceModal.jsx";
 import TeamPerformanceTable from "@/components/admin/Performance/TeamPerformanceTable.jsx";
 import PersonalKPIGuidelineTab from "@/components/admin/Performance/PersonalKPIGuidelineTab.jsx";
 import { Button } from "@/components/ui/button";
@@ -164,16 +164,25 @@ export default function PerformancePage() {
   //   }
   // };
 
-  const handleFinish = async (values) => {
+  const handleFinish = async (id, values) => {
     try {
       setLoading(true);
-      await performanceService.createCycleApi(values.quarter);
+      if (modalState.mode === "edit") {
+        await performanceService.updatePerformance(id, values);
+        toast.success("Cập nhật điểm đánh giá thành công!");
+      } else if (modalState.mode === "create") {
+        await performanceService.createCycleApi(values.quarter);
+        toast.success(`Đã mở thành công chu kỳ ${values.quarter} cho toàn công ty!`);
+      } else if (modalState.mode === "approved") {
+        await performanceService.approvePerformance(id, values);
+        toast.success("Đã duyệt phiếu đánh giá!");
+      }
 
-      toast.success(`Đã mở thành công chu kỳ ${values.quarter} cho toàn công ty!`);
       closeModal()
       fetchPerformancesList();
+
     } catch (error) {
-      toast.error(error.response?.data?.message || "Lỗi khi tạo chu kỳ mới!");
+      toast.error(error.message || "Có lỗi xảy ra!");
     } finally {
       setLoading(false);
     }
@@ -205,7 +214,7 @@ export default function PerformancePage() {
         </Button>
       </div>
 
-      <PerformanceStats statsData={performanceStats}/>
+      <PerformanceStats statsData={performanceStats} />
 
       <div className="space-y-6">
         <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6 w-full">
@@ -221,6 +230,7 @@ export default function PerformancePage() {
               pageSize={4}
               setPageNumber={setPerformanceNumber}
               pagination={performancePagination}
+              onOpenModal={openModal}
             />
           )}
           {activeTab === "team" && <TeamPerformanceTable data={teamData} onViewDetail={handleViewDetail} />}
@@ -242,6 +252,7 @@ export default function PerformancePage() {
           isOpen={modalState.isOpen}
           onClose={closeModal}
           mode={modalState.mode}
+          data={modalState.data}
           dataListEmp={dataAllListEmp}
           onSubmit={handleFinish}
         />

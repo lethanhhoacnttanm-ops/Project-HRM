@@ -35,17 +35,22 @@ export default function AttendanceFilter({
       return;
     }
 
-    const selectedDate = new Date(date);
+    const formatDateToLocalString = (d) => {
+      const dateObj = new Date(d);
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    const selectedDateStr = formatDateToLocalString(date);
 
     const result = dataAttendance.filter((record) => {
       if (!record.date) return false;
-      const recordDate = new Date(record.date);
 
-      return (
-        recordDate.getDate() === selectedDate.getDate() &&
-        recordDate.getMonth() === selectedDate.getMonth() &&
-        recordDate.getFullYear() === selectedDate.getFullYear()
-      );
+      const recordDateStr = formatDateToLocalString(record.date);
+
+      return recordDateStr === selectedDateStr;
     });
 
     if (onFilterChange) {
@@ -70,7 +75,7 @@ export default function AttendanceFilter({
               )}
             </span>
           </Button>
-        )}/>
+        )} />
 
         <PopoverContent className="w-auto p-0 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl" align="start">
           <Calendar

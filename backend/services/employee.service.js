@@ -20,9 +20,33 @@ class EmployeeService {
         });
     }
 
+    async disableEmployeeService(employeeId, reason) {
+        const employee = await employeeRepository.findById(employeeId);
+        if (!employee) {
+            throw new Error("Không tìm thấy thông tin nhân sự!");
+        }
+
+        return await employeeRepository.updateById(employeeId, {
+            status: 'disabled',
+            deactivationReason: reason || 'Vi phạm quy định công ty'
+        });
+    }
+
+    async enableEmployeeService(employeeId) {
+        const employee = await employeeRepository.findById(employeeId);
+        if (!employee) {
+            throw new Error("Không tìm thấy thông tin nhân sự!");
+        }
+
+        return await employeeRepository.updateById(employeeId, {
+            status: 'active',
+            deactivationReason: '' 
+        });
+    }
+
     async getEmployeesByDepartment(departmentName) {
         return await EmployeeModel.find({
-            department: { $regex: new RegExp(departmentName, 'i') } 
+            department: { $regex: new RegExp(departmentName, 'i') }
         });
     }
 

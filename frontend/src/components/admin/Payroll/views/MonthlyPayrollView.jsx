@@ -26,20 +26,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
-export default function MonthlyPayrollView({ payrollData = [], onOpenModal, onToggleLock }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("08-2026");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-
-  const filteredData = payrollData.filter((item) => {
-    const fullName = item.employee?.fullName?.toLowerCase() || "";
-    const code = item.employee?.code?.toLowerCase() || "";
-    const term = searchTerm.toLowerCase();
-
-    const matchesSearch = fullName.includes(term) || code.includes(term);
-    const matchesStatus = selectedStatus === "all" || item.status === selectedStatus;
-
-    return matchesSearch && matchesStatus;
+export default function MonthlyPayrollView({ payrollData = [], selectedStatus, searchTerm, setSelectedStatus, setSearchTerm, selectedMonth, setSelectedMonth, onOpenModal, onToggleLock, filteredData }) {
+ 
+  const monthsList = Array.from({ length: 12 }, (_, index) => { 
+    const monthNumber = String(index + 1).padStart(2, '0');
+    return `${monthNumber}-2026`;
   });
 
   return (
@@ -51,9 +42,15 @@ export default function MonthlyPayrollView({ payrollData = [], onOpenModal, onTo
               <CalendarIcon className="w-3.5 h-3.5 mr-1.5 text-slate-400" />
               <SelectValue placeholder="Chọn kỳ lương" />
             </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="08-2026" className="text-xs font-medium cursor-pointer">Tháng 08/2026</SelectItem>
-              <SelectItem value="07-2026" className="text-xs font-medium cursor-pointer">Tháng 07/2026</SelectItem>
+            <SelectContent className="rounded-xl max-h-60">
+              {monthsList.map((m) => {
+                const [month, year] = m.split('-');
+                return (
+                  <SelectItem key={m} value={m} className="text-xs font-medium cursor-pointer">
+                    Tháng {month}/{year}
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
         </div>

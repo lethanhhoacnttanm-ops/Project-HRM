@@ -1,6 +1,13 @@
 import axiosClient from "@/config/axios";
 
 export const performanceService = {
+  updatePerformance: async (id, data) => {
+    return await axiosClient.put(`/performances/${id}`, data);
+  },
+
+  approvePerformance: async (id, data) => {
+    return await axiosClient.put(`/performances/${id}/approve`, data);
+  },
   getMyEvaluations: async () => {
     return await axiosClient.get('/performances/me');
   },
