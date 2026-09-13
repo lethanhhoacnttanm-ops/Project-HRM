@@ -16,7 +16,9 @@ const EmployeeListPage = () => {
   const [employees, setEmployees] = useState([]);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const pageSize=4
+  const [loading, setLoading] = useState(false)
+
+  const pageSize = 4
 
   const [paginationInfo, setPaginationInfo] = useState({ totalEmp: 0, totalPage: 1 });
 
@@ -25,7 +27,7 @@ const EmployeeListPage = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [viewMode, setViewMode] = useState('table');
 
-  
+
   const [modalState, setModalState] = useState({ isOpen: false, mode: 'view', data: null });
 
   const fetchEmployees = useCallback(async () => {
@@ -135,6 +137,38 @@ const EmployeeListPage = () => {
     }
   };
 
+  const handleDisableEmployee = async (employeeId, reason) => {
+    try {
+      setLoading(true);
+      await employeeService.disableAccountApi(employeeId, reason);
+
+      toast.success("Đã vô hiệu hóa tài khoản thành công!");
+      handleCloseModal();
+      fetchEmployees();
+    } catch (error) {
+      console.error("Lỗi vô hiệu hóa tài khoản:", error);
+      toast.error(error.response?.data?.message || "Không thể vô hiệu hóa tài khoản này!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEnableEmployee = async (employeeId) => {
+    try {
+      setLoading(true);
+      await employeeService.enableAccountApi(employeeId);
+
+      toast.success("Đã mở khóa tài khoản thành công!");
+      handleCloseModal();
+      fetchEmployees();
+    } catch (error) {
+      console.error("Lỗi mở khóa tài khoản:", error);
+      toast.error(error.response?.data?.message || "Không thể mở khóa tài khoản này!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="p-6 space-y-6 bg-slate-50/50 min-h-screen">
@@ -188,6 +222,8 @@ const EmployeeListPage = () => {
 
         onSubmitCreate={handleCreateEmployee}
         onSubmit={handleUpdateEmployee}
+        onDisable={handleDisableEmployee}
+        onEnable={handleEnableEmployee}
       />
     </div>
   );

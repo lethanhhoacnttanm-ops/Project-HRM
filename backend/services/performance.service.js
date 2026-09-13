@@ -21,7 +21,10 @@ class PerformanceService {
   }
 
   async createCycleForEmployees(quarter, adminId) {
-    const employees = await EmployeeModel.find({ status: 'active' });
+    const employees = await EmployeeModel.find({ 
+      status: 'active', 
+      role: 'EMPLOYEE' 
+    });
 
     if (!employees || employees.length === 0) {
       throw new Error("Không tìm thấy nhân viên nào trong hệ thống để tạo chu kỳ!");
@@ -176,6 +179,29 @@ class PerformanceService {
 
     return result;
   };
+
+  async updatePerformance(id, updateData) {
+    const existing = await performanceRepository.findById(id);
+    if (!existing) {
+      throw new Error("Không tìm thấy phiếu đánh giá trong hệ thống!");
+    }
+
+    return await performanceRepository.updateById(id, updateData);
+  }
+
+  async approvePerformance(id, updateData) {
+    const existing = await performanceRepository.findById(id);
+    if (!existing) {
+      throw new Error("Không tìm thấy phiếu đánh giá trong hệ thống!");
+    }
+
+    const payload = {
+      ...updateData,
+      status: 'Approved', 
+    };
+
+    return await performanceRepository.updateById(id, payload);
+  }
 }
 
 export default new PerformanceService();

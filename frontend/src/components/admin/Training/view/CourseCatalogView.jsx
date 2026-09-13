@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,15 +12,25 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 
 export default function CourseCatalogView({ dataCourse, pagination, pageSize, pageNumber, setPageNumber }) {
 
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const handlePrevPage = () => {
     if (pageNumber > 1) {
-      setPageNumber(prev => prev - 1);
+      setIsAnimating(true);
+      setTimeout(() => {
+        setPageNumber(prev => prev - 1);
+        setIsAnimating(false);
+      }, 100);
     }
   };
 
   const handleNextPage = () => {
     if (pagination && pageNumber < pagination.totalPage) {
-      setPageNumber(prev => prev + 1);
+      setIsAnimating(true);
+      setTimeout(() => {
+        setPageNumber(prev => prev + 1);
+        setIsAnimating(false);
+      }, 100);
     }
   };
 
@@ -41,13 +51,12 @@ export default function CourseCatalogView({ dataCourse, pagination, pageSize, pa
           </div>
         </div>
 
-        
-          <div className="text-xs font-semibold text-slate-600 dark:text-gray-300 bg-slate-50 dark:bg-gray-800 px-4 py-2 rounded-xl border border-slate-100 dark:border-gray-700">
-            {console.log(pagination)}
-            Trang <span className="text-indigo-600 dark:text-indigo-400 font-bold">{pageNumber}</span> / <span className="font-bold">{pagination?.totalPage}</span>
-            <span className="text-slate-400 dark:text-gray-500 mx-2">|</span>
-            Tổng số: <span className="text-slate-900 dark:text-white font-bold">{pagination?.totalCourse}</span> khóa học
-          </div>
+
+        <div className="text-xs font-semibold text-slate-600 dark:text-gray-300 bg-slate-50 dark:bg-gray-800 px-4 py-2 rounded-xl border border-slate-100 dark:border-gray-700">
+          Trang <span className="text-indigo-600 dark:text-indigo-400 font-bold">{pageNumber}</span> / <span className="font-bold">{pagination?.totalPage}</span>
+          <span className="text-slate-400 dark:text-gray-500 mx-2">|</span>
+          Tổng số: <span className="text-slate-900 dark:text-white font-bold">{pagination?.totalCourse}</span> khóa học
+        </div>
       </div>
 
       <div className="relative px-2 sm:px-10">
@@ -56,10 +65,10 @@ export default function CourseCatalogView({ dataCourse, pagination, pageSize, pa
           size="icon"
           onClick={handlePrevPage}
           disabled={pageNumber <= 1}
-          className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-700 dark:text-gray-200 shadow-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:hover:bg-indigo-600 dark:hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          className="absolute -left-2 sm:-left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-700 dark:text-gray-200 shadow-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:hover:bg-indigo-600 dark:hover:text-white transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95 group"
           title="Trang trước"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5 transition-transform duration-200 group-hover:-translate-x-0.5" />
         </Button>
 
         <Button
@@ -67,14 +76,17 @@ export default function CourseCatalogView({ dataCourse, pagination, pageSize, pa
           size="icon"
           onClick={handleNextPage}
           disabled={!pagination || pageNumber >= pagination.totalPages}
-          className="absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-700 dark:text-gray-200 shadow-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:hover:bg-indigo-600 dark:hover:text-white transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+          className="absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white dark:bg-gray-800 border-slate-200 dark:border-gray-700 text-slate-700 dark:text-gray-200 shadow-lg hover:bg-indigo-600 hover:text-white hover:border-indigo-600 dark:hover:bg-indigo-600 dark:hover:text-white transition-all duration-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95 group"
           title="Trang tiếp theo"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5 transition-transform duration-200 group-hover:translate-x-0.5" />
         </Button>
 
         {dataCourse && dataCourse.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300">
+          <div
+            className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 transition-all duration-300 transform ${isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
+              }`}
+          >
             {dataCourse.map((course) => (
               <Card key={course._id || course.id} className="border border-slate-200/80 dark:border-gray-800 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition-all flex flex-col justify-between bg-white dark:bg-gray-900">
                 <div>

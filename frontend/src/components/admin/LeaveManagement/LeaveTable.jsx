@@ -92,66 +92,76 @@ export default function LeaveTable({ dataLeave, pageNumber, pageSize, pagination
         </TableHeader>
 
         <TableBody className="divide-y divide-slate-100 text-xs">
-          {dataLeave.map((row) => (
-            <TableRow key={row._id} className="hover:bg-slate-50/80 transition-colors">
-              <TableCell className="py-4 px-6">
-                <div className="flex items-center gap-3">
-                  {row.employee?.avatarUrl ? (
-                    <img
-                      src={row.employee?.avatarUrl}
-                      alt={row.employee?.fullName}
-                      className="w-9 h-9 rounded-full object-cover border"
-                    />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-                      <User className="w-4 h-4" />
+          {dataLeave && dataLeave.length > 0 ? (
+            dataLeave.map((row) => (
+              <TableRow key={row._id} className="hover:bg-slate-50/80 transition-colors">
+                <TableCell className="py-4 px-6">
+                  <div className="flex items-center gap-3">
+                    {row.employee?.avatarUrl ? (
+                      <img
+                        src={row.employee?.avatarUrl}
+                        alt={row.employee?.fullName}
+                        className="w-9 h-9 rounded-full object-cover border"
+                      />
+                    ) : (
+                      <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                        <User className="w-4 h-4" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-slate-800">{row.employee?.fullName}</p>
+                      <p className="text-[11px] text-slate-400">{row.employee?.code}</p>
                     </div>
-                  )}
-                  <div>
-                    <p className="font-bold text-slate-800">{row.employee?.fullName}</p>
-                    <p className="text-[11px] text-slate-400">{row.employee?.code}</p>
                   </div>
+                </TableCell>
+
+                <TableCell className="py-4 px-6 font-medium text-slate-700">
+                  {row.leaveType}
+                </TableCell>
+
+                <TableCell className="py-4 px-6 text-slate-600 font-medium">
+                  {dayjs(row.startDate).format("DD/MM/YYYY")}
+                </TableCell>
+
+                <TableCell className="py-4 px-6 text-slate-600 font-medium">
+                  {dayjs(row.endDate).format("DD/MM/YYYY")}
+                </TableCell>
+
+                <TableCell className="py-4 px-6 font-bold text-slate-800">
+                  {row.numberOfDays} ngày
+                </TableCell>
+
+                <TableCell className="py-4 px-6">
+                  <Badge
+                    className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${getStatusStyle(row.status)}`}
+                  >
+                    {row.status}
+                  </Badge>
+                </TableCell>
+
+                <TableCell className="py-4 px-6 text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg outline-none">
+                      <MoreVertical className="w-4 h-4" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40 rounded-xl">
+                      <DropdownMenuItem onClick={() => onOpenModal('detail', row)} className="text-xs font-medium cursor-pointer">
+                        Xem chi tiết đơn
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))) : (
+            <TableRow >
+              <TableCell colSpan={7} className="h-32 text-center">
+                <div className="flex flex-col items-center justify-center gap-1.5 text-slate-400 py-6">
+                  <span className="text-sm font-medium text-slate-600">Không tìm thấy dữ liệu phù hợp</span>
+                  <p className="text-xs text-slate-400">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc thời gian xem sao nhé.</p>
                 </div>
               </TableCell>
-
-              <TableCell className="py-4 px-6 font-medium text-slate-700">
-                {row.leaveType}
-              </TableCell>
-
-              <TableCell className="py-4 px-6 text-slate-600 font-medium">
-                {dayjs(row.startDate).format("DD/MM/YYYY")}
-              </TableCell>
-
-              <TableCell className="py-4 px-6 text-slate-600 font-medium">
-                {dayjs(row.endDate).format("DD/MM/YYYY")}
-              </TableCell>
-
-              <TableCell className="py-4 px-6 font-bold text-slate-800">
-                {row.numberOfDays} ngày
-              </TableCell>
-
-              <TableCell className="py-4 px-6">
-                <Badge
-                  className={`font-semibold text-[11px] px-3 py-1 rounded-full border-0 shadow-none ${getStatusStyle(row.status)}`}
-                >
-                  {row.status}
-                </Badge>
-              </TableCell>
-
-              <TableCell className="py-4 px-6 text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg outline-none">
-                    <MoreVertical className="w-4 h-4" />
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-40 rounded-xl">
-                    <DropdownMenuItem onClick={() => onOpenModal('detail', row)} className="text-xs font-medium cursor-pointer">
-                      Xem chi tiết đơn
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
         <TableFooter className="bg-white border-t border-slate-100">
           <TableRow className="hover:bg-transparent">
@@ -214,6 +224,6 @@ export default function LeaveTable({ dataLeave, pageNumber, pageSize, pagination
           </TableRow>
         </TableFooter>
       </Table>
-    </div>
+    </div >
   );
 }

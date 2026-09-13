@@ -20,7 +20,7 @@ import PerformanceFilter from "../../../components/admin/Performance/Performance
 
 
 
-export default function PerformanceTable({ dataPerformance, pageNumber, setPageNumber, pagination, pageSize }) {
+export default function PerformanceTable({ dataPerformance, pageNumber, setPageNumber, pagination, pageSize, onOpenModal }) {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("all");
@@ -65,6 +65,7 @@ export default function PerformanceTable({ dataPerformance, pageNumber, setPageN
         setSelectedDepartment={setSelectedDepartment}
         selectedQuarter={selectedQuarter}
         setSelectedQuarter={setSelectedQuarter}
+        dataList={dataPerformance}
       />
       <Table>
         <TableHeader className="bg-slate-50/80">
@@ -80,6 +81,9 @@ export default function PerformanceTable({ dataPerformance, pageNumber, setPageN
             </TableHead>
             <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
               TỰ ĐÁNH GIÁ
+            </TableHead>
+            <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
+              HỆ THỐNG ĐÁNH GIÁ
             </TableHead>
             <TableHead className="py-4 px-6 text-slate-500 font-bold text-xs uppercase">
               ĐIỂM CHỐT
@@ -138,6 +142,17 @@ export default function PerformanceTable({ dataPerformance, pageNumber, setPageN
                   )}
                 </TableCell>
 
+                <TableCell className="py-4 px-6 font-medium text-slate-600">
+                  {row ? (
+                    <div className="text-[11px] space-y-0.5">
+                      <div>Out: <span className="font-bold text-red-500">{row.outsourcingScore}</span></div>
+                      <div>Train: <span className="font-bold text-red-500">{row.trainingScore}</span></div>
+                    </div>
+                  ) : (
+                    <span className="text-slate-400 italic">Chưa đánh giá</span>
+                  )}
+                </TableCell>
+
                 <TableCell className="py-4 px-6">
                   <div className="flex items-center gap-1.5">
                     {(() => {
@@ -176,11 +191,23 @@ export default function PerformanceTable({ dataPerformance, pageNumber, setPageN
                       <MoreVertical className="w-4 h-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-44 rounded-xl">
-                      <DropdownMenuItem className="text-xs font-medium cursor-pointer">
+                      <DropdownMenuItem 
+                      onClick={() => onOpenModal("details", row)}
+                      className="text-xs font-medium cursor-pointer"
+                      >
                         Xem phiếu chi tiết
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-xs  cursor-pointer text-indigo-600 font-semibold">
-                        Chỉnh sửa & Duyệt điểm
+                      <DropdownMenuItem 
+                      onClick={() => onOpenModal("edit", row)}
+                      className="text-xs  cursor-pointer text-indigo-600 font-semibold"
+                      >
+                        Chỉnh sửa điểm
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                      onClick={() => onOpenModal("approved", row)}
+                      className="text-xs  cursor-pointer text-indigo-600 font-semibold"
+                      >
+                        Duyệt điểm
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

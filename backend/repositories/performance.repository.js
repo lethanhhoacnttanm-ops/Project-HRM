@@ -2,6 +2,14 @@ import PerformanceModel from '../models/Performance.js';
 
 class PerformanceRepository {
 
+  async findById(id) {
+    return await PerformanceModel.findById(id);
+  }
+
+  async updateById(id, updateData) {
+    return await PerformanceModel.findByIdAndUpdate(id, updateData, { new: true });
+  }
+
   async findAllWithoutPagination() {
     try {
       return await PerformanceModel.find({})

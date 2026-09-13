@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Row, Col, Select, DatePicker } from 'antd';
+import { Form, Row, Col, Select } from 'antd';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,23 +8,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Building2 } from 'lucide-react'
+import { Building2 } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { DatePicker } from "antd";
 
 export default function PromotionModal({ isOpen, onClose, mode, dataEmployee, dataDepartment, dataPosition, onSubmitPromotion }) {
-  const isCreate = mode === 'create'
-
+  const isCreate = mode === 'create';
   const [form] = Form.useForm();
 
   const getModalTitle = () => {
     if (isCreate) return 'Thêm đề xuất mới';
     return 'Thông tin';
   };
-
-  useEffect(() => {
-    if (isOpen) {
-      form.resetFields();
-    }
-  }, [isOpen, form]);
 
   const levelsList = [
     { label: 'Intern', value: 'Intern' },
@@ -38,27 +33,48 @@ export default function PromotionModal({ isOpen, onClose, mode, dataEmployee, da
 
   const [filteredLevels, setFilteredLevels] = useState(levelsList);
 
+  useEffect(() => {
+    if (isOpen) {
+      form.resetFields();
+      setFilteredLevels(levelsList);
+    }
+  }, [isOpen, form]);
+
   const handleEmployeeChange = (selectedEmployeeId) => {
     const employee = dataEmployee?.find(
       (emp) => String(emp._id || emp.id) === String(selectedEmployeeId)
     );
 
     if (employee) {
-      const empDeptId = employee.department;
-      const empPosId = employee.position;
+      let deptName = 'Chưa cập nhật';
+      if (employee.department) {
+        if (typeof employee.department === 'object' && employee.department.name) {
+          deptName = employee.department.name;
+        } else {
+          const matchedDepartment = dataDepartment?.find(
+            (dept) => String(dept._id || dept.id) === String(employee.department)
+          );
+          if (matchedDepartment) deptName = matchedDepartment.name;
+        }
+      }
 
-      const matchedDepartment = dataDepartment?.find(
-        (dept) => String(dept._id || dept.id) === String(empDeptId)
-      );
+      let posName = 'Chưa cập nhật';
+      if (employee.position) {
+        if (typeof employee.position === 'object' && employee.position.name) {
+          posName = employee.position.name;
+        } else {
+          const matchedPosition = dataPosition?.find(
+            (pos) => String(pos._id || pos.id) === String(employee.position)
+          );
+          if (matchedPosition) posName = matchedPosition.name;
+        }
+      }
 
-      const matchedPosition = dataPosition?.find(
-        (pos) => String(pos._id || pos.id) === String(empPosId)
-      );
       const currentLevel = employee.level || 'Intern';
 
       form.setFieldsValue({
-        currentPosition: matchedPosition ? matchedPosition.name : 'Chưa cập nhật',
-        currentDepartment: matchedDepartment ? matchedDepartment.name : 'Chưa cập nhật',
+        currentPosition: posName,
+        currentDepartment: deptName,
         currentLevel: currentLevel,
         proposedLevel: undefined,
       });
@@ -74,13 +90,22 @@ export default function PromotionModal({ isOpen, onClose, mode, dataEmployee, da
       setFilteredLevels(available);
     } else {
       form.resetFields();
-      setFilteredLevels(allLevels);
+      setFilteredLevels(levelsList);
     }
   };
 
   const onFinish = (values) => {
+    console.log("Giá trị ngày trước khi format:", values.effectiveDate);
+
+    const formattedValues = {
+      ...values,
+      effectiveDate: values.effectiveDate && typeof values.effectiveDate.format === 'function'
+        ? values.effectiveDate.format('YYYY-MM-DD') 
+        : values.effectiveDate,
+    };
+
     if (onSubmitPromotion) {
-      onSubmitPromotion(values);
+      onSubmitPromotion(formattedValues);
     }
     onClose();
   };
@@ -110,7 +135,13 @@ export default function PromotionModal({ isOpen, onClose, mode, dataEmployee, da
             onFinish={onFinish}
             requiredMark={false}
             className="space-y-2"
-            initialValues={{ promotionType: 'Vertical' }}
+            initialValues={{
+              promotionType: 'Vertical',
+              currentDepartment: '',
+              currentPosition: '',
+              currentLevel: '',
+              effectiveDate: null 
+            }}
           >
             <Row gutter={16}>
               <Col span={24}>
@@ -134,19 +165,33 @@ export default function PromotionModal({ isOpen, onClose, mode, dataEmployee, da
 
               <Col span={12}>
                 <Form.Item name="currentDepartment" label="Phòng ban hiện tại">
-                  <Select disabled placeholder="Tự động hiển thị" />
+                  <Input disabled placeholder="Tự động hiển thị" />
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item name="currentPosition" label="Vị trí hiện tại">
-                  <Select disabled placeholder="Tự động hiển thị" />
+                  <Input disabled placeholder="Tự động hiển thị" />
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item name="currentLevel" label="Cấp bậc hiện tại">
-                  <Select disabled placeholder="Tự động hiển thị" />
+                  <Input disabled placeholder="Tự động hiển thị" />
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item
+                  name="effectiveDate"
+                  label="Ngày có hiệu lực"
+                  rules={[{ required: true, message: 'Vui lòng chọn ngày có hiệu lực!' }]}
+                >
+                  <DatePicker
+                    placeholder="Chọn ngày có hiệu lực"
+                    className="w-full"
+                    format="YYYY-MM-DD"
+                  />
                 </Form.Item>
               </Col>
 

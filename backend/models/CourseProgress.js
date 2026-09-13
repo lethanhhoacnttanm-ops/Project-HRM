@@ -30,6 +30,19 @@ const CourseProgressSchema = new mongoose.Schema(
     },
     completedAt: {
       type: Date
+    },
+    assignedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'employees', 
+      required: false
+    },
+    isMandatory: {
+      type: Boolean,
+      default: true 
+    },
+    dueDate: {
+      type: Date, 
+      required: false
     }
   },
   { timestamps: true }

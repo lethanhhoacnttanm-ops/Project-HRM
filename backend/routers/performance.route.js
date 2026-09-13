@@ -11,6 +11,8 @@ router.get('/team-summary', verifyToken, checkRole("ADMIN"), performanceControll
 router.post('/cycle', verifyToken, checkRole("ADMIN"), performanceController.createCycle);
 router.get('/my-review', verifyToken, checkRole("EMPLOYEE","ADMIN"), performanceController.getMyReview);
 router.put('/submit-self', verifyToken, checkRole("EMPLOYEE","ADMIN"), performanceController.submitSelfAssessment);
+router.put('/:id', verifyToken, checkRole("ADMIN"), performanceController.updatePerformance);
+router.put('/:id/approve', verifyToken, checkRole("ADMIN"), performanceController.approvePerformance);
 router.get(
   '/me',
   verifyToken,

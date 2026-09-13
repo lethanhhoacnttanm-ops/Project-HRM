@@ -20,8 +20,8 @@ import {
 import AttendanceFilter from "../AttendanceFilter";
 import dayjs from "dayjs";
 
-export default function DailyAttendanceView({ dataAttendance, pagination, pageSize, pageNumber, setPageNumber }) {
-  const [searchTerm, setSearchTerm] = useState("");
+export default function DailyAttendanceView({ dataAttendance, pagination, pageSize, pageNumber, setPageNumber, onOpenModal }) {
+  const [searchTerm, setSearchTerm] = useState(""); 
   const [selectedDepartment, setSelectedDepartment] = useState("all");
 
   const [filteredRecords, setFilteredRecords] = useState([]);
@@ -188,11 +188,11 @@ export default function DailyAttendanceView({ dataAttendance, pagination, pageSi
                         <MoreVertical className="w-4 h-4" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-44 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-lg p-1">
-                        <DropdownMenuItem className="text-xs font-medium cursor-pointer text-red-500 dark:text-red-400 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5">
-                          Duyệt chấm công
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-slate-200 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5">
-                          Xem lịch sử chấm công
+                        <DropdownMenuItem 
+                        onClick={() => onOpenModal('details', row)}
+                        className="text-xs font-medium cursor-pointer dark:text-slate-200 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5"
+                        >
+                          Xem chi tiết chấm công
                         </DropdownMenuItem>
                         <DropdownMenuItem className="text-xs font-medium cursor-pointer dark:text-slate-200 dark:hover:bg-slate-800 rounded-lg px-2 py-1.5">
                           Chỉnh sửa giờ Check-in/out

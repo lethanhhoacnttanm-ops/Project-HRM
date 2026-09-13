@@ -7,6 +7,14 @@ export const employeeService = {
     });
   },
 
+  disableAccountApi: async (employeeId, reason) => {
+    return await axiosClient.put(`/employees/${employeeId}/disable`, { reason });
+  },
+
+  enableAccountApi: async (employeeId) => {
+    return await axiosClient.put(`/employees/${employeeId}/enable`);
+  },
+
   getAllListEmp: async () => {
     return await axiosClient.get('/employees/all-list-v1')
   },

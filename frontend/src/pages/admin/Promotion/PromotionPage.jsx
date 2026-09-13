@@ -166,11 +166,13 @@ export default function PromotionPage() {
         currentPosition: formValues.currentPosition,
         currentLevel: formValues.currentLevel,
         proposedLevel: formValues.proposedLevel,
-        promotionType: formValues.promotionType || 'Vertical'
+        promotionType: formValues.promotionType || 'Vertical',
+        effectiveDate: formValues.effectiveDate 
       };
 
       await promotionService.createPromotion(payload);
       toast.success('Tạo đề xuất thăng tiến thành công!');
+      fetchPromotions()
     } catch (error) {
       toast.error(error.response?.data?.message || 'Có lỗi xảy ra!');
     }

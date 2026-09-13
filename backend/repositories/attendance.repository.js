@@ -16,19 +16,28 @@ class AttendanceRepository {
       .lean();
   }
 
-  async FindWithPagination({ skip, limit }) {
-    const [totalAttendance, dataAttendance] = await Promise.all([
-      AttendanceModel.countDocuments(),
-      AttendanceModel.find().populate({
-        path: 'employee',
-        select: 'fullName code avatarUrl' 
-      }).populate({
-        path: 'shift',
-        select: 'name checkInTime checkOutTime' 
-      }).skip(skip).limit(limit).sort({ createdAt: -1 }).lean()
-    ])
+  async FindWithPagination({ skip, limit, date }) {
+    let query = {};
 
-    return { totalAttendance, dataAttendance }
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      query.date = { $gte: startOfDay, $lte: endOfDay };
+    }
+
+    const dataAttendance = await AttendanceModel.find(query)
+      .populate('employee', 'fullName email avatarUrl department')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const totalAttendance = await AttendanceModel.countDocuments(query);
+
+    return { totalAttendance, dataAttendance };
   }
 
   async createAttendance(data, shiftId) {

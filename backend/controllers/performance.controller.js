@@ -1,6 +1,45 @@
 import performanceService from '../services/performance.service.js';
 
 class PerformanceController {
+  async updatePerformance(req, res) {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+
+      const result = await performanceService.updatePerformance(id, updateData);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Cập nhật điểm đánh giá thành công!",
+        data: result,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Lỗi khi cập nhật phiếu đánh giá!",
+      });
+    }
+  }
+
+  async approvePerformance(req, res) {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+
+      const result = await performanceService.approvePerformance(id, updateData);
+      
+      return res.status(200).json({
+        success: true,
+        message: "Phê duyệt phiếu đánh giá thành công!",
+        data: result,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message || "Lỗi khi duyệt phiếu đánh giá!",
+      });
+    }
+  }
   async getAllPerformancesNoPagination(req, res) {
     try {
       const performances = await performanceService.getAllPerformancesWithoutPagination();

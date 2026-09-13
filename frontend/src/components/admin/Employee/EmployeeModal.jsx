@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,13 +10,19 @@ import { Button } from "@/components/ui/button";
 import dayjs from 'dayjs';
 import { Form, Segmented, DatePicker, Input } from 'antd';
 import { User, Lock, IdCard, Mail, Phone } from 'lucide-react';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-const EmployeeModal = ({ isOpen, onClose, onSubmitCreate, mode, data, onSubmit }) => {
+const EmployeeModal = ({ isOpen, onClose, onDisable, onEnable, onSubmitCreate, mode, data, onSubmit }) => {
   const isView = mode === 'view';
   const isProcess = mode === 'processRegistry';
   const isEdit = mode === "edit"
+  const isDisable = mode === "disable"
+  const isEnable = mode === "enable";
+
+  const [disableReason, setDisableReason] = useState("");
 
   const [form] = Form.useForm();
+
 
   useEffect(() => {
     if (isOpen) {
@@ -58,7 +64,18 @@ const EmployeeModal = ({ isOpen, onClose, onSubmitCreate, mode, data, onSubmit }
     if (isView) return 'Hồ sơ nhân sự';
     if (isProcess) return 'Thêm nhân sự mới';
     if (isEdit) return 'Chỉnh sửa thông tin';
+    if (isDisable) return 'Vô hiệu hóa tài khoản';
+    if (isEnable) return 'Khôi phục tài khoản';
     return 'Thông tin';
+  };
+
+  const handleDisableSubmit = (values) => {
+    const employeeId = data?._id;
+    const reason = values.reason;
+
+    if (onDisable) {
+      onDisable(employeeId, reason);
+    }
   };
 
   return (
@@ -108,6 +125,74 @@ const EmployeeModal = ({ isOpen, onClose, onSubmitCreate, mode, data, onSubmit }
               </div>
             </div>
           </div>
+
+        ) : isDisable ? (
+          <div className="space-y-4 pt-3">
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 leading-relaxed font-medium">
+              Cảnh báo: Hành động này sẽ vô hiệu hóa tài khoản của nhân sự <span className="font-bold">{data?.fullName}</span>. Nhân sự sẽ không thể đăng nhập vào hệ thống.
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                Chọn lý do vô hiệu hóa <span className="text-red-500">*</span>
+              </label>
+
+              <Select value={disableReason} onValueChange={setDisableReason}>
+                <SelectTrigger className="w-full h-10 rounded-xl text-xs font-medium border-slate-200 bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                  <SelectValue placeholder="Chọn lý do vi phạm" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="Vi phạm nội quy công ty" className="text-xs font-medium cursor-pointer">
+                    Vi phạm nội quy công ty
+                  </SelectItem>
+                  <SelectItem value="Gian lận chấm công" className="text-xs font-medium cursor-pointer">
+                    Gian lận chấm công
+                  </SelectItem>
+                  <SelectItem value="Nghỉ việc/Đã thôi việc" className="text-xs font-medium cursor-pointer">
+                    Nghỉ việc/Đã thôi việc
+                  </SelectItem>
+                  <SelectItem value="Lý do cá nhân khác" className="text-xs font-medium cursor-pointer">
+                    Lý do cá nhân khác
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-6 border-t border-slate-100 dark:border-gray-800">
+              <Button type="button" onClick={onClose} className="rounded-xl bg-transparent hover:bg-gray-100 border border-gray-300 text-black dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 cursor-pointer">
+                Hủy
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  if (!disableReason) {
+                    return;
+                  }
+                  if (onDisable) onDisable(data?._id, disableReason);
+                }}
+                className="bg-red-600 hover:bg-red-700 text-white rounded-xl border-none cursor-pointer"
+              >
+                Xác nhận vô hiệu hóa
+              </Button>
+            </div>
+          </div>
+
+        ) : isEnable ? (
+          <div className="space-y-4 pt-3">
+            <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 leading-relaxed font-medium">
+              Xác nhận khôi phục tài khoản cho nhân sự <span className="font-bold">{data?.fullName}</span>? Tài khoản sẽ chuyển về trạng thái <span className="font-bold text-emerald-600">Active</span> và nhân sự có thể đăng nhập lại bình thường.
+            </div>
+
+            <div className="flex justify-end gap-2 pt-6 border-t border-slate-100 dark:border-gray-800">
+              <Button type="button" onClick={onClose} className="rounded-xl bg-transparent hover:bg-gray-100 border border-gray-300 text-black dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 cursor-pointer">
+                Hủy
+              </Button>
+              <Button type="button" onClick={() => onEnable && onEnable(data?._id)} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl border-none cursor-pointer">
+                Xác nhận mở khóa
+              </Button>
+            </div>
+          </div>
+
         ) : (
           <Form
             form={form}

@@ -60,10 +60,6 @@ export default function PayrollModal({ isOpen, onClose, mode, dataContract, load
       const recordId = isAdjust ? dataAdjust?._id : null;
       onSubmit(payload, recordId);
     }
-
-    if (onConfirm) {
-      onConfirm(monthYear);
-    }
   };
 
   const handleFormSubmitLockSalary = (e) => {
@@ -342,9 +338,14 @@ export default function PayrollModal({ isOpen, onClose, mode, dataContract, load
               >
                 Hủy
               </Button>
+
               <Button
-                type="submit"
-                onClick={onClose}
+                type="button"
+                onClick={() => {
+                  if (onConfirm) {
+                    onConfirm(monthYear);
+                  }
+                }}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl h-10 px-5 shadow-sm"
               >
                 {isLock ? "Khóa bảng lương" : "Xuất file Excel"}

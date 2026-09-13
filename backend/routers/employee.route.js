@@ -21,6 +21,20 @@ router.put('/assign-department', verifyToken, checkRole('ADMIN'), employeeContro
 
 router.put('/:id', verifyToken, checkRole('ADMIN'), employeesController.updateEmployee);
 
+router.put(
+  '/:id/disable',
+  verifyToken,
+  checkRole('ADMIN'),
+  employeeController.disableEmployee
+);
+
+router.put(
+  '/:id/enable',
+  verifyToken,
+  checkRole('ADMIN'),
+  employeeController.enableEmployee
+);
+
 // ===== Employee self-service =====
 router.get(
   '/me',
