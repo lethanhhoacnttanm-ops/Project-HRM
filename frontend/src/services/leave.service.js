@@ -21,8 +21,7 @@ export const leaveService = {
 
   updateLeaveStatus: async (id, status) => {
     try {
-      const response = await axiosClient.put(`/leaves/${id}/status`, { status });
-      return response.data; 
+      return await axiosClient.put(`/leaves/${id}/status`, { status });
     } catch (error) {
       throw error.response?.data || error.message;
     }
