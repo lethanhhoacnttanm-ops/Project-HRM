@@ -62,7 +62,7 @@ const items = [
     label: 'Vận hành & Chấm công',
     children: [
       { key: '/admin-page/attendance', icon: <Calendar className="h-4 w-4" />, label: 'Chấm công' },
-      { key: '/admin-page/leave', icon: <CalendarDays className="h-4 w-4" />, label: 'Quản lý nghỉ phép' },
+      { key: '/admin-page/leaves', icon: <CalendarDays className="h-4 w-4" />, label: 'Quản lý nghỉ phép' },
       { key: '/admin-page/performance', icon: <Trophy className="h-4 w-4" />, label: 'Đánh giá hiệu suất' },
       { key: '/admin-page/benefits', icon: <Heart className="h-4 w-4" />, label: 'Chính sách phúc lợi' },
     ],
