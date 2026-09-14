@@ -23,7 +23,7 @@ export const leaveService = {
     try {
       return await axiosClient.put(`/leaves/${id}/status`, { status });
     } catch (error) {
-      throw error.response?.data || error.message;
+      throw error.response?.data || { success: false, message: error.message };
     }
   },
 };
