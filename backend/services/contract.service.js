@@ -1,6 +1,8 @@
 import contractRepository from "../repositories/contract.repository.js";
 import { contractUtils } from "../utils/contract.util.js";
 import { generateUniqueEmployeeCode } from "../utils/generateEmployeeCode.js";
+import EmployeeModel from "../models/Employee.js";
+import ContractModel from "../models/Contract.js";
 
 class ContractsService {
   async postNewContractEmployee(payload) {

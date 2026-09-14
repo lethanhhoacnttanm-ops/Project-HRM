@@ -1,5 +1,6 @@
 import performanceRepository from '../repositories/performance.repository.js';
 import EmployeeModel from '../models/Employee.js';
+import PerformanceModel from '../models/Performance.js';
 
 class PerformanceService {
   async getAllPerformancesWithoutPagination() {
@@ -20,10 +21,30 @@ class PerformanceService {
     return evaluation;
   }
 
+  async getPerformanceStats() {
+    try {
+      const performances = await PerformanceModel.find().populate('employee');
+
+      const totalCount = performances.length;
+      const avgScore = totalCount > 0 ? (performances.reduce((acc, curr) => acc + (curr.score || 0), 0) / totalCount).toFixed(2) : 0;
+
+      const lowPerformers = performances.filter(p => (p.score || 0) < 5);
+
+      return {
+        totalEvaluated: totalCount,
+        averageScore: avgScore,
+        lowPerformersList: lowPerformers
+      };
+    } catch (error) {
+      console.error("Lỗi lấy performance stats:", error);
+      return { error: "Không thể lấy dữ liệu hiệu suất" };
+    }
+  }
+
   async createCycleForEmployees(quarter, adminId) {
-    const employees = await EmployeeModel.find({ 
-      status: 'active', 
-      role: 'EMPLOYEE' 
+    const employees = await EmployeeModel.find({
+      status: 'active',
+      role: 'EMPLOYEE'
     });
 
     if (!employees || employees.length === 0) {
@@ -197,7 +218,7 @@ class PerformanceService {
 
     const payload = {
       ...updateData,
-      status: 'Approved', 
+      status: 'Approved',
     };
 
     return await performanceRepository.updateById(id, payload);

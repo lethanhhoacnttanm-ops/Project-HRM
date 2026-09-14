@@ -6,7 +6,7 @@ import { Search, Filter } from 'lucide-react';
 
 const JobFilter = ({ searchTerm, setSearchTerm, department, setDepartment, contractType, setContractType }) => {
   return (
-    <div className="bg-white dark:bg-gray-900 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-2xs">
+    <div className="bg-white mt-6 dark:bg-gray-900 p-3.5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-2xs">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         <div className="md:col-span-6">
           <Input

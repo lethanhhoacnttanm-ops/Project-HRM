@@ -4,6 +4,7 @@ import ContractService from "../services/contract.service.js";
 import budgetService from "../services/budget.service.js";
 import candidateService from "../services/candidate.service.js";
 import supportService from "../services/support.service.js";
+import performanceService from "../services/performance.service.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -74,12 +75,22 @@ const hrmTools = [{
         },
         {
             name: 'getContractTypeStatistics',
-            description: 'Thống kê tổng quan tình trạng hợp đồng hiện tại: bao nhiêu hợp đồng chính thức, thử việc và thời vụ',
+            description: 'Thống kê tổng quan tình trạng hợp đồng hiện tại: chính thức, thử việc, thời vụ và danh sách nhân sự mới chưa ký hợp đồng',
             parameters: { type: 'OBJECT', properties: {} }
         },
         {
             name: 'getPendingContractsForNewEmployees',
             description: 'Kiểm tra có bao nhiêu nhân sự mới gia nhập trong tháng này nhưng chưa có hợp đồng hoặc đang treo trạng thái chờ ký',
+            parameters: { type: 'OBJECT', properties: {} }
+        },
+        {
+            name: 'getPerformanceStatistics',
+            description: 'Lấy thông tin đánh giá hiệu suất, phòng ban đạt điểm cao nhất và danh sách nhân sự bị tụt giảm KPI hoặc điểm số thấp',
+            parameters: { type: 'OBJECT', properties: {} }
+        },
+        {
+            name: 'getRecruitmentPipelineStats',
+            description: 'Lấy số lượng và danh sách ứng viên ở các vòng tuyển dụng như phỏng vấn, hồ sơ mới, đánh giá để phân tích tiến độ tuyển dụng',
             parameters: { type: 'OBJECT', properties: {} }
         }
     ]
@@ -89,97 +100,122 @@ class ChatbotAiController {
 
     async handleAIChatAgent(req, res) {
         try {
-            const { message } = req.body;
-            const lowerMsg = message.toLowerCase();
-            let contextDescription = "";
+            const { message, pageContext } = req.body;
 
-            if (lowerMsg.includes('bao nhiêu nhân viên') || lowerMsg.includes('số lượng nhân viên') || lowerMsg.includes('tổng nhân viên')) {
-                const countResult = await EmployeeService.getEmployeeCount();
-                const total = countResult?.total !== undefined ? countResult.total : countResult;
-                contextDescription = `Tổng số lượng nhân viên hiện tại trong hệ thống là: ${total}`;
-            }
-            else if (lowerMsg.includes('danh sách nhân viên') || lowerMsg.includes('xem nhân viên')) {
-                const employees = await EmployeeService.getAllListEmployees();
-                contextDescription = `Danh sách nhân viên hiện có: ${JSON.stringify(employees)}`;
-            }
-            else if (lowerMsg.includes('hợp đồng') || lowerMsg.includes('số lượng hợp đồng')) {
-                const countResult = await ContractService.getContractCount();
-                const total = countResult?.total !== undefined ? countResult.total : countResult;
-                contextDescription = `Tổng số lượng hợp đồng hiện tại là: ${total}`;
-            }
-            else if (lowerMsg.includes('nhân viên mới') || (lowerMsg.includes('mới gia nhập') && lowerMsg.includes('tháng này'))) {
-                const newEmployees = await EmployeeService.getNewEmployeesThisMonth();
-                contextDescription = `Số lượng nhân viên mới gia nhập trong tháng này là: ${newEmployees.length} người. Chi tiết: ${JSON.stringify(newEmployees)}`;
-            }
-            else if (lowerMsg.includes('Software Development') || lowerMsg.includes('UX/UI Designer') || lowerMsg.includes('QA/QC') || lowerMsg.includes('Business Analysis & Product') || lowerMsg.includes('DevOps & System') || lowerMsg.includes('PMO/PM')) {
-                const keyword = lowerMsg.includes('Software Development') ? 'UX/UI Designer' : 'QA/QC' ? 'Business Analysis & Product' : 'DevOps & System' ? 'PMO/PM' : 'none';
-                const employees = await EmployeeService.getEmployeesByDepartment(keyword);
-                contextDescription = `Danh sách nhân viên thuộc phòng ban ${keyword}: ${JSON.stringify(employees)}`;
-            }
-            else if (fnName === 'getRealtimeBudgetStats') {
-                const budgetStats = await budgetService.getRealtimeStats();
-                apiResult = JSON.stringify(budgetStats);
-            }
-            else if (fnName === 'getCandidatesByStage') {
-                const targetStage = fnArgs.stage || 'interview';
+            const textMessage = typeof message === 'object' && message !== null
+                ? (message.message || JSON.stringify(message))
+                : String(message || '');
 
-                const candidatesRes = await candidateService.getAllCandidatesWithoutPagination().catch(() => ({ dataCandidates: [] }));
-                const candidates = candidatesRes?.dataCandidates || [];
+            const currentContext = pageContext || (typeof message === 'object' && message !== null ? message.pageContext : '');
 
-                const filteredCandidates = candidates.filter(c => c.stage === targetStage);
-
-                apiResult = JSON.stringify({
-                    stage: targetStage,
-                    totalCount: filteredCandidates.length,
-                    candidates: filteredCandidates
-                });
-            }
-            else if (fnName === 'getPendingSupportTickets') {
-                const ticketsRes = await supportService.getAllTicketsWithoutPagination().catch(() => ({ dataTickets: [] }));
-                const tickets = ticketsRes?.dataTickets || [];
-
-                const pendingTickets = tickets.filter(t => t.status === 'Mở' || t.status === 'pending' || t.status === 'Open');
-
-                apiResult = JSON.stringify({
-                    totalPending: pendingTickets.length,
-                    tickets: pendingTickets
-                });
-            }
-            else if (fnName === 'getContractTypeStatistics') {
-                const stats = await ContractService.getContractTypeStatistics();
-                apiResult = JSON.stringify(stats);
-            }
-            else if (fnName === 'getPendingContractsForNewEmployees') {
-                const pendingData = await ContractService.getPendingContractsForNewEmployees();
-                apiResult = JSON.stringify(pendingData);
-            }
-
-            if (contextDescription) {
-                const response = await ai.models.generateContent({
-                    model: 'gemini-3.6-flash',
-                    contents: [{
-                        role: 'user',
-                        parts: [{
-                            text: `Dựa vào dữ liệu hệ thống HRM sau: "${contextDescription}". Hãy trả lời câu hỏi của người dùng một cách ngắn gọn, lịch sự và thân thiện: "${message}"`
-                        }]
-                    }]
-                });
-                return res.status(200).json({ reply: response.text });
-            }
-
-            const normalResponse = await ai.models.generateContent({
+            const initialResponse = await ai.models.generateContent({
                 model: 'gemini-3.6-flash',
-                contents: [{ role: 'user', parts: [{ text: message }] }]
+                contents: [{ role: 'user', parts: [{ text: textMessage }] }],
+                config: {
+                    tools: hrmTools,
+                }
             });
 
-            return res.status(200).json({ reply: normalResponse.text });
+            const functionCalls = initialResponse.functionCalls;
+
+            if (functionCalls && functionCalls.length > 0) {
+                const call = functionCalls[0];
+                const fnName = call.name;
+                const fnArgs = call.args || {};
+
+                let apiResult = null;
+
+                switch (fnName) {
+                    case 'getAllListEmployees':
+                        apiResult = await EmployeeService.getAllListEmployees();
+                        break;
+                    case 'getEmployeeCount':
+                        apiResult = await EmployeeService.getEmployeeCount();
+                        break;
+                    case 'getListContracts':
+                        apiResult = await ContractService.getListContracts();
+                        break;
+                    case 'getContractCount':
+                        apiResult = await ContractService.getContractCount();
+                        break;
+                    case 'getEmployeesByDepartment':
+                        apiResult = await EmployeeService.getEmployeesByDepartment(fnArgs.departmentName);
+                        break;
+                    case 'getNewEmployeesThisMonth':
+                        apiResult = await EmployeeService.getNewEmployeesThisMonth();
+                        break;
+                    case 'getRealtimeBudgetStats':
+                        apiResult = await budgetService.getRealtimeStats();
+                        break;
+                    case 'getCandidatesByStage': {
+                        const targetStage = fnArgs.stage || 'interview';
+                        const candidatesRes = await candidateService.getAllCandidatesWithoutPagination().catch(() => ({ dataCandidates: [] }));
+                        const candidates = candidatesRes?.dataCandidates || [];
+                        const filteredCandidates = candidates.filter(c => c.stage === targetStage);
+                        apiResult = { stage: targetStage, totalCount: filteredCandidates.length, candidates: filteredCandidates };
+                        break;
+                    }
+                    case 'getPendingSupportTickets': {
+                        const ticketsRes = await supportService.getAllTicketsWithoutPagination().catch(() => ({ dataTickets: [] }));
+                        const tickets = ticketsRes?.dataTickets || [];
+                        const pendingTickets = tickets.filter(t => t.status === 'Mở' || t.status === 'pending' || t.status === 'Open');
+                        apiResult = { totalPending: pendingTickets.length, tickets: pendingTickets };
+                        break;
+                    }
+                    case 'getContractTypeStatistics':
+                        apiResult = await ContractService.getContractTypeStatistics();
+                        break;
+                    case 'getPendingContractsForNewEmployees':
+                        apiResult = await ContractService.getPendingContractsForNewEmployees();
+                        break;
+                    case 'getPerformanceStatistics':
+                        apiResult = await performanceService.getPerformanceStats();
+                        break;
+                    case 'getContractTypeStatistics':
+                        apiResult = await ContractService.getContractTypeStatistics();
+                        break;
+                    case 'getRecruitmentPipelineStats':
+                        const candidatesRes = await candidateService.getAllCandidatesWithoutPagination().catch(() => ({ dataCandidates: [] }));
+                        apiResult = { totalCandidates: candidatesRes?.dataCandidates?.length || 0, candidates: candidatesRes?.dataCandidates || [] };
+                        break;
+                    default:
+                        apiResult = { error: "Không tìm thấy chức năng tương ứng" };
+                }
+
+                const finalResponse = await ai.models.generateContent({
+                    model: 'gemini-3.6-flash',
+                    contents: [
+                        { role: 'user', parts: [{ text: textMessage }] },
+                        ...initialResponse.candidates.map(c => c.content),
+                        {
+                            role: 'user',
+                            parts: [{
+                                functionResponse: {
+                                    name: fnName,
+                                    response: { result: apiResult }
+                                }
+                            }]
+                        }
+                    ]
+                });
+
+                return res.status(200).json({ reply: finalResponse.text });
+
+                const fallbackResponse = await ai.models.generateContent({
+                    model: 'gemini-3.6-flash',
+                    contents: [{ role: 'user', parts: [{ text: textMessage + " (Hãy trả lời ngắn gọn, chuyên nghiệp bằng tiếng Việt dựa trên hệ thống quản trị nhân sự HRM)" }] }]
+                });
+
+                return res.status(200).json({ reply: fallbackResponse.text || "Hệ thống hiện tại chưa ghi nhận dữ liệu phù hợp với yêu cầu này." });
+            }
+
+            return res.status(200).json({ reply: initialResponse.text });
 
         } catch (error) {
-            console.error('Lỗi AI Agent:', error);
-            return res.status(500).json({ reply: 'Hệ thống AI đang gặp sự cố nhỏ.' });
+            console.error('Lỗi chi tiết tại AI Agent:', error);
+            return res.status(500).json({ reply: 'Hệ thống AI đang gặp sự cố nhỏ: ' + (error.message || 'Lỗi không xác định') });
         }
     }
 }
-
 
 export default new ChatbotAiController();

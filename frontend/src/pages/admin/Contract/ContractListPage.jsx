@@ -13,6 +13,9 @@ import { contractService } from '../../../services/contract.service.js';
 import { employeeService } from '../../../services/employee.service.js';
 import dayjs from 'dayjs';
 
+import AISummaryWidget from "@/components/AISummary/AISummaryWidget.jsx";
+import { useLocation } from 'react-router-dom';
+
 const ContractListPage = () => {
   const [contracts, setContract] = useState([]);
   const [allContracts, setAllContracts] = useState([]);
@@ -21,6 +24,8 @@ const ContractListPage = () => {
   const [status, setStatus] = useState('Tất cả');
 
   const pageSize = 4
+
+  const location = useLocation();
 
   const [beginEmployees, setBeginEmployees] = useState([]);
   const [beginPageNumber, setBeginPageNumber] = useState(1);
@@ -177,6 +182,8 @@ const ContractListPage = () => {
       </div>
 
       <ContractTopCards isProbation={isProbation} dataAllcontract={allContracts} waitingForRegis={waitingForRegis} totalContract={totalContract} isActiveContract={isActiveContract} isExpired={isExpried} />
+
+      <AISummaryWidget currentPath={location.pathname} />
 
       <ContractFilter
         searchTerm={searchTerm}

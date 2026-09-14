@@ -18,7 +18,7 @@ const ContractFilter = ({
   setStatus,
 }) => {
   return (
-    <div className="bg-white p-3.5 rounded-2xl border border-gray-200 shadow-xs dark:bg-gray-900 dark:border-gray-800">
+    <div className="bg-white mt-6 p-3.5 rounded-2xl border border-gray-200 shadow-xs dark:bg-gray-900 dark:border-gray-800">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
         <div className="md:col-span-6">
           <div className="relative w-full">

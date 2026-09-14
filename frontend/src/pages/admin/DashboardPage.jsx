@@ -15,6 +15,9 @@ import { leaveService } from '@/services/leave.service';
 import { supportService } from '@/services/support.service';
 import { performanceService } from '@/services/performance.service';
 import { budgetServiceFE } from '@/services/budget.service';
+import AISummaryWidget from '@/components/AISummary/AISummaryWidget';
+
+import { useLocation } from 'react-router-dom';
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -24,6 +27,8 @@ export default function DashboardPage() {
     pendingTickets: 0,
     activeCandidates: 0,
   });
+
+  const location = useLocation();
 
   const [miniTrendData] = useState({
     employees: [
@@ -141,7 +146,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <AISummaryWidget currentPath={location.pathname} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         
         <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs flex flex-col justify-between">
           <div>

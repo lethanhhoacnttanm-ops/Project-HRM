@@ -16,6 +16,9 @@ import internalJobService from '@/services/internalJob.service';
 
 import { toast } from 'sonner'
 
+import AISummaryWidget from "@/components/AISummary/AISummaryWidget.jsx";
+import { useLocation } from 'react-router-dom';
+
 
 const JobPostingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,6 +26,8 @@ const JobPostingPage = () => {
   const [contractType, setContractType] = useState('all');
 
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const [dataPosition, setDataPosition] = useState([])
   const [dataJobs, setDataJobs] = useState([])
@@ -166,7 +171,8 @@ const JobPostingPage = () => {
         </Button>
       </div>
 
-      <RecruitmentStats />
+
+      <AISummaryWidget currentPath={location.pathname} />
 
       <JobFilter
         searchTerm={searchTerm}

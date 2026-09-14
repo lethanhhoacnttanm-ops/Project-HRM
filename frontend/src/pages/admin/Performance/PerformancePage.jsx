@@ -15,6 +15,9 @@ import { Button } from "@/components/ui/button";
 import { employeeService } from "@/services/employee.service.js";
 import { performanceService } from "@/services/performance.service.js";
 
+import AISummaryWidget from "@/components/AISummary/AISummaryWidget.jsx";
+import { useLocation } from 'react-router-dom';
+
 import { toast } from "sonner";
 
 export default function PerformancePage() {
@@ -24,6 +27,8 @@ export default function PerformancePage() {
   const [modalState, setModalState] = useState({ isOpen: false, mode: "create" });
 
   const [dataAllListEmp, setDataAllListEmp] = useState([])
+
+  const location = useLocation();
 
   const [performanceStats, setPerformanceStats] = useState({
     evaluatedCount: 0,
@@ -216,7 +221,9 @@ export default function PerformancePage() {
 
       <PerformanceStats statsData={performanceStats} />
 
-      <div className="space-y-6">
+      <AISummaryWidget currentPath={location.pathname} />
+
+      <div className="space-y-6 mt-6">
         <div className="rounded-2xl border border-slate-200 overflow-hidden shadow-sm bg-white p-6 space-y-6 w-full">
           <PerformanceTabs
             activeTab={activeTab}
