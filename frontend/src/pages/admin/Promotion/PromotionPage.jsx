@@ -71,7 +71,7 @@ export default function PromotionPage() {
       const fetchAllEmployee = async () => {
         try {
 
-          const res = await employeeService.getAllDataEmp('EMPLOYEE');
+          const res = await employeeService.getAllDataEmpForBenefit('EMPLOYEE');
           if (res?.success) {
             setDataAllEmployee(res.dataEmp);
           } else {
