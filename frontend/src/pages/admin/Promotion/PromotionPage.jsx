@@ -29,6 +29,7 @@ export default function PromotionPage() {
   const [loading, setLoading] = useState(true);
 
   const [dataEmployee, setDataEmployee] = useState([])
+  const [dataAllEmployee, setDataAllEmployee] = useState([])
   const [dataDepartment, setDataDepartment] = useState([])
   const [dataPosition, setDataPosition] = useState([])
   const [promotions, setPromotions] = useState([]);
@@ -62,6 +63,29 @@ export default function PromotionPage() {
       };
 
       fetchEmployee();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (viewMode === "table") {
+      const fetchAllEmployee = async () => {
+        try {
+
+          const res = await employeeService.getAllDataEmp('EMPLOYEE');
+          if (res?.success) {
+            setDataAllEmployee(res.dataEmp);
+          } else {
+            setDataAllEmployee([]);
+          }
+        } catch (error) {
+          setDataAllEmployee([]);
+          toast.error('Thất bại', {
+            description: error.message || 'Không thể lấy danh sách nhân viên!',
+          });
+        }
+      };
+
+      fetchAllEmployee();
     }
   }, []);
 
@@ -341,7 +365,7 @@ export default function PromotionPage() {
         isOpen={modalState.isOpen}
         onClose={handleCloseModal}
         mode={modalState.mode}
-        dataEmployee={modalState.data}
+        dataEmployee={dataAllEmployee}
         dataDepartment={dataDepartment}
         dataPosition={dataPosition}
 
