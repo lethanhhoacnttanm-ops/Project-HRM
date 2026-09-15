@@ -92,7 +92,7 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
               form={form}
               layout="vertical"
               onFinish={handleFinish}
-              initialValues={{ quarter: getCurrentQuarter() }} 
+              initialValues={{ quarter: getCurrentQuarter() }}
               className="space-y-4"
             >
 
@@ -136,7 +136,14 @@ export default function PerformanceModal({ isOpen, onClose, mode, dataListEmp, o
                 </Button>
                 <Button
                   type="button"
-                  onClick={() => form.submit()}
+                  onClick={async () => {
+                    try {
+                      const values = await form.validateFields();
+                      handleFinish(values);
+                    } catch (errorInfo) {
+                      console.log('Validate Failed:', errorInfo);
+                    }
+                  }}
                   className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200"
                 >
                   Mở chu kỳ toàn công ty
