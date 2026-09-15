@@ -11,18 +11,16 @@ const candidateService = {
   },
 
   updateCandidateStage: async (candidateId, newStage) => {
-    try {
-      const response = await axiosClient.put(`/candidates/${candidateId}/stage`, { stage: newStage });
-      return response;
-    } catch (err) {
-      console.error("Axios request lỗi:", err.response || err);
-      throw err;
-    }
+    return await axiosClient.put(`/candidates/${candidateId}/stage`, { stage: newStage });
   },
 
   getCandidatesNoPaging: async () => {
     return await axiosClient.get('/candidates/all-no-pagination');
   },
+
+  getMyApplications: async () => {
+    return await axiosClient.get('/candidates/my-applications');
+  }
 };
 
 export default candidateService;

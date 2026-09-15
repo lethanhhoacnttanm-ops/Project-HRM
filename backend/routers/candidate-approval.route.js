@@ -11,6 +11,7 @@ router.get('/all-no-pagination', verifyToken, checkRole("ADMIN"), candidateContr
 router.post('/apply', verifyToken, checkRole("EMPLOYEE"), candidateController.applyJob);
 
 router.put('/:id/stage', verifyToken, checkRole("ADMIN"), candidateController.updateStage);
+router.get('/my-applications', verifyToken, checkRole("ADMIN"), candidateController.getMyApplications);
 
 // router.put('/:id/status', verifyToken, checkRole('ADMIN'), validationValueUpdatedPromotion,  handlelogicUpdated, promotionController.updateStatus);
 

@@ -169,21 +169,22 @@ export default function PerformancePage() {
   //   }
   // };
 
-  const handleFinish = async (id, values) => {
+  const handleFinish = async (values) => {
     try {
       setLoading(true);
+      
       if (modalState.mode === "edit") {
-        await performanceService.updatePerformance(id, values);
+        await performanceService.updatePerformance(modalState.currentId, values);
         toast.success("Cập nhật điểm đánh giá thành công!");
       } else if (modalState.mode === "create") {
         await performanceService.createCycleApi(values.quarter);
         toast.success(`Đã mở thành công chu kỳ ${values.quarter} cho toàn công ty!`);
       } else if (modalState.mode === "approved") {
-        await performanceService.approvePerformance(id, values);
+        await performanceService.approvePerformance(modalState.currentId, values);
         toast.success("Đã duyệt phiếu đánh giá!");
       }
 
-      closeModal()
+      closeModal();
       fetchPerformancesList();
 
     } catch (error) {

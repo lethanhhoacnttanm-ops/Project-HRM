@@ -2,6 +2,11 @@ import candidateRepository from '../repositories/candidate.repository.js';
 import JobModel from '../models/Job.js';
 
 class CandidateService {
+
+  async getApplicationsByUser(userId) {
+    const applications = await candidateRepository.getByUserId(userId);
+    return applications;
+  }
   async createApplication({ employeeInfo, jobId, appliedPosition }) {
     const existing = await candidateRepository.findByJobAndEmail(jobId, employeeInfo.email);
     if (existing) {

@@ -13,6 +13,11 @@ class CandidateRepository {
     return await CandidateModel.find({ job: jobId }).sort({ createdAt: -1 });
   }
 
+  async getByUserId(userId) {
+    return await CandidateModel.find({ user: userId }).populate('jobId');
+  }
+
+
   async findByJobAndEmail(jobId, email) {
     try {
       return await CandidateModel.findOne({ job: jobId, email }).lean();

@@ -3,6 +3,23 @@ import JobModel from '../models/Job.js';
 import candidateService from '../services/candidate.service.js';
 
 class CandidateController {
+
+  async getMyApplications(req, res) {
+    try {
+      const userId = req.user?._id || req.user?.id;
+
+      const applications = await candidateService.getApplicationsByUser(userId);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy danh sách đơn thành công!',
+        data: applications,
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  }
+
   async applyJob(req, res) {
     try {
       const { jobId, appliedPosition } = req.body;
