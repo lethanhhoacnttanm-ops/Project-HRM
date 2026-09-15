@@ -142,16 +142,14 @@ export default function LeavePage() {
     try {
       const res = await leaveService.updateLeaveStatus(id, status);
 
-      const responseData = res.data || res;
-
-      if (responseData && responseData.success) {
+      if (res && res.success) {
         setDataLeave(prevData =>
-          prevData.map(item => (item._id === id ? (responseData.data || { ...item, status }) : item))
+          prevData.map(item => (item._id === id ? (res.data || { ...item, status }) : item))
         );
 
-        toast.success('Thành công', { description: responseData.message || 'Đã cập nhật trạng thái đơn!' });
+        toast.success('Thành công', { description: res.message || 'Đã cập nhật trạng thái đơn!' });
       } else {
-        toast.error('Thất bại', { description: responseData?.message || 'Không thể cập nhật trạng thái!' });
+        toast.error('Thất bại', { description: res.message || 'Không thể cập nhật trạng thái!' });
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái đơn:", error);

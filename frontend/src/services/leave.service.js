@@ -20,10 +20,6 @@ export const leaveService = {
   },
 
   updateLeaveStatus: async (id, status) => {
-    try {
       return await axiosClient.put(`/leaves/${id}/status`, { status });
-    } catch (error) {
-      throw error.response?.data || { success: false, message: error.message };
-    }
   },
 };
