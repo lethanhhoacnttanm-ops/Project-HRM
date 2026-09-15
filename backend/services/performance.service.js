@@ -51,12 +51,17 @@ class PerformanceService {
       throw new Error("Không tìm thấy nhân viên nào trong hệ thống để tạo chu kỳ!");
     }
 
-    const existing = await performanceRepository.findByQuarter(quarter);
-    if (existing && existing.length > 0) {
-      throw new Error(`Chu kỳ ${quarter} đã được khởi tạo trước đó rồi!`);
+    const existingRecords = await performanceRepository.findByQuarter(quarter);
+    
+    const existingEmployeeIds = new Set(existingRecords.map(record => record.employee.toString()));
+
+    const newEmployees = employees.filter(emp => !existingEmployeeIds.has(emp._id.toString()));
+
+    if (newEmployees.length === 0) {
+      throw new Error(`Chu kỳ ${quarter} đã được khởi tạo cho toàn bộ nhân viên rồi!`);
     }
 
-    const performanceRecords = employees.map((emp) => ({
+    const performanceRecords = newEmployees.map((emp) => ({
       employee: emp._id,
       evaluator: adminId,
       quarter: quarter,
